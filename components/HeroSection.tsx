@@ -81,7 +81,7 @@ export function HeroSection() {
                     href="/catalogo"
                     className="btn-account bg-linear-to-br from-(--ofimundo-purple) to-(--ofimundo-magenta) text-white rounded-lg text-sm font-semibold px-6 py-3 hover:from-[#241a78] hover:to-[#c62842] transition"
                   >
-                    {"Conoce la Solución →"}
+                    {"Conoce las Soluciones →"}
                   </a>
                 </div>
               </div>
