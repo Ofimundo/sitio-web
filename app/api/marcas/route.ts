@@ -1,34 +1,17 @@
 import { NextResponse } from "next/server"
 import { executeQuery } from "@/lib/db"
-import type { Marca, ApiResponse } from "@/lib/types"
+import { type ProductoRow, VISTA_PRODUCTOS } from "@/lib/productos"
+import type { ApiResponse, Marca } from "@/lib/types"
 
 export async function GET() {
   try {
-    const query = `
-      SELECT 
-        ID_Marca,
-        Nombre_Marca,
-        Sitio_Web,
-        Fecha_Registro,
-        Activo
-      FROM MPR.Marcas
-      WHERE Activo = 1
-      ORDER BY Nombre_Marca ASC
-    `
-
-    const marcas = await executeQuery<Marca>(query)
-
-    const response: ApiResponse<Marca[]> = {
-      success: true,
-      data: marcas,
-    }
-
+    const rows = await executeQuery<ProductoRow>(`SELECT * FROM ${VISTA_PRODUCTOS}`)
+    const nombres = [...new Set(rows.map((row) => row.marca?.trim()).filter((marca): marca is string => Boolean(marca)))].sort((a, b) => a.localeCompare(b, "es"))
+    const marcas: Marca[] = nombres.map((Nombre_Marca, index) => ({ ID_Marca: index + 1, Nombre_Marca, Sitio_Web: null, Fecha_Registro: null, Activo: true }))
+    const response: ApiResponse<Marca[]> = { success: true, data: marcas }
     return NextResponse.json(response)
   } catch (error) {
-    console.error("Error obteniendo marcas:", error)
-    return NextResponse.json(
-      { success: false, error: "Error al obtener marcas" },
-      { status: 500 }
-    )
+    console.error("Error obteniendo marcas MPS:", error)
+    return NextResponse.json({ success: false, error: "Error al obtener marcas" }, { status: 500 })
   }
 }
