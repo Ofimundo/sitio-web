@@ -49,7 +49,39 @@ export function CatalogoContent() {
 
   const cargarEquipos = useCallback(async () => { if (!mostrarEquipos) { setEquipos([]); setLoading(false); return } setLoading(true); try { const params = new URLSearchParams(); tiposEquipo.forEach((v) => params.append("tipo", v)); filtrosActivos.marca.forEach((v) => params.append("marca", v)); filtrosActivos.tecnologia.forEach((v) => params.append("tecnologia", v)); filtrosActivos.color.forEach((v) => params.append("color", v)); if (searchTerm) params.set("search", searchTerm); const respuesta = await fetch(`/api/equipos?${params.toString()}`); const data = await respuesta.json(); setEquipos(data.success && Array.isArray(data.data) ? data.data : []) } catch { setEquipos([]) } finally { setLoading(false) } }, [filtrosActivos.color, filtrosActivos.marca, filtrosActivos.tecnologia, mostrarEquipos, searchTerm, claveTiposEquipo])
   useEffect(() => { cargarEquipos() }, [cargarEquipos])
-  useEffect(() => { const params = new URLSearchParams(); tiposEquipo.forEach((v) => params.append("tipo", v)); fetch(`/api/equipos/filtros?${params.toString()}`).then((r) => r.json()).then((data) => { if (!data.success || !data.data) return; setFiltros((actuales) => ({ ...filtrosBase, ...data.data, tipos: Array.from(new Set([...actuales.tipos, ...data.data.tipos, SALAS, AUTOMATIZACION])), marcas: Array.from(new Set([...marcasBase, ...actuales.marcas, ...data.data.marcas])).sort((a, b) => a.localeCompare(b, "es")) })) }).catch(() => undefined) }, [claveTiposEquipo])
+  useEffect(() => {
+    const params = new URLSearchParams()
+    tiposEquipo.forEach((v) => params.append("tipo", v))
+    fetch(`/api/equipos/filtros?${params.toString()}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (!data.success || !data.data) return
+
+        setFiltros((actuales) => {
+          // Deduplicación case-insensitive consistente
+          const dedup = (arr: string[]) =>
+            Array.from(
+              new Map(
+                arr
+                  .filter((v): v is string => Boolean(v))
+                  .map((v) => [v.toLocaleLowerCase("es-CL"), v])
+              ).values()
+            ).sort((a, b) => a.localeCompare(b, "es"))
+
+          return {
+            ...filtrosBase,
+            ...data.data,
+            tipos: Array.from(
+              new Set([...actuales.tipos, ...data.data.tipos, SALAS, AUTOMATIZACION])
+            ),
+            marcas: dedup([...marcasBase, ...actuales.marcas, ...(data.data.marcas || [])]),
+            tecnologias: dedup([...(actuales.tecnologias || []), ...(data.data.tecnologias || [])]),
+            colores: dedup([...(actuales.colores || []), ...(data.data.colores || [])]),
+          }
+        })
+      })
+      .catch(() => undefined)
+  }, [claveTiposEquipo])
 
   const salas = useMemo(() => mostrarSalas ? salasDisponibles.filter((sala) => { const tamano = filtrosActivos.tamanosSala.length === 0 || filtrosActivos.tamanosSala.some((v) => codigoTamano[v] === sala.Tamano); const linea = filtrosActivos.lineasSala.length === 0 || filtrosActivos.lineasSala.some((v) => v.trim().toLowerCase() === (sala.Linea ?? "").trim().toLowerCase()); const termino = searchTerm.trim().toLocaleLowerCase("es-CL"); return tamano && linea && (!termino || `${sala.Nombre} ${sala.Titulo} ${sala.Descripcion}`.toLocaleLowerCase("es-CL").includes(termino)) }) : [], [filtrosActivos.lineasSala, filtrosActivos.tamanosSala, mostrarSalas, searchTerm, salasDisponibles])
   const automatizacionesFiltradas = useMemo(() => mostrarAutomatizaciones ? automatizaciones.filter((item) => { const area = filtrosActivos.areasAutomatizacion.length === 0 || filtrosActivos.areasAutomatizacion.includes(item.categoria); const modalidad = filtrosActivos.modalidadesAutomatizacion.length === 0 || filtrosActivos.modalidadesAutomatizacion.includes(item.modalidad); const termino = searchTerm.trim().toLocaleLowerCase("es-CL"); return area && modalidad && (!termino || `${item.nombre} ${item.resumen} ${item.categoria}`.toLocaleLowerCase("es-CL").includes(termino)) }) : [], [filtrosActivos.areasAutomatizacion, filtrosActivos.modalidadesAutomatizacion, mostrarAutomatizaciones, searchTerm])
