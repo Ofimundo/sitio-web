@@ -167,12 +167,12 @@ export default function CotizarSalasPage() {
                 <select id="opcion" value={opcion} onChange={(event) => setOpcion(event.target.value)} className={fieldClass} aria-describedby="opcion-help">
                   <option value="">Necesito asesoría para elegir</option>
                   {opciones.map((op) => (
-                    <option key={op.ID_Opcion} value={`${op.Codigo} - ${op.Nombre}`}>{`Opción ${op.Codigo} · ${op.Nombre}`}</option>
+                    <option key={op.ID_Opcion} value={`${op.Codigo} - ${op.Nombre}`}>{`Opción ${op.Codigo}`}</option>
                   ))}
                   {opciones.length === 0 && (
                     <>
-                      <option value="A">Opción A · Configuración base</option>
-                      <option value="B">Opción B · Configuración ampliada</option>
+                      <option value="A">Opción A</option>
+                      <option value="B">Opción B</option>
                     </>
                   )}
                 </select>
