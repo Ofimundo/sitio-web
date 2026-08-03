@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import Image from "next/image"
+import { ThemeToggle } from "@/components/ThemeToggle"
 
 export function Header() {
   return (
@@ -97,8 +98,8 @@ export function Header() {
           </li>
         </ul>
 
-        {/* Botón */}
-        <div className="nav-button">
+        <div className="nav-actions">
+          <ThemeToggle />
           <a
             href="https://micuenta.ofimundo.cl/"
             target="_blank"

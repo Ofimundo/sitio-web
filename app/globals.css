@@ -23,6 +23,25 @@
   --border: #e5e7eb;
   --ring: #2e2096;
   --radius: 0.5rem;
+  color-scheme: light;
+}
+
+.dark {
+  --ofimundo-purple: #8b7cf6;
+  --ofimundo-magenta: #f05a74;
+  --ofimundo-red: #f05a74;
+  --ofimundo-navy: #f3f4f6;
+  --background: #111827;
+  --foreground: #f3f4f6;
+  --primary: #8b7cf6;
+  --primary-foreground: #111827;
+  --accent: #f05a74;
+  --accent-foreground: #111827;
+  --muted: #1f2937;
+  --muted-foreground: #cbd5e1;
+  --border: #374151;
+  --ring: #a99df8;
+  color-scheme: dark;
 }
 
 @theme inline {
@@ -137,7 +156,7 @@ body {
 .navbar {
   max-width: 1200px;
   margin: 0 auto;
-  background: #fff;
+  background: var(--background);
   padding: 18px 30px;
   border-radius: 50px;
   display: flex;
@@ -150,6 +169,12 @@ body {
   width: 230px;
 }
 
+.dark .logo {
+  padding: 6px 12px;
+  border-radius: 16px;
+  background: #ffffff;
+}
+
 .nav-links {
   list-style: none;
   display: flex;
@@ -159,7 +184,7 @@ body {
 
 .nav-links li a {
   text-decoration: none;
-  color: #2e3a4d;
+  color: var(--foreground);
   font-weight: 500;
   font-size: 15px;
   transition: 0.3s;
@@ -167,6 +192,43 @@ body {
 
 .nav-links li a:hover {
   color: #6c3df4;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.theme-toggle {
+  width: 42px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  background: var(--muted);
+  color: var(--foreground);
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.theme-toggle svg {
+  width: 20px;
+  height: 20px;
+}
+
+.theme-toggle:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 14%, var(--muted));
+}
+
+.theme-toggle:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--ring) 42%, transparent);
+  outline-offset: 2px;
 }
 
 .btn-account {
@@ -196,7 +258,8 @@ body {
   top: 60px;
   left: 0;
   width: 420px;
-  background: #ffffff;
+  background: var(--background);
+  border: 1px solid var(--border);
   border-radius: 20px;
   padding: 20px 0;
   box-shadow: 0 15px 40px rgba(0,0,0,0.12);
@@ -223,13 +286,13 @@ body {
 }
 
 .mega-item:hover {
-  background: #f5f7ff;
+  background: var(--muted);
 }
 
 .mega-item .icon {
   width: 36px;
   height: 36px;
-  background: #eef1ff;
+  background: var(--muted);
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -243,13 +306,13 @@ body {
   margin: 0;
   font-size: 15px;
   font-weight: 600;
-  color: #2e3a4d;
+  color: var(--foreground);
 }
 
 .mega-item p {
   margin: 4px 0 0;
   font-size: 13px;
-  color: #6c7a89;
+  color: var(--muted-foreground);
 }
 
 /* =====================================================
@@ -324,8 +387,8 @@ body {
 .filter-sidebar {
   width: 0;
   min-width: 0;
-  background: white;
-  border-right: 1px solid #e5e7eb;
+  background: var(--background);
+  border-right: 1px solid var(--border);
   overflow: hidden;
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   flex-shrink: 0;
@@ -346,7 +409,7 @@ body {
 }
 
 .filter-section-header:hover {
-  background: #f9fafb;
+  background: var(--muted);
 }
 
 .filter-checkbox {
@@ -359,7 +422,54 @@ body {
 }
 
 .filter-checkbox:hover {
-  background: #f3f4f6;
+  background: var(--muted);
+}
+
+.dark .hero-gradient {
+  background: #172033;
+}
+
+.dark .bg-white,
+.dark .bg-gray-50,
+.dark .bg-gray-100 {
+  background-color: var(--background) !important;
+}
+
+.dark .bg-gray-200 {
+  background-color: var(--muted) !important;
+}
+
+.dark .text-gray-900,
+.dark .text-gray-800,
+.dark .text-gray-700,
+.dark .text-\[\#2d2944\],
+.dark .text-\[\#2D2944\] {
+  color: var(--foreground) !important;
+}
+
+.dark .text-gray-600,
+.dark .text-gray-500,
+.dark .text-gray-400 {
+  color: var(--muted-foreground) !important;
+}
+
+.dark .border-gray-100,
+.dark .border-gray-200,
+.dark .border-gray-300 {
+  border-color: var(--border) !important;
+}
+
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: var(--muted);
+  color: var(--foreground);
+  border-color: var(--border);
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: var(--muted-foreground);
 }
 
 /* =====================================================

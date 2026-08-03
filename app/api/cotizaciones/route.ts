@@ -45,10 +45,6 @@ export async function POST(request: Request) {
 
     const smtpUser = process.env.SMTP_USER
     const smtpPassword = process.env.SMTP_PASSWORD
-    console.log({
-      smtpUser: process.env.SMTP_USER,
-      smtpPassword: process.env.SMTP_PASSWORD ? "Existe" : "No existe",
-    })
     if (!smtpUser || !smtpPassword) {
       return NextResponse.json({ error: "El servicio de correo no está configurado" }, { status: 503 })
     }

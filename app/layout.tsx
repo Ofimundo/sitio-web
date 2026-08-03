@@ -38,10 +38,22 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: "#2e2096",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#111827" },
+  ],
   width: "device-width",
   initialScale: 1,
 }
+
+const themeScript = `
+  try {
+    const saved = localStorage.getItem('ofimundo-theme');
+    const dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.classList.toggle('dark', dark);
+    document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+  } catch (_) {}
+`
 
 export default function RootLayout({
   children,
@@ -49,8 +61,9 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="es-CL" className="bg-background">
+    <html lang="es-CL" className="bg-background" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         {/* Google Tag Manager - lo más arriba posible */}
         <GoogleTagManagerHead />
         
