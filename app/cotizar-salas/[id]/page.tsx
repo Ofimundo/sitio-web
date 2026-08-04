@@ -15,6 +15,33 @@ import {
   sendQuotation,
 } from "@/components/QuotationForm"
 
+// ─────────────────────────────────────────────
+//  Tipos auxiliares
+// ─────────────────────────────────────────────
+
+interface FieldProps {
+  id: string
+  label: string
+  help: string
+  children: React.ReactNode
+}
+
+// ─────────────────────────────────────────────
+//  Subcomponente: Campo de formulario con ayuda
+// ─────────────────────────────────────────────
+
+function Field({ id, label, help, children }: FieldProps) {
+  return (
+    <div>
+      <label className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-gray-700">
+        {label}
+        <FieldHelp id={id}>{help}</FieldHelp>
+      </label>
+      <div className="mt-3">{children}</div>
+    </div>
+  )
+}
+
 const USOS = [
   "Videoconferencia y reuniones híbridas",
   "Capacitaciones y salas de formación",
@@ -160,11 +187,20 @@ export default function CotizarSalasPage() {
         <>
           <div className="rounded-2xl border-2 border-ofimundo-purple bg-white p-6 shadow-sm md:p-8">
             <h2 className="mb-6 text-2xl font-bold text-ofimundo-navy md:text-3xl">Configura tu solución</h2>
-            <div className="flex flex-col gap-6">
+            <div className="grid gap-6">
               {/* Opción de configuración */}
-              <div>
-                <label htmlFor="opcion" className="mb-2 block text-sm font-semibold text-gray-700">Opción de configuración a cotizar</label>
-                <select id="opcion" value={opcion} onChange={(event) => setOpcion(event.target.value)} className={fieldClass} aria-describedby="opcion-help">
+              <Field
+                id="opcion-help"
+                label="Opción de configuración a cotizar"
+                help="Cada sala ofrece configuraciones predefinidas (A y B) según equipamiento. Si no estás seguro, elige asesoría y un especialista te recomendará la más adecuada."
+              >
+                <select
+                  id="opcion"
+                  value={opcion}
+                  onChange={(event) => setOpcion(event.target.value)}
+                  className={fieldClass}
+                  aria-describedby="opcion-help"
+                >
                   <option value="">Necesito asesoría para elegir</option>
                   {opciones.map((op) => (
                     <option key={op.ID_Opcion} value={`${op.Codigo} - ${op.Nombre}`}>{`Opción ${op.Codigo}`}</option>
@@ -176,38 +212,70 @@ export default function CotizarSalasPage() {
                     </>
                   )}
                 </select>
-                <FieldHelp id="opcion-help">Cada sala ofrece configuraciones predefinidas (A y B) según equipamiento. Si no estás seguro, elige asesoría y un especialista te recomendará la más adecuada.</FieldHelp>
-              </div>
+              </Field>
 
               {/* Cantidad y plazo */}
               <div className="grid gap-6 md:grid-cols-2">
-                <div>
-                  <label htmlFor="cantidad" className="mb-2 block text-sm font-semibold text-gray-700">Cantidad de salas a implementar</label>
-                  <input id="cantidad" type="number" min={1} max={50} value={cantidadSalas} onChange={(event) => setCantidadSalas(Math.max(1, Number(event.target.value) || 1))} className={fieldClass} aria-describedby="cantidad-help" />
-                  <FieldHelp id="cantidad-help">Indica cuántos espacios equiparás con esta misma solución para calcular volumen y logística de instalación.</FieldHelp>
-                </div>
-                <div>
-                  <label htmlFor="plazo" className="mb-2 block text-sm font-semibold text-gray-700">Plazo estimado</label>
-                  <select id="plazo" value={plazo} onChange={(event) => setPlazo(event.target.value)} className={fieldClass} aria-describedby="plazo-help">
+                <Field
+                  id="cantidad-help"
+                  label="Cantidad de salas a implementar"
+                  help="Indica cuántos espacios equiparás con esta misma solución para calcular volumen y logística de instalación."
+                >
+                  <input
+                    id="cantidad"
+                    type="number"
+                    min={1}
+                    max={50}
+                    value={cantidadSalas}
+                    onChange={(event) => setCantidadSalas(Math.max(1, Number(event.target.value) || 1))}
+                    className={fieldClass}
+                    aria-describedby="cantidad-help"
+                  />
+                </Field>
+
+                <Field
+                  id="plazo-help"
+                  label="Plazo estimado"
+                  help="Nos ayuda a priorizar la disponibilidad de equipos y coordinar la visita técnica."
+                >
+                  <select
+                    id="plazo"
+                    value={plazo}
+                    onChange={(event) => setPlazo(event.target.value)}
+                    className={fieldClass}
+                    aria-describedby="plazo-help"
+                  >
                     {PLAZOS.map((item) => <option key={item} value={item}>{item}</option>)}
                   </select>
-                  <FieldHelp id="plazo-help">Nos ayuda a priorizar la disponibilidad de equipos y coordinar la visita técnica.</FieldHelp>
-                </div>
+                </Field>
               </div>
 
               {/* Uso principal */}
-              <div>
-                <label htmlFor="uso" className="mb-2 block text-sm font-semibold text-gray-700">Uso principal del espacio</label>
-                <select id="uso" value={uso} onChange={(event) => setUso(event.target.value)} className={fieldClass} aria-describedby="uso-help">
+              <Field
+                id="uso-help"
+                label="Uso principal del espacio"
+                help="El uso determina el tipo de pantalla, audio y cámara recomendados para lograr la mejor experiencia."
+              >
+                <select
+                  id="uso"
+                  value={uso}
+                  onChange={(event) => setUso(event.target.value)}
+                  className={fieldClass}
+                  aria-describedby="uso-help"
+                >
                   {USOS.map((item) => <option key={item} value={item}>{item}</option>)}
                 </select>
-                <FieldHelp id="uso-help">El uso determina el tipo de pantalla, audio y cámara recomendados para lograr la mejor experiencia.</FieldHelp>
-              </div>
+              </Field>
 
               {/* Complementos */}
               <div className="rounded-xl border-2 border-gray-100 bg-gray-50/60 p-5">
                 <label className="flex cursor-pointer items-start gap-3">
-                  <input type="checkbox" checked={tieneComplementos} onChange={(event) => setTieneComplementos(event.target.checked)} className="mt-0.5 h-5 w-5 shrink-0 accent-[#2e2096]" />
+                  <input
+                    type="checkbox"
+                    checked={tieneComplementos}
+                    onChange={(event) => setTieneComplementos(event.target.checked)}
+                    className="mt-0.5 h-5 w-5 shrink-0 accent-[#2e2096]"
+                  />
                   <span>
                     <span className="block text-sm font-semibold text-gray-800">Quiero agregar equipos complementarios</span>
                     <span className="mt-1 block text-sm leading-relaxed text-gray-500">Selecciona accesorios o equipos adicionales para incluirlos en la conversación de tu cotización.</span>
@@ -216,7 +284,10 @@ export default function CotizarSalasPage() {
 
                 {tieneComplementos && (
                   <fieldset className="mt-4 border-0 p-0">
-                    <legend className="mb-3 text-sm font-semibold text-gray-700">Complementos disponibles</legend>
+                    <legend className="mb-3 flex items-center gap-1.5 text-sm font-semibold text-gray-700">
+                      Complementos disponibles
+                      <FieldHelp id="complementos-help">Los complementos seleccionados se revisarán técnica y comercialmente; podrían ajustarse según la configuración final de la sala.</FieldHelp>
+                    </legend>
                     {listaComplementos.length > 0 ? (
                       <div className="grid gap-2 sm:grid-cols-2">
                         {listaComplementos.map((comp) => {
@@ -236,17 +307,26 @@ export default function CotizarSalasPage() {
                     ) : (
                       <p className="rounded-lg border-2 border-dashed border-gray-200 bg-white p-4 text-sm leading-relaxed text-gray-500">Aún no hay complementos cargados para esta sala. Descríbelos en observaciones y un asesor los cotizará contigo.</p>
                     )}
-                    <FieldHelp id="complementos-help">Los complementos seleccionados se revisarán técnica y comercialmente; podrían ajustarse según la configuración final de la sala.</FieldHelp>
                   </fieldset>
                 )}
               </div>
 
               {/* Observaciones */}
-              <div>
-                <label htmlFor="observaciones" className="mb-2 block text-sm font-semibold text-gray-700">Observaciones (opcional)</label>
-                <textarea id="observaciones" rows={3} value={observaciones} onChange={(event) => setObservaciones(event.target.value)} placeholder="Dimensiones del espacio, requerimientos especiales, integraciones existentes, etc." className={`${fieldClass} resize-none`} aria-describedby="observaciones-help" />
-                <FieldHelp id="observaciones-help">Cualquier detalle del espacio o de tu operación nos ayuda a ajustar la propuesta a tu realidad.</FieldHelp>
-              </div>
+              <Field
+                id="observaciones-help"
+                label="Observaciones (opcional)"
+                help="Cualquier detalle del espacio o de tu operación nos ayuda a ajustar la propuesta a tu realidad."
+              >
+                <textarea
+                  id="observaciones"
+                  rows={3}
+                  value={observaciones}
+                  onChange={(event) => setObservaciones(event.target.value)}
+                  placeholder="Dimensiones del espacio, requerimientos especiales, integraciones existentes, etc."
+                  className={`${fieldClass} resize-none`}
+                  aria-describedby="observaciones-help"
+                />
+              </Field>
             </div>
           </div>
 

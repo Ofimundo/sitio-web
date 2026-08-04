@@ -17,6 +17,33 @@ import {
   sendQuotation,
 } from "@/components/QuotationForm"
 
+// ─────────────────────────────────────────────
+//  Tipos auxiliares
+// ─────────────────────────────────────────────
+
+interface FieldProps {
+  id: string
+  label: string
+  help: string
+  children: React.ReactNode
+}
+
+// ─────────────────────────────────────────────
+//  Subcomponente: Campo de formulario con ayuda
+// ─────────────────────────────────────────────
+
+function Field({ id, label, help, children }: FieldProps) {
+  return (
+    <div>
+      <label className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-gray-700">
+        {label}
+        <FieldHelp id={id}>{help}</FieldHelp>
+      </label>
+      <div className="mt-3">{children}</div>
+    </div>
+  )
+}
+
 const VOLUMENES = [
   "0 a 1.000 páginas",
   "1.000 a 3.000 páginas",
@@ -173,55 +200,101 @@ export default function CotizarMpsPage() {
         <>
           <div className="rounded-2xl border-2 border-ofimundo-purple bg-white p-6 shadow-sm md:p-8">
             <h2 className="mb-6 text-2xl font-bold text-ofimundo-navy md:text-3xl">Tu necesidad de impresión</h2>
-            <div className="flex flex-col gap-6">
+            <div className="grid gap-6">
               {/* Cantidad y plazo */}
               <div className="grid gap-6 md:grid-cols-2">
-                <div>
-                  <label htmlFor="cantidad" className="mb-2 block text-sm font-semibold text-gray-700">Cantidad de equipos</label>
-                  <input id="cantidad" type="number" min={1} max={200} value={cantidadEquipos} onChange={(event) => setCantidadEquipos(Math.max(1, Number(event.target.value) || 1))} className={fieldClass} aria-describedby="cantidad-help" />
-                  <FieldHelp id="cantidad-help">Número aproximado de impresoras o multifuncionales que necesitas en arriendo.</FieldHelp>
-                </div>
-                <div>
-                  <label htmlFor="plazo" className="mb-2 block text-sm font-semibold text-gray-700">Plazo del contrato</label>
-                  <select id="plazo" value={plazoContrato} onChange={(event) => setPlazoContrato(event.target.value)} className={fieldClass} aria-describedby="plazo-help">
+                <Field
+                  id="cantidad-help"
+                  label="Cantidad de equipos"
+                  help="Número aproximado de impresoras o multifuncionales que necesitas en arriendo."
+                >
+                  <input
+                    id="cantidad"
+                    type="number"
+                    min={1}
+                    max={200}
+                    value={cantidadEquipos}
+                    onChange={(event) => setCantidadEquipos(Math.max(1, Number(event.target.value) || 1))}
+                    className={fieldClass}
+                    aria-describedby="cantidad-help"
+                  />
+                </Field>
+
+                <Field
+                  id="plazo-help"
+                  label="Plazo del contrato"
+                  help="A mayor plazo, mejor es la cuota mensual. El servicio incluye mantención e insumos durante todo el contrato."
+                >
+                  <select
+                    id="plazo"
+                    value={plazoContrato}
+                    onChange={(event) => setPlazoContrato(event.target.value)}
+                    className={fieldClass}
+                    aria-describedby="plazo-help"
+                  >
                     {PLAZOS.map((item) => <option key={item} value={item}>{item}</option>)}
                   </select>
-                  <FieldHelp id="plazo-help">A mayor plazo, mejor es la cuota mensual. El servicio incluye mantención e insumos durante todo el contrato.</FieldHelp>
-                </div>
+                </Field>
               </div>
 
               {/* Volumen */}
-              <div>
-                <label htmlFor="volumen" className="mb-2 block text-sm font-semibold text-gray-700">Volumen mensual estimado (por equipo)</label>
-                <select id="volumen" value={volumen} onChange={(event) => setVolumen(event.target.value)} className={fieldClass} aria-describedby="volumen-help">
+              <Field
+                id="volumen-help"
+                label="Volumen mensual estimado (por equipo)"
+                help="Cantidad de páginas que imprimes al mes. Si no lo sabes con exactitud, elige el rango más cercano; lo ajustamos en la propuesta."
+              >
+                <select
+                  id="volumen"
+                  value={volumen}
+                  onChange={(event) => setVolumen(event.target.value)}
+                  className={fieldClass}
+                  aria-describedby="volumen-help"
+                >
                   {VOLUMENES.map((item) => <option key={item} value={item}>{item}</option>)}
                 </select>
-                <FieldHelp id="volumen-help">Cantidad de páginas que imprimes al mes. Si no lo sabes con exactitud, elige el rango más cercano; lo ajustamos en la propuesta.</FieldHelp>
-              </div>
+              </Field>
 
               {/* Proporción color */}
-              <div>
-                <label htmlFor="proporcion" className="mb-2 block text-sm font-semibold text-gray-700">Proporción de color</label>
-                <select id="proporcion" value={proporcion} onChange={(event) => setProporcion(event.target.value)} className={fieldClass} aria-describedby="proporcion-help">
+              <Field
+                id="proporcion-help"
+                label="Proporción de color"
+                help="La impresión en color tiene un costo por página distinto al blanco y negro; esto define el plan más conveniente."
+              >
+                <select
+                  id="proporcion"
+                  value={proporcion}
+                  onChange={(event) => setProporcion(event.target.value)}
+                  className={fieldClass}
+                  aria-describedby="proporcion-help"
+                >
                   {PROPORCIONES.map((item) => <option key={item} value={item}>{item}</option>)}
                 </select>
-                <FieldHelp id="proporcion-help">La impresión en color tiene un costo por página distinto al blanco y negro; esto define el plan más conveniente.</FieldHelp>
-              </div>
+              </Field>
 
               {/* Tamaño de papel */}
-              <div>
-                <label htmlFor="papel" className="mb-2 block text-sm font-semibold text-gray-700">Tamaño de papel principal</label>
-                <select id="papel" value={tamanoPapel} onChange={(event) => setTamanoPapel(event.target.value)} className={fieldClass} aria-describedby="papel-help">
+              <Field
+                id="papel-help"
+                label="Tamaño de papel principal"
+                help="Selecciona el formato que más usas. Si necesitas A3 o tabloide, considera equipos con esa capacidad."
+              >
+                <select
+                  id="papel"
+                  value={tamanoPapel}
+                  onChange={(event) => setTamanoPapel(event.target.value)}
+                  className={fieldClass}
+                  aria-describedby="papel-help"
+                >
                   {TAMANOS_PAPEL.map((item) => <option key={item} value={item}>{item}</option>)}
                 </select>
-                <FieldHelp id="papel-help">Selecciona el formato que más usas. Si necesitas A3 o tabloide, considera equipos con esa capacidad.</FieldHelp>
-              </div>
+              </Field>
 
               {/* Funciones */}
               <div>
                 <fieldset className="border-0 p-0">
-                  <legend className="mb-1 block text-sm font-semibold text-gray-700">Funciones requeridas</legend>
-                  <FieldHelp id="funciones-help">Marca las funciones que tu equipo de trabajo necesita en el día a día.</FieldHelp>
+                  <legend className="mb-1 flex items-center gap-1.5 text-sm font-semibold text-gray-700">
+                    Funciones requeridas
+                    <FieldHelp id="funciones-help">Marca las funciones que tu equipo de trabajo necesita en el día a día.</FieldHelp>
+                  </legend>
                   <div className="mt-3 grid gap-2 sm:grid-cols-2">
                     {FUNCIONES.map((item) => {
                       const activo = funciones.includes(item)
@@ -237,18 +310,39 @@ export default function CotizarMpsPage() {
               </div>
 
               {/* Ubicaciones */}
-              <div>
-                <label htmlFor="ubicaciones" className="mb-2 block text-sm font-semibold text-gray-700">Número de ubicaciones / sucursales</label>
-                <input id="ubicaciones" type="number" min={1} max={100} value={ubicaciones} onChange={(event) => setUbicaciones(Math.max(1, Number(event.target.value) || 1))} className={fieldClass} aria-describedby="ubicaciones-help" />
-                <FieldHelp id="ubicaciones-help">Indica en cuántas direcciones se instalarán los equipos para planificar la logística y el soporte.</FieldHelp>
-              </div>
+              <Field
+                id="ubicaciones-help"
+                label="Número de ubicaciones / sucursales"
+                help="Indica en cuántas direcciones se instalarán los equipos para planificar la logística y el soporte."
+              >
+                <input
+                  id="ubicaciones"
+                  type="number"
+                  min={1}
+                  max={100}
+                  value={ubicaciones}
+                  onChange={(event) => setUbicaciones(Math.max(1, Number(event.target.value) || 1))}
+                  className={fieldClass}
+                  aria-describedby="ubicaciones-help"
+                />
+              </Field>
 
               {/* Observaciones */}
-              <div>
-                <label htmlFor="observaciones" className="mb-2 block text-sm font-semibold text-gray-700">Observaciones (opcional)</label>
-                <textarea id="observaciones" rows={3} value={observaciones} onChange={(event) => setObservaciones(event.target.value)} placeholder="Direcciones de despacho, integraciones, requerimientos de seguridad, etc." className={`${fieldClass} resize-none`} aria-describedby="observaciones-help" />
-                <FieldHelp id="observaciones-help">Comparte cualquier detalle relevante de tu operación para afinar la propuesta.</FieldHelp>
-              </div>
+              <Field
+                id="observaciones-help"
+                label="Observaciones (opcional)"
+                help="Comparte cualquier detalle relevante de tu operación para afinar la propuesta."
+              >
+                <textarea
+                  id="observaciones"
+                  rows={3}
+                  value={observaciones}
+                  onChange={(event) => setObservaciones(event.target.value)}
+                  placeholder="Direcciones de despacho, integraciones, requerimientos de seguridad, etc."
+                  className={`${fieldClass} resize-none`}
+                  aria-describedby="observaciones-help"
+                />
+              </Field>
             </div>
           </div>
 

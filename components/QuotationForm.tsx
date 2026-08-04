@@ -18,7 +18,6 @@ export function FieldHelp({ id, children }: { id: string; children: ReactNode })
           <circle cx="12" cy="12" r="9" strokeWidth="2" />
           <path d="M12 11v5m0-8h.01" strokeWidth="2" strokeLinecap="round" />
         </svg>
-        ¿Qué significa?
       </summary>
       <div id={id} role="note" className="quotation-help-popover absolute left-0 z-30 mt-2 w-72 rounded-lg border border-gray-200 bg-white p-4 text-sm font-normal leading-relaxed text-gray-600 shadow-xl">
         {children}
@@ -88,11 +87,11 @@ export function QuotationPage({ title, description, step, detailHref, contextual
           <h1 className="text-balance text-4xl font-bold text-ofimundo-navy md:text-5xl">{title}</h1>
           <p className="mx-auto mt-4 max-w-2xl text-pretty text-lg leading-relaxed text-gray-600">{description}</p>
         </div>
+        <Link href={detailHref} className="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-ofimundo-purple transition hover:text-ofimundo-magenta"><span aria-hidden="true">←</span> Volver al detalle del producto</Link>
         <div className="mb-8" aria-label={`Paso ${step} de 2`}>
           <div className="mb-2 flex items-center justify-between text-sm font-semibold text-gray-600"><span>Paso {step} de 2</span><span>{step === 1 ? "Necesidades" : "Datos de contacto"}</span></div>
           <div className="h-2 overflow-hidden rounded-full bg-gray-200"><div className="h-full rounded-full bg-ofimundo-purple transition-all" style={{ width: step === 1 ? "50%" : "100%" }} /></div>
         </div>
-        <Link href={detailHref} className="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-ofimundo-purple transition hover:text-ofimundo-magenta"><span aria-hidden="true">←</span> Volver al detalle del producto</Link>
         <div className="grid gap-8 lg:grid-cols-5">
           <section className="flex flex-col gap-6 lg:col-span-3">{children}</section>
           <aside className="flex flex-col gap-6 lg:col-span-2">

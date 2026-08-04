@@ -12,13 +12,16 @@ interface SalaCardProps {
 export function SalaCard({ sala, showBadge = false }: SalaCardProps) {
   return (
     <article className="card-hover relative flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white">
-      <Link href={`/salas/${sala.Slug}`} className="flex h-[275px] items-center justify-center bg-linear-to-br from-purple-100 to-pink-50">
+      <Link 
+        href={`/salas/${sala.Slug}`} 
+        className="relative flex h-[275px] overflow-hidden rounded-t-xl bg-linear-to-br from-purple-100 to-pink-50"
+      >
         <Image
           src={sala.Imagen_Principal}
           alt={`Configuración comercial de la sala ${sala.Nombre}`}
-          width={440}
-          height={275}
-          className="max-h-full max-w-full object-contain"
+          fill
+          sizes="(max-width: 768px) 100vw, 440px"
+          className="object-cover"
         />
       </Link>
 
