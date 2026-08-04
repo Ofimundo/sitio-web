@@ -13,14 +13,6 @@ const TENANT_ID = process.env.MICROSOFT_TENANT_ID!
 const EMAIL_FROM = process.env.MICROSOFT_SENDER_EMAIL!          // amoris@ofimundo.cl
 const GRAPH_BASE_URL = "https://graph.microsoft.com/v1.0"
 
-const cca = new ConfidentialClientApplication({
-  auth: {
-    clientId: CLIENT_ID,
-    clientSecret: CLIENT_SECRET,
-    authority: `https://login.microsoftonline.com/${TENANT_ID}`,
-  },
-})
-
 function escapeHtml(value: unknown) {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
@@ -48,6 +40,13 @@ function formatValue(value: unknown): string {
 }
 
 async function getGraphToken(): Promise<string> {
+  const cca = new ConfidentialClientApplication({
+    auth: {
+      clientId: CLIENT_ID,
+      clientSecret: CLIENT_SECRET,
+      authority: `https://login.microsoftonline.com/${TENANT_ID}`,
+    },
+  })
   const result = await cca.acquireTokenByClientCredential({
     scopes: ["https://graph.microsoft.com/.default"],
   })

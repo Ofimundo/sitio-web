@@ -11,7 +11,8 @@ export function Header() {
         {/* Logo */}
         <div className="logo">
           <Link href="/" className="logo-link">
-            <Image src="https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/01-logos/logo-ofimundo.png" alt="Ofimundo" width={230} height={50} priority />
+            <Image className="logo-light" src="https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/01-logos/logo-ofimundo.png" alt="Ofimundo" width={230} height={50} priority />
+            <Image className="logo-dark" src="https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/01-logos/logo-ofimundo-blanco.png" alt="Ofimundo" width={230} height={50} priority />
           </Link>
         </div>
 

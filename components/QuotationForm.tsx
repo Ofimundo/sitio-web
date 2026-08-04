@@ -9,13 +9,21 @@ export const fieldClass = "w-full rounded-lg border-2 border-gray-200 px-4 py-3 
 
 export function FieldHelp({ id, children }: { id: string; children: ReactNode }) {
   return (
-    <p id={id} className="mt-2 flex items-start gap-2 text-sm leading-relaxed text-gray-500">
-      <svg aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-ofimundo-purple" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <circle cx="12" cy="12" r="9" strokeWidth="2" />
-        <path d="M12 11v5m0-8h.01" strokeWidth="2" strokeLinecap="round" />
-      </svg>
-      <span>{children}</span>
-    </p>
+    <details className="group relative mt-2 w-fit">
+      <summary
+        aria-label="Ver ayuda para este campo"
+        className="flex cursor-pointer list-none items-center gap-1.5 text-xs font-semibold text-ofimundo-purple marker:hidden hover:text-ofimundo-magenta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ofimundo-purple"
+      >
+        <svg aria-hidden="true" className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <circle cx="12" cy="12" r="9" strokeWidth="2" />
+          <path d="M12 11v5m0-8h.01" strokeWidth="2" strokeLinecap="round" />
+        </svg>
+        ¿Qué significa?
+      </summary>
+      <div id={id} role="note" className="quotation-help-popover absolute left-0 z-30 mt-2 w-72 rounded-lg border border-gray-200 bg-white p-4 text-sm font-normal leading-relaxed text-gray-600 shadow-xl">
+        {children}
+      </div>
+    </details>
   )
 }
 
@@ -76,7 +84,6 @@ export function QuotationPage({ title, description, step, detailHref, contextual
       <Header />
       <main className="mx-auto max-w-7xl px-4 pb-16 pt-36 sm:px-6 md:pt-40 lg:px-8 lg:pb-24">
         <div className="mb-10 text-center">
-          <Link href={detailHref} className="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-ofimundo-purple transition hover:opacity-75"><span aria-hidden="true">←</span> Volver al detalle del producto</Link>
           <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-ofimundo-purple">Solicitud personalizada</p>
           <h1 className="text-balance text-4xl font-bold text-ofimundo-navy md:text-5xl">{title}</h1>
           <p className="mx-auto mt-4 max-w-2xl text-pretty text-lg leading-relaxed text-gray-600">{description}</p>
@@ -85,6 +92,7 @@ export function QuotationPage({ title, description, step, detailHref, contextual
           <div className="mb-2 flex items-center justify-between text-sm font-semibold text-gray-600"><span>Paso {step} de 2</span><span>{step === 1 ? "Necesidades" : "Datos de contacto"}</span></div>
           <div className="h-2 overflow-hidden rounded-full bg-gray-200"><div className="h-full rounded-full bg-ofimundo-purple transition-all" style={{ width: step === 1 ? "50%" : "100%" }} /></div>
         </div>
+        <Link href={detailHref} className="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-ofimundo-purple transition hover:text-ofimundo-magenta"><span aria-hidden="true">←</span> Volver al detalle del producto</Link>
         <div className="grid gap-8 lg:grid-cols-5">
           <section className="flex flex-col gap-6 lg:col-span-3">{children}</section>
           <aside className="flex flex-col gap-6 lg:col-span-2">
