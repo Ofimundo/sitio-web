@@ -14,7 +14,37 @@ import {
   sendQuotation,
   type ContactData,
 } from "@/components/QuotationForm"
-import { obtenerAutomatizacionPorSlug } from "@/lib/automatizaciones"
+import { obtenerAutomatizacionPorSlug } from "@/lib/automatizaciones-data"
+
+// ─────────────────────────────────────────────
+//  HELPERS DE SANITIZACIÓN
+// ─────────────────────────────────────────────
+
+const MAX_TEXT = 250
+const MAX_OBS  = 500
+
+/** Solo letras, espacios, acentos, ñ, ü. Máx 250 caracteres. */
+const sanitizeNombre = (v: string) =>
+  v.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]/g, "").slice(0, MAX_TEXT)
+
+/** Letras, números y espacios únicamente. Sin caracteres especiales. Máx 250. */
+const sanitizeAlfanumerico = (v: string) =>
+  v.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑüÜ0-9\s]/g, "").slice(0, MAX_TEXT)
+
+/** Cualquier texto, solo acotado a 250 caracteres. */
+const sanitizeTexto = (v: string) => v.slice(0, MAX_TEXT)
+
+/** Observaciones: máximo 500 caracteres. */
+const sanitizeObservaciones = (v: string) => v.slice(0, MAX_OBS)
+
+/** Teléfono: + opcional al inicio + hasta 10 dígitos = máx 11 caracteres. */
+const sanitizeTelefono = (v: string) => {
+  let cleaned = v.replace(/[^0-9+]/g, "")
+  if (cleaned.includes("+")) {
+    cleaned = "+" + cleaned.replace(/\+/g, "")
+  }
+  return cleaned.slice(0, 11)
+}
 
 // ─────────────────────────────────────────────
 //  Tipos auxiliares
@@ -82,6 +112,19 @@ export default function CotizarAutomatizacionPage() {
   // ── Helpers ─────────────────────────────────
   const setNeed = (key: keyof typeof needs, value: string) =>
     setNeeds((actual) => ({ ...actual, [key]: value }))
+
+  const resetStep1 = () => {
+    setNeeds({
+      plan: "",
+      volumen: "",
+      empresas: "",
+      sistemas: "",
+      personalizacion: "Por definir",
+      plazo: "",
+      observaciones: "",
+    })
+    setSubmitError("")
+  }
 
   const validStep1 =
     needs.plan &&
@@ -218,7 +261,9 @@ export default function CotizarAutomatizacionPage() {
                     required
                     aria-describedby="volumen-help"
                     value={needs.volumen}
-                    onChange={(e) => setNeed("volumen", e.target.value)}
+                    onChange={(e) =>
+                      setNeed("volumen", sanitizeAlfanumerico(e.target.value))
+                    }
                     placeholder="Ej. 800 documentos al mes"
                     className={fieldClass}
                   />
@@ -233,7 +278,9 @@ export default function CotizarAutomatizacionPage() {
                     required
                     aria-describedby="empresas-help"
                     value={needs.empresas}
-                    onChange={(e) => setNeed("empresas", e.target.value)}
+                    onChange={(e) =>
+                      setNeed("empresas", sanitizeAlfanumerico(e.target.value))
+                    }
                     placeholder="Ej. 3 RUT"
                     className={fieldClass}
                   />
@@ -250,7 +297,9 @@ export default function CotizarAutomatizacionPage() {
                   required
                   aria-describedby="sistemas-help"
                   value={needs.sistemas}
-                  onChange={(e) => setNeed("sistemas", e.target.value)}
+                  onChange={(e) =>
+                    setNeed("sistemas", sanitizeTexto(e.target.value))
+                  }
                   placeholder="Ej. SAP, banco y correo corporativo"
                   className={fieldClass}
                 />
@@ -309,22 +358,42 @@ export default function CotizarAutomatizacionPage() {
                   aria-describedby="observaciones-help"
                   value={needs.observaciones}
                   onChange={(e) =>
-                    setNeed("observaciones", e.target.value)
+                    setNeed("observaciones", sanitizeObservaciones(e.target.value))
                   }
                   rows={4}
                   className={fieldClass}
                   placeholder="Cuéntanos cómo realizan hoy este proceso..."
                 />
+                <p className="mt-1 text-right text-xs text-gray-400">
+                  {needs.observaciones.length}/500
+                </p>
               </Field>
             </div>
           </div>
         ) : (
-          /* ── Paso 2: Contacto ───────────────── */
+          /* ── Paso 2: Contacto con validaciones ───────────────── */
           <ContactStep
             data={contact}
-            onChange={(field, value) =>
-              setContact((actual) => ({ ...actual, [field]: value }))
-            }
+            onChange={(field, value) => {
+              let sanitized = value
+
+              switch (field) {
+                case "nombreCompleto":
+                  sanitized = sanitizeNombre(value)
+                  break
+                case "telefono":
+                  sanitized = sanitizeTelefono(value)
+                  break
+                case "email":
+                  sanitized = sanitizeTexto(value)
+                  break
+                case "empresa":
+                  sanitized = sanitizeTexto(value)
+                  break
+              }
+
+              setContact((actual) => ({ ...actual, [field]: sanitized }))
+            }}
           />
         )}
 
@@ -337,19 +406,18 @@ export default function CotizarAutomatizacionPage() {
             <button
               type="button"
               onClick={() => setStep(1)}
-              className="rounded-lg border-2 border-gray-200 px-6 py-3 font-semibold text-gray-600"
+              className="rounded-lg border-2 border-gray-300 px-6 py-3 font-semibold text-gray-700 transition hover:border-gray-400 md:px-8 md:py-4"
             >
               Volver
             </button>
           ) : (
-            <a
-              href={AGENDA_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-lg border-2 border-ofimundo-purple bg-white px-6 py-3 text-center font-semibold text-ofimundo-purple transition hover:bg-purple-50"
+            <button
+              type="button"
+              onClick={resetStep1}
+              className="rounded-lg border-2 border-gray-300 px-6 py-3 font-semibold text-gray-700 transition hover:border-gray-400 md:px-8 md:py-4"
             >
-              Agendar Reunión
-            </a>
+              Limpiar
+            </button>
           )}
 
           <button

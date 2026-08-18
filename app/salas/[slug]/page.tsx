@@ -39,7 +39,7 @@ export default async function SalaDetallePage({ params }: { params: Promise<{ sl
                       href={`/cotizar-salas/${sala.Slug}`}
                       className="flex-1 rounded-lg bg-linear-to-r from-(--ofimundo-magenta) to-(--ofimundo-purple) px-4 py-3 text-center text-sm font-semibold text-white transition hover:opacity-90"
                     >
-                      Cotizar
+                      Cotizar solución
                     </Link>
                     <a href="https://outlook.office.com/bookwithme/user/5d9fcae1581e49e8be2b6a163ed07576%40ofimundo.cl/meetingtype/x2Au6VY8SU-gJ1Uq4PePCw2?anonymous&ismsaljsauthenabled" target="_blank" rel="noopener noreferrer" className="flex-1 rounded-lg border-2 border-ofimundo-purple px-4 py-3 text-center text-sm font-semibold text-ofimundo-purple transition hover:bg-purple-50">Agendar Reunión</a>
                   </div>
@@ -69,7 +69,7 @@ export default async function SalaDetallePage({ params }: { params: Promise<{ sl
               </div>
             </section>
 
-            <section className="rounded-2xl border border-gray-200 bg-linear-to-br from-gray-50 to-gray-100 p-8" aria-labelledby="servicios-sala">
+            {/* <section className="rounded-2xl border border-gray-200 bg-linear-to-br from-gray-50 to-gray-100 p-8" aria-labelledby="servicios-sala">
               <Image
                 src="https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/06-servicio/banner-titulo.png"
                 alt="banner-servicio"
@@ -83,7 +83,7 @@ export default async function SalaDetallePage({ params }: { params: Promise<{ sl
                 <ServiceCard image="https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/06-servicio/03.servicio.png" title="Gestión del espacio" description="Coordinación de equipos, plataformas y disponibilidad" />
                 <ServiceCard image="https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/06-servicio/04.servicio.jpg" title="Acompañamiento continuo" description="Capacitación y optimización de la experiencia" />
               </div>
-            </section>
+            </section> */}
 
             <section className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm" aria-labelledby="complementos"><div className="mb-7 text-center"><p className="text-sm font-bold uppercase tracking-[0.2em] text-ofimundo-magenta">Personaliza tu espacio</p><h2 id="complementos" className="mt-2 text-3xl font-bold text-ofimundo-navy">Complementos disponibles</h2><p className="mt-2 text-gray-600">Podemos revisar estas alternativas durante la cotización.</p></div><div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">{sala.Complementos.map((item) => <article key={item.ID_Producto} className="rounded-xl border border-gray-200 bg-gray-50 p-5"><p className="text-xs font-bold uppercase tracking-wider text-ofimundo-magenta">{item.Categoria}</p><h3 className="mt-2 font-bold text-ofimundo-navy">{item.Nombre_Marca} {item.Nombre_Equipo}</h3><p className="mt-2 text-sm text-gray-600">{item.Descripcion}</p></article>)}</div></section>
           </div>

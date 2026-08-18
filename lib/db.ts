@@ -1,3 +1,4 @@
+import net from "net"
 import sql from "mssql"
 
 const [server, instanceName] = (process.env.DB_SERVER || "localhost").split("\\")
@@ -18,6 +19,7 @@ const sqlConfig: sql.config = {
   options: {
     encrypt: true,
     trustServerCertificate: true,
+    ...(net.isIP(server) ? { serverName: "localhost" } : {}),
     ...(instanceName && !configuredPort ? { instanceName } : {}),
   },
 }

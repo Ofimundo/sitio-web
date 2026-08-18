@@ -18,6 +18,15 @@ import {
 } from "@/components/QuotationForm"
 
 // ─────────────────────────────────────────────
+//  HELPERS DE SANITIZACIÓN
+// ─────────────────────────────────────────────
+
+const MAX_OBS = 500
+
+/** Observaciones: máximo 500 caracteres. */
+const sanitizeObservaciones = (v: string) => v.slice(0, MAX_OBS)
+
+// ─────────────────────────────────────────────
 //  Tipos auxiliares
 // ─────────────────────────────────────────────
 
@@ -53,11 +62,9 @@ const VOLUMENES = [
   "Más de 20.000 páginas",
 ]
 
-const PROPORCIONES = [
-  "Solo blanco y negro",
-  "Mayormente blanco y negro (poca cobertura color)",
-  "Mixto (aprox. 50% color)",
-  "Mayormente color",
+const TIPO_IMPRESION = [
+  "Monocromatico (blanco y negro)",
+  "COlor",
 ]
 
 const PLAZOS = ["12 meses", "24 meses", "36 meses", "48 meses", "60 meses"]
@@ -87,7 +94,7 @@ export default function CotizarMpsPage() {
   const [cantidadEquipos, setCantidadEquipos] = useState(1)
   const [plazoContrato, setPlazoContrato] = useState(PLAZOS[2])
   const [volumen, setVolumen] = useState(VOLUMENES[1])
-  const [proporcion, setProporcion] = useState(PROPORCIONES[0])
+  const [tipoImpresion, setTipoImpresion] = useState(TIPO_IMPRESION[0])
   const [tamanoPapel, setTamanoPapel] = useState(TAMANOS_PAPEL[0])
   const [funciones, setFunciones] = useState<string[]>(["Impresión", "Copiado", "Escaneo a correo / carpeta"])
   const [ubicaciones, setUbicaciones] = useState(1)
@@ -95,6 +102,13 @@ export default function CotizarMpsPage() {
 
   // Paso 2 - contacto
   const [contacto, setContacto] = useState<ContactData>({ nombreCompleto: "", telefono: "", email: "", empresa: "" })
+
+  // ── Efecto: si hay 1 equipo, forzar 1 ubicación y ocultar el campo ──
+  useEffect(() => {
+    if (cantidadEquipos === 1) {
+      setUbicaciones(1)
+    }
+  }, [cantidadEquipos])
 
   useEffect(() => {
     let activo = true
@@ -126,7 +140,7 @@ export default function CotizarMpsPage() {
     setCantidadEquipos(1)
     setPlazoContrato(PLAZOS[2])
     setVolumen(VOLUMENES[1])
-    setProporcion(PROPORCIONES[0])
+    setTipoImpresion(TIPO_IMPRESION[0])
     setTamanoPapel(TAMANOS_PAPEL[0])
     setFunciones(["Impresión", "Copiado", "Escaneo a correo / carpeta"])
     setUbicaciones(1)
@@ -144,7 +158,7 @@ export default function CotizarMpsPage() {
         cantidad_equipos: cantidadEquipos,
         plazo_contrato: plazoContrato,
         volumen_mensual: volumen,
-        proporcion_color: proporcion,
+        tipo_impresion: tipoImpresion,
         tamano_papel: tamanoPapel,
         funciones,
         numero_ubicaciones: ubicaciones,
@@ -214,7 +228,7 @@ export default function CotizarMpsPage() {
                     min={1}
                     max={200}
                     value={cantidadEquipos}
-                    onChange={(event) => setCantidadEquipos(Math.max(1, Number(event.target.value) || 1))}
+                    onChange={(event) => setCantidadEquipos(Math.max(1, Math.min(200, Number(event.target.value) || 1)))}
                     className={fieldClass}
                     aria-describedby="cantidad-help"
                   />
@@ -254,20 +268,20 @@ export default function CotizarMpsPage() {
                 </select>
               </Field>
 
-              {/* Proporción color */}
+              {/* Tipo de Impresión */}
               <Field
-                id="proporcion-help"
-                label="Proporción de color"
+                id="tipo_impresion-help"
+                label="Tipo de Impresión"
                 help="La impresión en color tiene un costo por página distinto al blanco y negro; esto define el plan más conveniente."
               >
                 <select
-                  id="proporcion"
-                  value={proporcion}
-                  onChange={(event) => setProporcion(event.target.value)}
+                  id="tipo_impresion"
+                  value={tipoImpresion}
+                  onChange={(event) => setTipoImpresion(event.target.value)}
                   className={fieldClass}
-                  aria-describedby="proporcion-help"
+                  aria-describedby="tipo_impresion-help"
                 >
-                  {PROPORCIONES.map((item) => <option key={item} value={item}>{item}</option>)}
+                  {TIPO_IMPRESION.map((item) => <option key={item} value={item}>{item}</option>)}
                 </select>
               </Field>
 
@@ -309,25 +323,27 @@ export default function CotizarMpsPage() {
                 </fieldset>
               </div>
 
-              {/* Ubicaciones */}
-              <Field
-                id="ubicaciones-help"
-                label="Número de ubicaciones / sucursales"
-                help="Indica en cuántas direcciones se instalarán los equipos para planificar la logística y el soporte."
-              >
-                <input
-                  id="ubicaciones"
-                  type="number"
-                  min={1}
-                  max={100}
-                  value={ubicaciones}
-                  onChange={(event) => setUbicaciones(Math.max(1, Number(event.target.value) || 1))}
-                  className={fieldClass}
-                  aria-describedby="ubicaciones-help"
-                />
-              </Field>
+              {/* Ubicaciones — condicional: solo si cantidad > 1 */}
+              {cantidadEquipos > 1 && (
+                <Field
+                  id="ubicaciones-help"
+                  label="Número de ubicaciones / sucursales"
+                  help="Indica en cuántas direcciones se instalarán los equipos para planificar la logística y el soporte."
+                >
+                  <input
+                    id="ubicaciones"
+                    type="number"
+                    min={1}
+                    max={100}
+                    value={ubicaciones}
+                    onChange={(event) => setUbicaciones(Math.max(1, Math.min(100, Number(event.target.value) || 1)))}
+                    className={fieldClass}
+                    aria-describedby="ubicaciones-help"
+                  />
+                </Field>
+              )}
 
-              {/* Observaciones */}
+              {/* Observaciones — max 500 caracteres */}
               <Field
                 id="observaciones-help"
                 label="Observaciones (opcional)"
@@ -337,11 +353,14 @@ export default function CotizarMpsPage() {
                   id="observaciones"
                   rows={3}
                   value={observaciones}
-                  onChange={(event) => setObservaciones(event.target.value)}
+                  onChange={(event) => setObservaciones(sanitizeObservaciones(event.target.value))}
                   placeholder="Direcciones de despacho, integraciones, requerimientos de seguridad, etc."
                   className={`${fieldClass} resize-none`}
                   aria-describedby="observaciones-help"
                 />
+                <p className="mt-1 text-right text-xs text-gray-400">
+                  {observaciones.length}/500
+                </p>
               </Field>
             </div>
           </div>

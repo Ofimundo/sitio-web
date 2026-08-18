@@ -8,6 +8,7 @@ import { SalasSection } from "@/components/SalasSection"
 import { AutomatizacionesSection } from "@/components/AutomatizacionesSection"
 import { getEquipos } from "@/lib/data"
 import { getSalasDestacadas } from "@/lib/salas"
+import { getAutomatizacionesDestacadas, type Automatizacion } from "@/lib/automatizaciones"
 import type { Equipo, Sala } from "@/lib/types"
 
 export default async function HomePage() {
@@ -15,22 +16,26 @@ export default async function HomePage() {
   let multifuncionales: Equipo[] = []
   let impresoras: Equipo[] = []
   let salasDestacadas: Sala[] = []
+  let automatizacionesDestacadas: Automatizacion[] = []
 
   // Cada bloque se resuelve de forma independiente: una falla en equipos no debe
   // ocultar las salas destacadas (ni viceversa) en la página de inicio.
-  const [multiResult, impResult, salasResult] = await Promise.allSettled([
+  const [multiResult, impResult, salasResult, autoResult] = await Promise.allSettled([
     getEquipos({ tipo: "Multifuncional", limit: 6 }),
     getEquipos({ tipo: "Impresora", limit: 6 }),
     getSalasDestacadas(),
+    getAutomatizacionesDestacadas(),
   ])
 
   if (multiResult.status === "fulfilled") multifuncionales = multiResult.value.equipos
   if (impResult.status === "fulfilled") impresoras = impResult.value.equipos
   if (salasResult.status === "fulfilled") salasDestacadas = salasResult.value
+  if (autoResult.status === "fulfilled") automatizacionesDestacadas = autoResult.value
 
   if (multiResult.status === "rejected") console.error("Error cargando multifuncionales:", multiResult.reason)
   if (impResult.status === "rejected") console.error("Error cargando impresoras:", impResult.reason)
   if (salasResult.status === "rejected") console.error("Error cargando salas destacadas:", salasResult.reason)
+  if (autoResult.status === "rejected") console.error("Error cargando automatizaciones destacadas:", autoResult.reason)
 
   return (
     <main className="min-h-screen">
@@ -43,7 +48,7 @@ export default async function HomePage() {
       <SolucionesSection />
 
       {/* Automatizaciones para procesos de negocio */}
-      <AutomatizacionesSection />
+      <AutomatizacionesSection automatizaciones={automatizacionesDestacadas} />
 
       {/* Soluciones completas para espacios de colaboración */}
       <SalasSection salas={salasDestacadas} />

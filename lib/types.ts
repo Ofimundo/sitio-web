@@ -126,3 +126,38 @@ export const CATEGORIAS_EQUIPO = [
 ] as const
 
 export type CategoriaEquipo = typeof CATEGORIAS_EQUIPO[number]
+
+// Tipos para soluciones de automatización
+export interface PlanAutomatizacion {
+  nombre: string
+  recomendado?: boolean
+  descripcion: string
+  idealPara: string[]
+  incluye: string[]
+}
+
+export interface Automatizacion {
+  ID_Producto: string
+  slug: string
+  nombre: string
+  nombreCorto: string
+  categoria: string
+  modalidad: string
+  beneficio: string
+  resumen: string
+  descripcion: string
+  imagen: string
+  icono: string
+  destacada?: boolean
+  capacidades: string[]
+  integraciones: string[]
+  metricas: string[]
+  planes: PlanAutomatizacion[]
+}
+
+export interface FiltrosAutomatizacion {
+  area?: string
+  modalidad?: string
+  search?: string
+}
+

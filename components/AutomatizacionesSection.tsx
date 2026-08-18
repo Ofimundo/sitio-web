@@ -1,7 +1,7 @@
 import { AutomatizacionCard } from "./AutomatizacionCard"
-import { automatizaciones } from "@/lib/automatizaciones"
+import type { Automatizacion } from "@/lib/types"
 
-export function AutomatizacionesSection() {
+export function AutomatizacionesSection({ automatizaciones = [] }: { automatizaciones?: Automatizacion[] }) {
   return (
     <section className="bg-gray-50 px-4 py-16" aria-labelledby="automatizaciones-title">
       <div className="mx-auto max-w-7xl">
@@ -10,7 +10,9 @@ export function AutomatizacionesSection() {
           <p className="mx-auto mt-3 max-w-4xl text-pretty text-lg leading-relaxed text-ofimundo-navy md:text-xl">Soluciones que convierten procesos repetitivos en resultados</p>
         </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {automatizaciones.slice(0, 3).map((automatizacion) => <AutomatizacionCard key={automatizacion.slug} automatizacion={automatizacion} />)}
+          {automatizaciones.slice(0, 3).map((automatizacion) => (
+            <AutomatizacionCard key={automatizacion.slug} automatizacion={automatizacion} />
+          ))}
         </div>
       </div>
     </section>

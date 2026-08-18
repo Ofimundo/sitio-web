@@ -4,22 +4,28 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 import { Header } from "@/components/Header"
 import { Footer } from "@/components/Footer"
+import { AceptacionFacturasAnimation } from "@/components/AceptacionFacturasAnimation"
+import { FiniquitosDtAnimation } from "@/components/FiniquitosDtAnimation"
+import { GestionCuentasAnimation } from "@/components/GestionCuentasAnimation"
+import { SaldosBancariosAnimation } from "@/components/SaldosBancariosAnimation"
+import {
+  isAceptacionFacturasAnimation,
+  isFiniquitosDtAnimation,
+  isGestionCuentasAnimation,
+  isSaldosBancariosAnimation,
+} from "@/lib/automatizaciones-helpers"
 import { AGENDA_URL } from "@/components/AutomatizacionCard"
-import { automatizaciones, obtenerAutomatizacionPorSlug } from "@/lib/automatizaciones"
-
-export function generateStaticParams() {
-  return automatizaciones.map(({ slug }) => ({ slug }))
-}
+import { obtenerAutomatizacionPorSlug } from "@/lib/automatizaciones"
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
-  const item = obtenerAutomatizacionPorSlug(slug)
-  return item ? { title: item.nombre, description: item.resumen } : {}
+  const item = await obtenerAutomatizacionPorSlug(slug)
+  return item ? { title: `${item.nombre} - Automatización`, description: item.resumen } : { title: "Automatización no encontrada" }
 }
 
 export default async function AutomatizacionDetallePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const item = obtenerAutomatizacionPorSlug(slug)
+  const item = await obtenerAutomatizacionPorSlug(slug)
   if (!item) notFound()
 
   return (
@@ -36,7 +42,17 @@ export default async function AutomatizacionDetallePage({ params }: { params: Pr
               <article className="overflow-hidden rounded-lg border border-gray-200 bg-background shadow-lg">
                 <div className="grid md:grid-cols-2">
                   <div className="relative min-h-[340px] bg-[linear-gradient(135deg,#f4dff0_0%,#c9b6e4_100%)] md:min-h-[490px]">
-                    <Image src={item.imagen} alt={`Ilustración de ${item.nombre}`} fill priority sizes="(max-width: 768px) 100vw, 34vw" className="object-cover" />
+                    {isAceptacionFacturasAnimation(item) ? (
+                      <AceptacionFacturasAnimation />
+                    ) : isFiniquitosDtAnimation(item) ? (
+                      <FiniquitosDtAnimation />
+                    ) : isGestionCuentasAnimation(item) ? (
+                      <GestionCuentasAnimation />
+                    ) : isSaldosBancariosAnimation(item) ? (
+                      <SaldosBancariosAnimation />
+                    ) : (
+                      <Image src={item.imagen} alt={`Ilustración de ${item.nombre}`} fill priority sizes="(max-width: 768px) 100vw, 34vw" className="object-cover" />
+                    )}
                   </div>
                   <div className="flex flex-col justify-center p-6 md:p-8">
                     <span className="mb-4 w-fit rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-ofimundo-purple">Automatización · {item.categoria}</span>

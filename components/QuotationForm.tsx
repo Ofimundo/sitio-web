@@ -5,6 +5,30 @@ import type { ReactNode } from "react"
 import { Footer } from "@/components/Footer"
 import { Header } from "@/components/Header"
 
+// ─────────────────────────────────────────────
+//  HELPERS DE SANITIZACIÓN
+// ─────────────────────────────────────────────
+
+const MAX_TEXT = 250
+
+/** Solo letras, espacios, acentos, ñ, ü. Máx 250 caracteres. */
+const sanitizeNombre = (v: string) =>
+  v.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]/g, "").slice(0, MAX_TEXT)
+
+/** Teléfono: + opcional al inicio + hasta 10 dígitos = máx 11 caracteres. */
+const sanitizeTelefono = (v: string) => {
+  let cleaned = v.replace(/[^0-9+]/g, "")
+  if (cleaned.includes("+")) {
+    cleaned = "+" + cleaned.replace(/\+/g, "")
+  }
+  return cleaned.slice(0, 11)
+}
+
+/** Cualquier texto, solo acotado a 250 caracteres. */
+const sanitizeTexto = (v: string) => v.slice(0, MAX_TEXT)
+
+// ─────────────────────────────────────────────
+
 export const fieldClass = "w-full rounded-lg border-2 border-gray-200 px-4 py-3 text-gray-900 transition focus:border-ofimundo-purple focus:outline-none focus:ring-2 focus:ring-[#2e2096]/30"
 
 export function FieldHelp({ id, children }: { id: string; children: ReactNode }) {
@@ -49,6 +73,25 @@ export function SubmissionError({ message }: { message: string }) {
 }
 
 export function ContactStep({ data, onChange }: { data: ContactData; onChange: (field: keyof ContactData, value: string) => void }) {
+  const handleChange = (field: keyof ContactData, value: string) => {
+    let sanitized = value
+    switch (field) {
+      case "nombreCompleto":
+        sanitized = sanitizeNombre(value)
+        break
+      case "telefono":
+        sanitized = sanitizeTelefono(value)
+        break
+      case "email":
+        sanitized = sanitizeTexto(value)
+        break
+      case "empresa":
+        sanitized = sanitizeTexto(value)
+        break
+    }
+    onChange(field, sanitized)
+  }
+
   return (
     <div className="rounded-2xl border-2 border-ofimundo-purple bg-white p-6 shadow-sm md:p-8">
       <h2 className="mb-2 text-2xl font-bold text-ofimundo-navy md:text-3xl">Datos de contacto</h2>
@@ -56,21 +99,21 @@ export function ContactStep({ data, onChange }: { data: ContactData; onChange: (
       <div className="flex flex-col gap-6">
         <div>
           <label htmlFor="nombreCompleto" className="mb-2 block text-sm font-semibold text-gray-700">Nombre completo <span className="text-red-500">*</span></label>
-          <input id="nombreCompleto" type="text" autoComplete="name" required value={data.nombreCompleto} onChange={(event) => onChange("nombreCompleto", event.target.value)} placeholder="Juan Pérez" className={fieldClass} />
+          <input id="nombreCompleto" type="text" autoComplete="name" required value={data.nombreCompleto} onChange={(event) => handleChange("nombreCompleto", event.target.value)} placeholder="Juan Pérez" className={fieldClass} />
         </div>
         <div className="grid gap-6 md:grid-cols-2">
           <div>
             <label htmlFor="telefono" className="mb-2 block text-sm font-semibold text-gray-700">Teléfono <span className="text-red-500">*</span></label>
-            <input id="telefono" type="tel" autoComplete="tel" required value={data.telefono} onChange={(event) => onChange("telefono", event.target.value)} placeholder="+56 9 1234 5678" className={fieldClass} />
+            <input id="telefono" type="tel" autoComplete="tel" required value={data.telefono} onChange={(event) => handleChange("telefono", event.target.value)} placeholder="+56 9 1234 5678" className={fieldClass} />
           </div>
           <div>
             <label htmlFor="email" className="mb-2 block text-sm font-semibold text-gray-700">Correo electrónico <span className="text-red-500">*</span></label>
-            <input id="email" type="email" autoComplete="email" required value={data.email} onChange={(event) => onChange("email", event.target.value)} placeholder="nombre@empresa.cl" className={fieldClass} />
+            <input id="email" type="email" autoComplete="email" required value={data.email} onChange={(event) => handleChange("email", event.target.value)} placeholder="nombre@empresa.cl" className={fieldClass} />
           </div>
         </div>
         <div>
           <label htmlFor="empresa" className="mb-2 block text-sm font-semibold text-gray-700">Empresa <span className="text-red-500">*</span></label>
-          <input id="empresa" type="text" autoComplete="organization" required value={data.empresa} onChange={(event) => onChange("empresa", event.target.value)} placeholder="Nombre de la empresa" className={fieldClass} />
+          <input id="empresa" type="text" autoComplete="organization" required value={data.empresa} onChange={(event) => handleChange("empresa", event.target.value)} placeholder="Nombre de la empresa" className={fieldClass} />
         </div>
       </div>
     </div>

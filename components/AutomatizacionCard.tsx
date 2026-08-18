@@ -1,6 +1,16 @@
 import Image from "next/image"
 import Link from "next/link"
 import type { Automatizacion } from "@/lib/automatizaciones"
+import { AceptacionFacturasAnimation } from "@/components/AceptacionFacturasAnimation"
+import { FiniquitosDtAnimation } from "@/components/FiniquitosDtAnimation"
+import { GestionCuentasAnimation } from "@/components/GestionCuentasAnimation"
+import { SaldosBancariosAnimation } from "@/components/SaldosBancariosAnimation"
+import {
+  isAceptacionFacturasAnimation,
+  isFiniquitosDtAnimation,
+  isGestionCuentasAnimation,
+  isSaldosBancariosAnimation,
+} from "@/lib/automatizaciones-helpers"
 
 export const AGENDA_URL = "https://outlook.office.com/bookwithme/user/5d9fcae1581e49e8be2b6a163ed07576%40ofimundo.cl/meetingtype/x2Au6VY8SU-gJ1Uq4PePCw2?anonymous&ismsaljsauthenabled"
 
@@ -8,8 +18,18 @@ export function AutomatizacionCard({ automatizacion }: { automatizacion: Automat
   return (
     <article className="flex h-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-background shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
       <div className="relative h-[275px] bg-[linear-gradient(135deg,#f4dff0_0%,#c9b6e4_100%)]">
-        <Image src={automatizacion.imagen} alt={`Ilustración de ${automatizacion.nombre}`} fill className="object-cover" sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw" />
-        <span className="absolute left-4 top-4 rounded-full bg-background/95 px-3 py-1 text-xs font-semibold text-ofimundo-purple shadow-sm">Automatización</span>
+        {isAceptacionFacturasAnimation(automatizacion) ? (
+          <AceptacionFacturasAnimation />
+        ) : isFiniquitosDtAnimation(automatizacion) ? (
+          <FiniquitosDtAnimation />
+        ) : isGestionCuentasAnimation(automatizacion) ? (
+          <GestionCuentasAnimation />
+        ) : isSaldosBancariosAnimation(automatizacion) ? (
+          <SaldosBancariosAnimation />
+        ) : (
+          <Image src={automatizacion.imagen} alt={`Ilustración de ${automatizacion.nombre}`} fill className="object-cover" sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw" />
+        )}
+        <span className="absolute left-4 top-4 z-10 rounded-full bg-background/95 px-3 py-1 text-xs font-semibold text-ofimundo-purple shadow-sm">Automatización</span>
       </div>
 
       <div className="flex flex-1 flex-col p-6">

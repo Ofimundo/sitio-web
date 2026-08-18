@@ -3,14 +3,14 @@ import { ConfidentialClientApplication } from "@azure/msal-node"
 
 export const runtime = "nodejs"
 
-const DESTINATARIO = "amoris@ofimundo.cl"
+const DESTINATARIO = process.env.MICROSOFT_SENDER_EMAIL || "marrano@ofimundo.cl"
 const TIPOS_VALIDOS = new Set(["sala", "mps", "automatizacion"])
 
 // ─── Configuración Microsoft Graph (adaptado a tu .env.local) ───
 const CLIENT_ID = process.env.MICROSOFT_CLIENT_ID!
 const CLIENT_SECRET = process.env.MICROSOFT_CLIENT_SECRET!
 const TENANT_ID = process.env.MICROSOFT_TENANT_ID!
-const EMAIL_FROM = process.env.MICROSOFT_SENDER_EMAIL!          // amoris@ofimundo.cl
+const EMAIL_FROM = process.env.MICROSOFT_SENDER_EMAIL!          // marrano@ofimundo.cl
 const GRAPH_BASE_URL = "https://graph.microsoft.com/v1.0"
 
 function escapeHtml(value: unknown) {

@@ -111,22 +111,34 @@ export default async function EquipoDetallePage({ params }: PageProps) {
                   </div>
 
                   {/* CTA Buttons */}
-                  <div className="flex items-center gap-3 mt-auto">
+                  <div className="flex flex-wrap items-center gap-3 mt-auto">
                     <Link
                       href={`/cotizar-mps/${equipo.ID_Producto}`}
-                      className="flex-1 rounded-lg bg-linear-to-r from-(--ofimundo-magenta) to-(--ofimundo-purple) px-4 py-3 text-center text-sm font-semibold text-white transition hover:opacity-90"
+                      className="flex-1 rounded-lg bg-linear-to-r from-(--ofimundo-magenta) to-(--ofimundo-purple) px-4 py-3 text-center text-sm font-semibold text-white transition hover:opacity-90 text-center"
                     >
-                      Cotizar
+                      Cotizar solución
                     </Link>
 
                     <a
                       href="https://outlook.office.com/bookwithme/user/5d9fcae1581e49e8be2b6a163ed07576%40ofimundo.cl/meetingtype/x2Au6VY8SU-gJ1Uq4PePCw2?anonymous&ismsaljsauthenabled"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 rounded-lg border-2 border-ofimundo-purple px-4 py-3 text-center text-sm font-semibold text-ofimundo-purple transition hover:bg-purple-50"
+                      className="flex-1 rounded-lg border-2 border-ofimundo-purple px-4 py-3 text-center text-sm font-semibold text-ofimundo-purple transition hover:bg-white-50 text-center"
                     >
                       Agendar Reunión
                     </a>
+
+                    {equipo.Archivo_PDF_Equipo && (
+                      <a
+                        href={equipo.Archivo_PDF_Equipo}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full rounded-lg border-2 border-gray-300 px-4 py-3 text-center text-sm font-semibold text-gray-700 transition hover:border-ofimundo-purple hover:text-ofimundo-purple flex items-center justify-center gap-2"
+                      >
+                        <i className="fas fa-file-pdf text-red-500" aria-hidden="true" />
+                        Descargar Ficha Técnica
+                      </a>
+                    )}
                   </div>
                 </div>
               </div>
@@ -163,34 +175,6 @@ export default async function EquipoDetallePage({ params }: PageProps) {
                   title="Client Success"
                   description="Acompañamiento y optimización continua"
                 />
-              </div>
-            </div>
-
-            {/* Contenido adicional */}
-            <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-200">
-              <h2 className="text-2xl font-bold text-ofimundo-navy mb-4 text-center">
-                Solución completa para tu oficina moderna
-              </h2>
-              <p className="text-gray-600 text-center leading-relaxed mb-8 max-w-3xl mx-auto">
-                El {equipo.Nombre_Equipo} combina velocidad, calidad y conectividad en un diseño
-                compacto. Perfecto para equipos de trabajo que necesitan maximizar su productividad
-                con tecnología de punta y gestión remota integrada.
-              </p>
-
-              <div className="flex justify-center gap-4">
-                <button className="px-8 py-3 bg-ofimundo-magenta text-white rounded-lg font-semibold hover:opacity-90 transition">
-                  Solicitar Demo
-                </button>
-                {equipo.Archivo_PDF_Equipo && (
-                  <a
-                    href={equipo.Archivo_PDF_Equipo}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-8 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:border-ofimundo-purple hover:text-ofimundo-purple transition"
-                  >
-                    Descargar Ficha Técnica
-                  </a>
-                )}
               </div>
             </div>
           </div>

@@ -484,11 +484,34 @@ body {
 }
 
 .dark :is(a, button).bg-ofimundo-purple,
-.dark :is(a, button).bg-ofimundo-navy,
-.dark :is(a, button).border-ofimundo-purple {
+.dark :is(a, button).bg-ofimundo-navy {
   background: linear-gradient(135deg, var(--ofimundo-purple), var(--ofimundo-magenta));
   border-color: transparent;
   color: #ffffff;
+}
+
+.dark :is(a, button).border-ofimundo-purple {
+  background: transparent;
+  border-color: var(--ofimundo-purple);
+  color: var(--ofimundo-purple);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ofimundo-purple) 18%, transparent);
+  transition: background 180ms ease, border-color 180ms ease, color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.dark :is(a, button).border-ofimundo-purple:hover,
+.dark :is(a, button).border-ofimundo-purple:focus-visible {
+  background: linear-gradient(135deg, var(--ofimundo-purple), var(--ofimundo-magenta));
+  border-color: transparent;
+  color: #ffffff;
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--ofimundo-magenta) 28%, transparent);
+  transform: translateY(-1px);
+}
+
+.dark :is(a, button).border-ofimundo-purple:active {
+  background: linear-gradient(135deg, var(--ofimundo-magenta), var(--ofimundo-purple));
+  color: #ffffff;
+  box-shadow: 0 3px 10px color-mix(in srgb, var(--ofimundo-purple) 32%, transparent);
+  transform: translateY(0) scale(0.98);
 }
 
 .dark input,
