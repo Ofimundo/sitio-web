@@ -1,10 +1,19 @@
 import { NextResponse } from "next/server"
 import { ConfidentialClientApplication } from "@azure/msal-node"
+import { injectSoftlandCotizacion } from "@/lib/db"
 
 export const runtime = "nodejs"
 
 const DESTINATARIO = process.env.MICROSOFT_SENDER_EMAIL || "marrano@ofimundo.cl"
-const TIPOS_VALIDOS = new Set(["sala", "mps", "automatizacion"])
+const TIPOS_VALIDOS = new Set(["sala", "mps", "automatizacion", "daas", "rpa", "smart offices"])
+
+function mapTipoSoftland(tipo: string): "SMART OFFICES" | "RPA" | "MPS" | "DAAS" {
+  const t = tipo.toLowerCase().trim()
+  if (t === "sala" || t === "smart offices" || t === "smart_offices") return "SMART OFFICES"
+  if (t === "automatizacion" || t === "rpa") return "RPA"
+  if (t === "mps") return "MPS"
+  return "DAAS"
+}
 
 // ─── Configuración Microsoft Graph (adaptado a tu .env.local) ───
 const CLIENT_ID = process.env.MICROSOFT_CLIENT_ID!
@@ -121,41 +130,69 @@ export async function POST(request: Request) {
     const email = String(body.email ?? "").trim()
     const telefono = String(body.telefono ?? "").trim()
     const empresa = String(body.empresa ?? "").trim()
+    const rutEmpresa = String(body.rutEmpresa ?? body.rut ?? "").trim()
 
     if (!TIPOS_VALIDOS.has(tipo) || !nombre || !telefono || !empresa || !/^\S+@\S+\.\S+$/.test(email)) {
       return NextResponse.json({ error: "Completa correctamente los datos obligatorios" }, { status: 400 })
     }
 
-    if (!CLIENT_ID || !CLIENT_SECRET || !TENANT_ID || !EMAIL_FROM) {
-      return NextResponse.json({ error: "El servicio de correo no está configurado" }, { status: 503 })
+    const tipoContactoSoftland = mapTipoSoftland(tipo)
+
+    // 1. Inyectar evento en Softland CRM vía Stored Procedure [SOFTLAND].[PA_INS_SITIO_OFIMUNDO_V2]
+    let softlandResponse = { success: false, message: "" }
+    try {
+      softlandResponse = await injectSoftlandCotizacion({
+        rut_empresa: rutEmpresa || empresa,
+        nombre_empresa: empresa,
+        nombre_completo: nombre,
+        telefono: telefono,
+        correo_electronico: email,
+        tipo_contacto: tipoContactoSoftland,
+      })
+      console.log("[Softland CRM] Resultado de inyección:", softlandResponse)
+    } catch (softlandErr) {
+      console.error("[Softland CRM] Error al ejecutar Stored Procedure:", softlandErr)
     }
 
-    const excluded = new Set(["nombreCompleto", "email", "telefono", "empresa"])
-    const details = Object.entries(body).filter(([key]) => !excluded.has(key))
-    const rows = details
-      .map(
-        ([key, value]) =>
-          `<tr><th style="padding:8px;text-align:left;border-bottom:1px solid #ddd">${escapeHtml(label(key))}</th><td style="padding:8px;border-bottom:1px solid #ddd">${escapeHtml(formatValue(value))}</td></tr>`
-      )
-      .join("")
-    const textDetails = details.map(([key, value]) => `${label(key)}: ${formatValue(value)}`).join("\n")
+    // 2. Enviar notificación por correo vía Microsoft Graph API (si está configurado)
+    let emailResult = { messageId: `local-${Date.now()}` }
+    if (CLIENT_ID && CLIENT_SECRET && TENANT_ID && EMAIL_FROM) {
+      try {
+        const excluded = new Set(["nombreCompleto", "email", "telefono", "empresa", "rutEmpresa"])
+        const details = Object.entries(body).filter(([key]) => !excluded.has(key))
+        const rows = details
+          .map(
+            ([key, value]) =>
+              `<tr><th style="padding:8px;text-align:left;border-bottom:1px solid #ddd">${escapeHtml(label(key))}</th><td style="padding:8px;border-bottom:1px solid #ddd">${escapeHtml(formatValue(value))}</td></tr>`
+          )
+          .join("")
+        const textDetails = details.map(([key, value]) => `${label(key)}: ${formatValue(value)}`).join("\n")
 
-    const htmlBody = `<main style="font-family:Arial,sans-serif;color:#17143b"><h1>Nueva solicitud de cotización</h1><p><strong>Cliente:</strong> ${escapeHtml(nombre)} · ${escapeHtml(empresa)}</p><p><strong>Contacto:</strong> ${escapeHtml(email)} · ${escapeHtml(telefono)}</p><table style="border-collapse:collapse;width:100%">${rows}</table></main>`
-    const textBody = `Nueva solicitud de cotización\nCliente: ${nombre}\nEmpresa: ${empresa}\nEmail: ${email}\nTeléfono: ${telefono}\n\n${textDetails}`
+        const htmlBody = `<main style="font-family:Arial,sans-serif;color:#17143b"><h1>Nueva solicitud de cotización (${escapeHtml(tipoContactoSoftland)})</h1><p><strong>Cliente:</strong> ${escapeHtml(nombre)} · ${escapeHtml(empresa)} (RUT: ${escapeHtml(rutEmpresa || "No ingresado")})</p><p><strong>Contacto:</strong> ${escapeHtml(email)} · ${escapeHtml(telefono)}</p><table style="border-collapse:collapse;width:100%">${rows}</table></main>`
+        const textBody = `Nueva solicitud de cotización (${tipoContactoSoftland})\nCliente: ${nombre}\nEmpresa: ${empresa}\nRUT: ${rutEmpresa}\nEmail: ${email}\nTeléfono: ${telefono}\n\n${textDetails}`
 
-    const token = await getGraphToken()
-    const result = await sendMailGraph(token, {
-      subject: `Nueva cotización ${tipo.toUpperCase()} — ${empresa}`,
-      from: EMAIL_FROM,
-      to: DESTINATARIO,
-      replyTo: email,
-      htmlBody,
-      textBody,
+        const token = await getGraphToken()
+        emailResult = await sendMailGraph(token, {
+          subject: `Nueva cotización ${tipoContactoSoftland} — ${empresa}`,
+          from: EMAIL_FROM,
+          to: DESTINATARIO,
+          replyTo: email,
+          htmlBody,
+          textBody,
+        })
+      } catch (graphErr) {
+        console.error("[Microsoft Graph] No se pudo enviar el correo de notificación:", graphErr)
+      }
+    }
+
+    return NextResponse.json({
+      success: true,
+      id: emailResult.messageId,
+      softland: softlandResponse,
     })
-
-    return NextResponse.json({ success: true, id: result.messageId })
   } catch (error) {
-    console.error("[Cotizaciones] No fue posible enviar la solicitud", error)
+    console.error("[Cotizaciones] No fue posible procesar la solicitud", error)
     return NextResponse.json({ error: "No pudimos enviar la cotización. Intenta nuevamente." }, { status: 500 })
   }
 }
+

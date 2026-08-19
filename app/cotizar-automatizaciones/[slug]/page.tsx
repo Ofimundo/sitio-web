@@ -104,6 +104,7 @@ export default function CotizarAutomatizacionPage() {
     telefono: "",
     email: "",
     empresa: "",
+    rutEmpresa: "",
   })
 
   // ── Guard: 404 si no existe el slug ─────────
@@ -422,7 +423,7 @@ export default function CotizarAutomatizacionPage() {
 
           <button
             type="submit"
-            disabled={(step === 1 && !validStep1) || sending}
+            disabled={(step === 1 && !validStep1) || (step === 2 && (!contact.nombreCompleto || !contact.telefono || !contact.email || !contact.empresa || !contact.rutEmpresa)) || sending}
             className="rounded-lg bg-ofimundo-purple px-7 py-3 font-semibold text-white transition hover:bg-ofimundo-magenta disabled:cursor-not-allowed disabled:opacity-50"
           >
             {step === 1

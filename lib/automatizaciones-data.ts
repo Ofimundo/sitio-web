@@ -62,6 +62,26 @@ export const automatizacionesFallback: Automatizacion[] = [
       { nombre: "Premium", recomendado: true, descripcion: "Mayor escala y personalización para grupos empresariales.", idealPara: ["Más de 100 finiquitos", "Hasta 10 RUT"], incluye: ["Integración con gestor documental", "Reportes y gráficas personalizadas", "Notificaciones customizadas", "Soporte ampliado"] },
     ],
   },
+  {
+    ID_Producto: "auto_gestion_cuentas",
+    slug: "gestion-cuentas",
+    nombre: "Gestión de Cuentas",
+    nombreCorto: "Gestión de Cuentas",
+    categoria: "Contabilidad",
+    modalidad: "Automatización gestionada",
+    beneficio: "Hasta 50% más eficiencia",
+    resumen: "Registros contables automatizados y contabilización directa en tu ERP.",
+    descripcion: "Automatiza el registro de facturas, cuentas por pagar y asientos contables directamente en tu ERP con reglas personalizadas de contabilización.",
+    imagen: "/images/automatizaciones/cuentas-basicas.png",
+    icono: "fa-calculator",
+    capacidades: ["Registros contables automatizados", "Reglas contables por centro de costo", "Flujos de aprobación y trazabilidad", "Reportes diarios y mensuales"],
+    integraciones: ["ERP del cliente", "SII", "Gestor documental", "Correo electrónico"],
+    metricas: ["Cantidad mensual de documentos", "Cantidad de centros de costo", "Reglas de contabilización", "Soporte mensual"],
+    planes: [
+      { nombre: "Estándar", descripcion: "Automatización contable esencial para tu operación.", idealPara: ["Hasta 500 documentos", "1 RUT"], incluye: ["Integración con ERP", "Reglas contables estándar", "Reportes diarios", "Soporte mensual"] },
+      { nombre: "Premium", recomendado: true, descripcion: "Mayor volumen y reglas contables avanzadas.", idealPara: ["501 a 2.000 documentos", "Hasta 10 RUT"], incluye: ["Reglas avanzadas por centro de costo", "Reportes ejecutivos", "Soporte dedicado"] },
+    ],
+  },
 ]
 
 export const automatizaciones = automatizacionesFallback
@@ -69,7 +89,7 @@ export const categoriasAutomatizacion = ["Finanzas", "Contabilidad", "Recursos H
 export const modalidadesAutomatizacion = ["Automatización gestionada", "Integración personalizada"]
 
 export function obtenerAutomatizacionPorSlug(slug: string): Automatizacion {
-  const norm = slug.trim().toLowerCase().replaceAll("-", "_").replace(/^auto_/, "")
+  const norm = slug.trim().toLowerCase().replaceAll("-", "_").replace(/^auto_/, "").replace(/^ofi_autprc_/, "")
   
   const exact = automatizacionesFallback.find((item) => {
     const itemNorm = item.slug.trim().toLowerCase().replaceAll("-", "_").replace(/^auto_/, "")
@@ -78,14 +98,17 @@ export function obtenerAutomatizacionPorSlug(slug: string): Automatizacion {
   })
   if (exact) return exact
 
-  if (norm.includes("factura") || norm.includes("aprobacion") || norm.includes("rechazo")) {
+  if (norm.includes("factura") || norm.includes("aprobacion") || norm.includes("rechazo") || norm.includes("aprrch")) {
     return automatizacionesFallback[0]
   }
-  if (norm.includes("saldo") || norm.includes("banco")) {
+  if (norm.includes("saldo") || norm.includes("banco") || norm.includes("sldbnc")) {
     return automatizacionesFallback[1]
   }
-  if (norm.includes("finiquito")) {
+  if (norm.includes("finiquito") || norm.includes("fnqt")) {
     return automatizacionesFallback[2]
+  }
+  if (norm.includes("gsct") || norm.includes("gesdoc") || norm.includes("cuenta")) {
+    return automatizacionesFallback[3]
   }
 
   return automatizacionesFallback[0]

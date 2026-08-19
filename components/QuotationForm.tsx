@@ -27,6 +27,10 @@ const sanitizeTelefono = (v: string) => {
 /** Cualquier texto, solo acotado a 250 caracteres. */
 const sanitizeTexto = (v: string) => v.slice(0, MAX_TEXT)
 
+/** Sanitiza RUT chileno: solo números, puntos, guion y K/k. Máx 12 caracteres (Ej: 12.345.678-K). */
+const sanitizeRut = (v: string) =>
+  v.replace(/[^0-9kK.-]/g, "").slice(0, 12)
+
 // ─────────────────────────────────────────────
 
 export const fieldClass = "w-full rounded-lg border-2 border-gray-200 px-4 py-3 text-gray-900 transition focus:border-ofimundo-purple focus:outline-none focus:ring-2 focus:ring-[#2e2096]/30"
@@ -55,6 +59,7 @@ export interface ContactData {
   telefono: string
   email: string
   empresa: string
+  rutEmpresa: string
 }
 
 export async function sendQuotation(payload: Record<string, unknown>) {
@@ -88,6 +93,9 @@ export function ContactStep({ data, onChange }: { data: ContactData; onChange: (
       case "empresa":
         sanitized = sanitizeTexto(value)
         break
+      case "rutEmpresa":
+        sanitized = sanitizeRut(value)
+        break
     }
     onChange(field, sanitized)
   }
@@ -95,7 +103,7 @@ export function ContactStep({ data, onChange }: { data: ContactData; onChange: (
   return (
     <div className="rounded-2xl border-2 border-ofimundo-purple bg-white p-6 shadow-sm md:p-8">
       <h2 className="mb-2 text-2xl font-bold text-ofimundo-navy md:text-3xl">Datos de contacto</h2>
-      <p className="mb-6 text-sm leading-relaxed text-gray-600">Usaremos estos datos únicamente para preparar la propuesta y coordinar el contacto de un asesor.</p>
+      <p className="mb-6 text-sm leading-relaxed text-gray-600">Usaremos estos datos únicamente para preparar la propuesta y registrar la cotización en nuestro sistema.</p>
       <div className="flex flex-col gap-6">
         <div>
           <label htmlFor="nombreCompleto" className="mb-2 block text-sm font-semibold text-gray-700">Nombre completo <span className="text-red-500">*</span></label>
@@ -111,9 +119,15 @@ export function ContactStep({ data, onChange }: { data: ContactData; onChange: (
             <input id="email" type="email" autoComplete="email" required value={data.email} onChange={(event) => handleChange("email", event.target.value)} placeholder="nombre@empresa.cl" className={fieldClass} />
           </div>
         </div>
-        <div>
-          <label htmlFor="empresa" className="mb-2 block text-sm font-semibold text-gray-700">Empresa <span className="text-red-500">*</span></label>
-          <input id="empresa" type="text" autoComplete="organization" required value={data.empresa} onChange={(event) => handleChange("empresa", event.target.value)} placeholder="Nombre de la empresa" className={fieldClass} />
+        <div className="grid gap-6 md:grid-cols-2">
+          <div>
+            <label htmlFor="rutEmpresa" className="mb-2 block text-sm font-semibold text-gray-700">RUT Empresa <span className="text-red-500">*</span></label>
+            <input id="rutEmpresa" type="text" required value={data.rutEmpresa} onChange={(event) => handleChange("rutEmpresa", event.target.value)} placeholder="76.123.456-7" className={fieldClass} />
+          </div>
+          <div>
+            <label htmlFor="empresa" className="mb-2 block text-sm font-semibold text-gray-700">Razón Social / Empresa <span className="text-red-500">*</span></label>
+            <input id="empresa" type="text" autoComplete="organization" required value={data.empresa} onChange={(event) => handleChange("empresa", event.target.value)} placeholder="Nombre de la empresa" className={fieldClass} />
+          </div>
         </div>
       </div>
     </div>
