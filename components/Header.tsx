@@ -25,7 +25,7 @@ export function Header() {
             </a>
 
             <div className="mega-menu">
-              <a href="https://www.ofimundo.cl/servicios/mps.html" target="_blank" rel="noopener noreferrer" className="mega-item">
+              <Link href="/soluciones#mps" className="mega-item">
                 <div className="icon">
                   <i className="fas fa-print"></i>
                 </div>
@@ -33,9 +33,9 @@ export function Header() {
                   <h4>MPS</h4>
                   <p>Servicio de Impresión Gestionado</p>
                 </div>
-              </a>
+              </Link>
 
-              <a href="https://www.ofimundo.cl/servicios/smart-office.html" target="_blank" rel="noopener noreferrer" className="mega-item">
+              <Link href="/soluciones#salas" className="mega-item">
                 <div className="icon">
                   <i className="fas fa-building"></i>
                 </div>
@@ -43,14 +43,9 @@ export function Header() {
                   <h4>Salas Inmersivas</h4>
                   <p>Reuniones inmersivas con tecnología</p>
                 </div>
-              </a>
+              </Link>
 
-              <a
-                href="https://www.ofimundo.cl/servicios/rpa.html"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mega-item"
-              >
+              <Link href="/soluciones#automatizaciones" className="mega-item">
                 <div className="icon">
                   <i className="fas fa-robot"></i>
                 </div>
@@ -58,22 +53,17 @@ export function Header() {
                   <h4>Automatización</h4>
                   <p>Automatiza tareas repetitivas</p>
                 </div>
-              </a>
+              </Link>
 
-              <a
-                href="https://www.ofimundo.cl/servicios/daas.html"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mega-item"
-              >
+              <Link href="/soluciones#daas" className="mega-item">
                 <div className="icon">
                   <i className="fas fa-laptop"></i>
                 </div>
                 <div className="text">
                   <h4>DaaS</h4>
-                  <p>Arriendo de equipos de cómputo</p>
+                  <p>Dispositivo como Servicio (Arriendo de Equipos)</p>
                 </div>
-              </a>
+              </Link>
             </div>
           </li>
           <li>
@@ -89,13 +79,9 @@ export function Header() {
             <Link href="/catalogo">Catálogo</Link>
           </li>
           <li>
-            <a
-              href="https://www.ofimundo.cl/contacto.html"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <Link href="/contacto">
               Contacto
-            </a>
+            </Link>
           </li>
         </ul>
 

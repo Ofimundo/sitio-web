@@ -51,9 +51,9 @@ export function Footer() {
                             Empresa
                         </h4>
                         <ul className="space-y-3">
-                            <li><a href="/" className="text-white/80 hover:text-white hover:translate-x-1 transition-all inline-block">Home</a></li>
-                            <li><a href="https://www.ofimundo.cl/aniversario" className="text-white/80 hover:text-white hover:translate-x-1 transition-all inline-block">Somos Ofimundo</a></li>
-                            <li><a href="https://www.ofimundo.cl/contacto.html" className="text-white/80 hover:text-white hover:translate-x-1 transition-all inline-block">Contacto</a></li>
+                            <li><Link href="/" className="text-white/80 hover:text-white hover:translate-x-1 transition-all inline-block">Home</Link></li>
+                            <li><a href="https://www.ofimundo.cl/aniversario/" target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-white hover:translate-x-1 transition-all inline-block">Somos Ofimundo</a></li>
+                            <li><Link href="/contacto" className="text-white/80 hover:text-white hover:translate-x-1 transition-all inline-block">Contacto</Link></li>
                         </ul>
                     </div>
                     
@@ -63,10 +63,10 @@ export function Footer() {
                             Servicios
                         </h4>
                         <ul className="space-y-3">
-                            <li><a href="https://www.ofimundo.cl/servicios/mps.html" className="text-white/80 hover:text-white hover:translate-x-1 transition-all inline-block">MPS</a></li>
-                            <li><a href="https://www.ofimundo.cl/servicios/smart-office.html" className="text-white/80 hover:text-white hover:translate-x-1 transition-all inline-block">Salas Inmersivas</a></li>
-                            <li><a href="https://www.ofimundo.cl/servicios/rpa.html" className="text-white/80 hover:text-white hover:translate-x-1 transition-all inline-block">Automatización</a></li>
-                            <li><a href="https://www.ofimundo.cl/servicios/daas.html" className="text-white/80 hover:text-white hover:translate-x-1 transition-all inline-block">DaaS</a></li>
+                            <li><Link href="/soluciones#mps" className="text-white/80 hover:text-white hover:translate-x-1 transition-all inline-block">MPS</Link></li>
+                            <li><Link href="/soluciones#salas" className="text-white/80 hover:text-white hover:translate-x-1 transition-all inline-block">Salas Inmersivas</Link></li>
+                            <li><Link href="/soluciones#automatizaciones" className="text-white/80 hover:text-white hover:translate-x-1 transition-all inline-block">Automatización</Link></li>
+                            <li><Link href="/soluciones#daas" className="text-white/80 hover:text-white hover:translate-x-1 transition-all inline-block">DaaS</Link></li>
                         </ul>
                     </div>
                     

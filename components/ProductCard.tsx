@@ -19,20 +19,20 @@ export function ProductCard({ equipo, showBadge = false, badgeText = "DESTACADO"
   return (
     <div className="card-hover relative bg-white border border-gray-200 rounded-xl overflow-hidden flex flex-col">
       {/* Imagen del producto */}
-      <div className="h-[275px] flex items-center justify-center bg-linear-to-br from-purple-100 to-pink-50">
+      <Link href={`/equipo/${equipo.ID_Producto}`} className="h-[275px] flex items-center justify-center bg-linear-to-br from-purple-100 to-pink-50 cursor-pointer overflow-hidden">
         <Image
           src={imagenUrl}
           alt={equipo.Nombre_Equipo}
           width={280}
           height={275}
-          className="max-h-full max-w-full object-contain"
+          className="max-h-full max-w-full object-contain hover:scale-105 transition-transform duration-300"
         />
-      </div>
+      </Link>
 
       {/* Badge opcional */}
       {showBadge && (
-        <div className="absolute top-4 left-4">
-          <span className="px-3 py-1 bg-ofimundo-red text-white text-xs font-bold rounded-full">
+        <div className="absolute top-4 left-4 z-10 pointer-events-none">
+          <span className="px-3 py-1 bg-ofimundo-red text-white text-xs font-bold rounded-full shadow-sm">
             {badgeText}
           </span>
         </div>
@@ -48,9 +48,11 @@ export function ProductCard({ equipo, showBadge = false, badgeText = "DESTACADO"
         )}
 
         {/* Nombre */}
-        <h3 className="nombre-producto text-lg font-bold text-ofimundo-navy mb-2">
-          {equipo.Nombre_Equipo}
-        </h3>
+        <Link href={`/equipo/${equipo.ID_Producto}`}>
+          <h3 className="nombre-producto text-lg font-bold text-ofimundo-navy mb-2 hover:text-ofimundo-purple transition-colors cursor-pointer">
+            {equipo.Nombre_Equipo}
+          </h3>
+        </Link>
 
         {/* Descripción */}
         <p className="text-sm text-gray-600 mb-4 line-clamp-2">

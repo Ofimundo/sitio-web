@@ -12,7 +12,7 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps) {
   const { id } = await params
-  const equipo = await getEquipoById(id)
+  const equipo = (await getEquipoById(id)) || getMockEquipo(id)
 
   if (!equipo) {
     return { title: "Equipo no encontrado - Ofimundo" }
@@ -26,17 +26,19 @@ export async function generateMetadata({ params }: PageProps) {
 
 export default async function EquipoDetallePage({ params }: PageProps) {
   const { id } = await params
-  const equipo = await getEquipoById(id)
+  const equipo = (await getEquipoById(id)) || getMockEquipo(id)
 
   if (!equipo) {
     notFound()
   }
 
-  const imagenUrl = equipo.Imagen_Equipo
+  const imagenUrl = equipo.Imagen_Equipo && !equipo.Imagen_Equipo.startsWith("/images/equipos/multifuncional/")
     ? equipo.Imagen_Equipo.startsWith("http")
       ? equipo.Imagen_Equipo
-      : equipo.Imagen_Equipo
-    : "/images/equipos/placeholder.png"
+      : equipo.Imagen_Equipo.startsWith("/")
+      ? equipo.Imagen_Equipo
+      : `/images/equipos/${equipo.Imagen_Equipo}`
+    : "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/03-iconos/mps.png"
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -54,7 +56,7 @@ export default async function EquipoDetallePage({ params }: PageProps) {
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
               <div className="grid md:grid-cols-2 gap-8 p-8">
                 {/* Imagen del producto */}
-                <div className="h-[450px] bg-linear-to-br from-purple-50 to-pink-50 rounded-xl flex items-center justify-center">
+                <div className="h-[450px] bg-linear-to-br from-purple-50 to-pink-50 rounded-xl flex items-center justify-center p-6">
                   <Image
                     src={imagenUrl}
                     alt={equipo.Nombre_Equipo}
@@ -322,7 +324,7 @@ function getMockEquipo(id: string): Equipo | null {
       Conectividad_Equipo: "WiFi, WiFi Direct, Ethernet, USB",
       Duracion_Bateria_Equipo: null,
       Archivo_PDF_Equipo: null,
-      Imagen_Equipo: "/images/equipos/multifuncional/WF-C5891.png",
+      Imagen_Equipo: "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/03-iconos/mps.png",
       Descripcion_Equipo: "Esta multifuncional PrecisionCore Heat-Free optimiza su oficina con 25 ppm ISO, primera página rápida y menor intervención. Ahorre energía y maximice la productividad con un sistema de tinta de alta capacidad y soluciones de flujo de trabajo avanzadas.",
       Fecha_Carga_Equipo: null,
       Fecha_Registro_Equipo: null,

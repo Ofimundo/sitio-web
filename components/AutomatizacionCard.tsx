@@ -17,7 +17,7 @@ export const AGENDA_URL = "https://outlook.office.com/bookwithme/user/5d9fcae158
 export function AutomatizacionCard({ automatizacion }: { automatizacion: Automatizacion }) {
   return (
     <article className="flex h-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-background shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-      <div className="relative h-[275px] bg-[linear-gradient(135deg,#f4dff0_0%,#c9b6e4_100%)]">
+      <Link href={`/automatizaciones/${automatizacion.slug}`} className="relative block h-[275px] bg-[linear-gradient(135deg,#f4dff0_0%,#c9b6e4_100%)] cursor-pointer overflow-hidden">
         {isAceptacionFacturasAnimation(automatizacion) ? (
           <AceptacionFacturasAnimation />
         ) : isFiniquitosDtAnimation(automatizacion) ? (
@@ -30,12 +30,14 @@ export function AutomatizacionCard({ automatizacion }: { automatizacion: Automat
           <Image src={automatizacion.imagen} alt={`Ilustración de ${automatizacion.nombre}`} fill className="object-cover" sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw" />
         )}
         <span className="absolute left-4 top-4 z-10 rounded-full bg-background/95 px-3 py-1 text-xs font-semibold text-ofimundo-purple shadow-sm">Automatización</span>
-      </div>
+      </Link>
 
       <div className="flex flex-1 flex-col p-6">
         <div>
           <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-ofimundo-magenta">{automatizacion.categoria}</p>
-          <h3 className="mb-3 text-xl font-bold text-ofimundo-navy">{automatizacion.nombre}</h3>
+          <Link href={`/automatizaciones/${automatizacion.slug}`}>
+            <h3 className="mb-3 text-xl font-bold text-ofimundo-navy hover:text-ofimundo-purple transition-colors cursor-pointer">{automatizacion.nombre}</h3>
+          </Link>
           <p className="mb-4 line-clamp-2 text-sm leading-relaxed text-gray-600">{automatizacion.resumen}</p>
           <dl className="mb-6 grid grid-cols-2 gap-3 border-y border-gray-100 py-4 text-sm">
             <div>

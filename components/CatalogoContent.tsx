@@ -33,6 +33,20 @@ export function CatalogoContent() {
   const [searchTerm, setSearchTerm] = useState(searchParams.get("search") ?? "")
   const [filtrosActivos, setFiltrosActivos] = useState<FiltrosActivos>({ tipos: valoresMultiples(searchParams, "tipo"), marca: valoresMultiples(searchParams, "marca"), tecnologia: valoresMultiples(searchParams, "tecnologia"), color: valoresMultiples(searchParams, "color"), tamanosSala: valoresMultiples(searchParams, "tamano"), lineasSala: valoresMultiples(searchParams, "linea"), areasAutomatizacion: valoresMultiples(searchParams, "area"), modalidadesAutomatizacion: valoresMultiples(searchParams, "modalidad") })
 
+  useEffect(() => {
+    setFiltrosActivos({
+      tipos: valoresMultiples(searchParams, "tipo"),
+      marca: valoresMultiples(searchParams, "marca"),
+      tecnologia: valoresMultiples(searchParams, "tecnologia"),
+      color: valoresMultiples(searchParams, "color"),
+      tamanosSala: valoresMultiples(searchParams, "tamano"),
+      lineasSala: valoresMultiples(searchParams, "linea"),
+      areasAutomatizacion: valoresMultiples(searchParams, "area"),
+      modalidadesAutomatizacion: valoresMultiples(searchParams, "modalidad"),
+    })
+    setSearchTerm(searchParams.get("search") ?? "")
+  }, [searchParams])
+
   const tiposEquipo = filtrosActivos.tipos.filter((tipo) => tipo !== SALAS && tipo !== AUTOMATIZACION)
   const claveTiposEquipo = tiposEquipo.join("|")
   const mostrarTodos = filtrosActivos.tipos.length === 0

@@ -37,9 +37,11 @@ export function SalaCard({ sala, showBadge = false }: SalaCardProps) {
         <span className="mb-1 text-xs uppercase tracking-wider text-gray-500">
           Solución {sala.Linea} · {etiquetasTamano[sala.Tamano]}
         </span>
-        <h3 className="nombre-producto mb-2 text-lg font-bold text-ofimundo-navy">
-          {sala.Nombre}
-        </h3>
+        <Link href={`/salas/${sala.Slug}`}>
+          <h3 className="nombre-producto mb-2 text-lg font-bold text-ofimundo-navy hover:text-ofimundo-purple transition-colors cursor-pointer">
+            {sala.Nombre}
+          </h3>
+        </Link>
         <p className="mb-4 line-clamp-2 text-sm text-gray-600">
           {sala.Descripcion}
         </p>
