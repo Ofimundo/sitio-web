@@ -1,0 +1,11 @@
+services:
+  sitio-web:
+    container_name: sitio-web
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "4000:3000"
+    restart: unless-stopped
+    env_file:
+      - .env.local

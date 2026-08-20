@@ -37,7 +37,7 @@ export default function SomosOfimundoPage() {
               Más de 30 Años Impulsando la Tecnología Empresarial
             </h2>
             <p className="text-slate-600 dark:text-gray-300 leading-relaxed">
-              En Ofimundo hemos evolucionado junto a las necesidades tecnológicas de Chile. Lo que comenzó como un referente en equipamiento de oficina e impresión gestionada, hoy es un ecosistema integral de soluciones digitales que incluye **DaaS (Device as a Service)**, **Automatización RPA**, **MPS** y **Salas Colaborativas**.
+              En Ofimundo hemos evolucionado junto a las necesidades tecnológicas de Chile. Lo que comenzó como un referente en equipamiento de oficina e impresión gestionada, hoy es un ecosistema integral de soluciones digitales que incluye **Automatizaciones**, **MPS** y **Salas Colaborativas**.
             </p>
             <p className="text-slate-600 dark:text-gray-300 leading-relaxed">
               Nuestra misión es permitir a las organizaciones enfocar sus recursos en su verdadero core de negocio, asegurando la continuidad operativa, el ahorro de costos y el soporte técnico especializado de excelencia.
@@ -107,7 +107,7 @@ export default function SomosOfimundoPage() {
               href="/soluciones"
               className="px-8 py-3.5 bg-linear-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold text-sm rounded-xl shadow-lg transition-all"
             >
-              Conocer Soluciones (DaaS, MPS, RPA, Salas)
+              Conocer Soluciones (MPS, Automatización, Salas)
             </Link>
             <Link
               href="/contacto"

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react"
 import Image from "next/image"
+import ChatbotOfimundo from "@/components/ChatbotOfimundo"
 
 export function HeroSection() {
   const swiperRef = useRef<HTMLDivElement>(null)
@@ -58,9 +59,9 @@ export function HeroSection() {
   ]
 
   return (
-    <section className="hero-gradient pt-28 pb-12 px-4 min-h-[70vh]">
+    <section className="hero-gradient pt-28 pb-4 px-4 min-h-0">
       {/* Banner Swiper */}
-      <div className="w-full flex justify-center px-4 mb-12">
+      <div className="w-full flex justify-center px-4 mb-8">
         <div
           ref={swiperRef}
           className="swiper w-full max-w-[1200px] aspect-[16/5] overflow-hidden rounded-[20px] relative">
@@ -92,13 +93,18 @@ export function HeroSection() {
       </div>
 
       {/* Título principal */}
-      <div className="max-w-5xl mx-auto text-center">
+      <div className="max-w-5xl mx-auto text-center mb-6">
         <h1 className="title-xl text-5xl text-gradient leading-snug mb-4">
           Encuentra el producto ideal para tu Empresa
         </h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+        <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
           Cuéntanos lo que necesitas y te recomendaremos las mejores opciones
         </p>
+      </div>
+
+      {/* Agente Chatbot Integrado */}
+      <div className="max-w-5xl mx-auto px-2">
+        <ChatbotOfimundo embedded={true} />
       </div>
     </section>
   )

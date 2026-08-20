@@ -51,17 +51,7 @@ export function Header() {
                 </div>
                 <div className="text">
                   <h4>Servicios de Automatización</h4>
-                  <p>Servicios y robots RPA para tu empresa</p>
-                </div>
-              </Link>
-
-              <Link href="/soluciones#daas" className="mega-item">
-                <div className="icon">
-                  <i className="fas fa-laptop"></i>
-                </div>
-                <div className="text">
-                  <h4>DaaS</h4>
-                  <p>Dispositivo como Servicio (Arriendo de Equipos)</p>
+                  <p>Servicios de automatización de procesos</p>
                 </div>
               </Link>
             </div>

@@ -47,13 +47,7 @@ export default async function HomePage() {
       {/* Nuestras Soluciones */}
       <SolucionesSection />
 
-      {/* Automatizaciones para procesos de negocio */}
-      <AutomatizacionesSection automatizaciones={automatizacionesDestacadas} />
-
-      {/* Soluciones completas para espacios de colaboración */}
-      <SalasSection salas={salasDestacadas} />
-
-      {/* Categoría Multifuncional */}
+      {/* 1. Categoría Multifuncional */}
       <CategoriaSection
         titulo="Categoría Multifuncional"
         subtitulo="Explora nuestras categorías principales"
@@ -61,16 +55,22 @@ export default async function HomePage() {
         verMasLink="/catalogo?tipo=Multifuncional"
       />
 
-      {/* Partners Section */}
-      <PartnersSection />
-
-      {/* Categoría Impresoras */}
+      {/* 2. Categoría Impresoras */}
       <CategoriaSection
         titulo="Categoría Impresoras"
         subtitulo="Más opciones para tu negocio"
         equipos={impresoras}
         verMasLink="/catalogo?tipo=Impresora"
       />
+
+      {/* Partners Section */}
+      <PartnersSection />
+
+      {/* 3. Salas Colaborativas */}
+      <SalasSection salas={salasDestacadas} />
+
+      {/* 4. Automatizaciones */}
+      <AutomatizacionesSection automatizaciones={automatizacionesDestacadas} />
 
       <Footer />
     </main>

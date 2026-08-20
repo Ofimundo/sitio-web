@@ -5,40 +5,10 @@ import { Footer } from "@/components/Footer"
 
 export const metadata = {
   title: "Soluciones y Servicios | Ofimundo",
-  description: "Conoce nuestras soluciones tecnológicas integrales: DaaS (Device as a Service), MPS (Servicios Gestionados de Impresión), Automatización RPA y Salas Colaborativas.",
+  description: "Conoce nuestras soluciones tecnológicas integrales: MPS (Servicios Gestionados de Impresión), Automatización RPA y Salas Colaborativas.",
 }
 
 const solucionesData = [
-  {
-    id: "daas",
-    badge: "Modelo DaaS",
-    title: "DaaS (Device as a Service)",
-    subtitle: "Dispositivo como Servicio: Arriendo de Equipos e Infraestructura Tecnológica",
-    iconClass: "fas fa-laptop",
-    iconImg: "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/03-iconos/DaaS.png",
-    intro:
-      "El modelo DaaS (Device as a Service) es un esquema de arriendo de equipamiento informático y tecnológico que permite a las empresas acceder a computadores, laptops y equipos corporativos de última generación bajo una suscripción mensual fija, transformando grandes inversiones de capital (CapEx) en gastos operativos previsibles (OpEx).",
-    highlights: [
-      {
-        title: "Arriendo de Equipos sin Inversión Inicial",
-        desc: "Accede a computadores, laptops y equipamiento de cómputo en modalidad de arriendo mensual sin desembolsar grandes sumas de dinero.",
-      },
-      {
-        title: "Soporte Técnico y Mantención Integral",
-        desc: "Incluye asistencia técnica continua, reemplazo preventivo y solución rápida ante cualquier falla técnica.",
-      },
-      {
-        title: "Insumos y Suministros Garantizados",
-        desc: "Despreocúpate de la continuidad; gestión de consumibles y repuestos para asegurar la operatividad de tus equipos.",
-      },
-      {
-        title: "Renovación Tecnológica Periódica",
-        desc: "Mantén tu empresa siempre al día renovando los equipos arrendados al finalizar tu periodo de contrato.",
-      },
-    ],
-    ctaText: "Explorar Equipos DaaS en Catálogo",
-    ctaLink: "/catalogo?tipo=Multifuncional&tipo=Impresora",
-  },
   {
     id: "mps",
     badge: "Gestión de Impresión",
@@ -71,13 +41,13 @@ const solucionesData = [
   },
   {
     id: "automatizaciones",
-    badge: "Servicios RPA",
-    title: "Servicios de Automatización (RPA)",
-    subtitle: "Servicios Digitales y Robots de Software para Automatización de Procesos",
+    badge: "Servicios de Automatización",
+    title: "Servicios de Automatización",
+    subtitle: "Servicios Digitales y Flujos de Automatización de Procesos",
     iconClass: "fas fa-robot",
     iconImg: "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/03-iconos/AUTO.png",
     intro:
-      "Brindamos servicios de automatización de procesos mediante robots de software (RPA) y flujos inteligentes que ejecutan tareas administrativas pesadas 24/7 sin errores humanos, integrándose a tus sistemas existentes (Softland, ERP, portales bancarios, SII y Dirección del Trabajo).",
+      "Brindamos servicios de automatización de procesos mediante flujos inteligentes que ejecutan tareas administrativas pesadas 24/7 sin errores humanos, integrándose a tus sistemas existentes (Softland, ERP, portales bancarios, SII y Dirección del Trabajo).",
     highlights: [
       {
         title: "Servicio de Aceptación Automática de Facturas SII",
@@ -146,7 +116,7 @@ export default function SolucionesPage() {
             Nuestras Soluciones y Servicios Integrales
           </h1>
           <p className="text-lg md:text-xl text-slate-600 dark:text-gray-300 max-w-3xl mx-auto mb-10 leading-relaxed">
-            Impulsa la productividad y la transformación digital de tu empresa. Explora en detalle nuestro ecosistema de servicios: <strong>DaaS</strong>, <strong>MPS</strong>, <strong>Automatizaciones RPA</strong> y <strong>Salas Colaborativas</strong>.
+            Impulsa la productividad y la transformación digital de tu empresa. Explora en detalle nuestro ecosistema de servicios: <strong>MPS</strong>, <strong>Automatizaciones</strong> y <strong>Salas Colaborativas</strong>.
           </p>
 
           {/* Quick Jump Buttons */}
@@ -252,7 +222,7 @@ export default function SolucionesPage() {
               ¿Listo para transformar la tecnología de tu empresa?
             </h2>
             <p className="text-white/80 text-base md:text-lg">
-              Cotiza con nuestros especialistas y descubre la mejor modalidad (DaaS, MPS, Automatización o Salas) adaptada a tu presupuesto.
+              Cotiza con nuestros especialistas y descubre la mejor modalidad (MPS, Automatización o Salas) adaptada a tu presupuesto.
             </p>
             <div className="flex flex-wrap justify-center gap-4 pt-4">
               <Link
