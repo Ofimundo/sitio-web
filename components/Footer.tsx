@@ -64,7 +64,7 @@ export function Footer() {
                         </h4>
                         <ul className="space-y-3">
                             <li><Link href="/soluciones#mps" className="text-white/80 hover:text-white hover:translate-x-1 transition-all inline-block">MPS</Link></li>
-                            <li><Link href="/soluciones#salas" className="text-white/80 hover:text-white hover:translate-x-1 transition-all inline-block">Salas Inmersivas</Link></li>
+                            <li><Link href="/soluciones#salas" className="text-white/80 hover:text-white hover:translate-x-1 transition-all inline-block">Salas Colaborativas</Link></li>
                             <li><Link href="/soluciones#automatizaciones" className="text-white/80 hover:text-white hover:translate-x-1 transition-all inline-block">Automatización</Link></li>
                             <li><Link href="/soluciones#daas" className="text-white/80 hover:text-white hover:translate-x-1 transition-all inline-block">DaaS</Link></li>
                         </ul>

@@ -77,10 +77,7 @@ export const automatizacionesFallback: Automatizacion[] = [
     capacidades: ["Registros contables automatizados", "Reglas contables por centro de costo", "Flujos de aprobación y trazabilidad", "Reportes diarios y mensuales"],
     integraciones: ["ERP del cliente", "SII", "Gestor documental", "Correo electrónico"],
     metricas: ["Cantidad mensual de documentos", "Cantidad de centros de costo", "Reglas de contabilización", "Soporte mensual"],
-    planes: [
-      { nombre: "Estándar", descripcion: "Automatización contable esencial para tu operación.", idealPara: ["Hasta 500 documentos", "1 RUT"], incluye: ["Integración con ERP", "Reglas contables estándar", "Reportes diarios", "Soporte mensual"] },
-      { nombre: "Premium", recomendado: true, descripcion: "Mayor volumen y reglas contables avanzadas.", idealPara: ["501 a 2.000 documentos", "Hasta 10 RUT"], incluye: ["Reglas avanzadas por centro de costo", "Reportes ejecutivos", "Soporte dedicado"] },
-    ],
+    planes: [],
   },
 ]
 

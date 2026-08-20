@@ -13,27 +13,27 @@ const solucionesData = [
     id: "daas",
     badge: "Modelo DaaS",
     title: "DaaS (Device as a Service)",
-    subtitle: "Dispositivo como Servicio: Arriendo e Infraestructura Tecnológica",
+    subtitle: "Dispositivo como Servicio: Arriendo de Equipos e Infraestructura Tecnológica",
     iconClass: "fas fa-laptop",
     iconImg: "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/03-iconos/DaaS.png",
     intro:
-      "El modelo DaaS (Device as a Service) permite a las empresas acceder a equipamiento de cómputo, impresoras y multifuncionales de última generación bajo una suscripción mensual fija, transformando grandes inversiones de capital (CapEx) en gastos operativos previsibles (OpEx).",
+      "El modelo DaaS (Device as a Service) es un esquema de arriendo de equipamiento informático y tecnológico que permite a las empresas acceder a computadores, laptops y equipos corporativos de última generación bajo una suscripción mensual fija, transformando grandes inversiones de capital (CapEx) en gastos operativos previsibles (OpEx).",
     highlights: [
       {
         title: "Arriendo de Equipos sin Inversión Inicial",
-        desc: "Accede a computadores, impresoras y laptops de alta gama sin desembolsar grandes sumas de dinero.",
+        desc: "Accede a computadores, laptops y equipamiento de cómputo en modalidad de arriendo mensual sin desembolsar grandes sumas de dinero.",
       },
       {
         title: "Soporte Técnico y Mantención Integral",
-        desc: "Incluye asistencia técnica continua, reemplazo preventivo y solución rápida ante cualquier falla.",
+        desc: "Incluye asistencia técnica continua, reemplazo preventivo y solución rápida ante cualquier falla técnica.",
       },
       {
-        title: "Insumos y Consumibles Garantizados",
-        desc: "Despreocúpate del abastecimiento; gestión automatizada de tóners y suministros para tus equipos.",
+        title: "Insumos y Suministros Garantizados",
+        desc: "Despreocúpate de la continuidad; gestión de consumibles y repuestos para asegurar la operatividad de tus equipos.",
       },
       {
         title: "Renovación Tecnológica Periódica",
-        desc: "Mantén tu empresa siempre al día con tecnología moderna al finalizar tu periodo de contrato.",
+        desc: "Mantén tu empresa siempre al día renovando los equipos arrendados al finalizar tu periodo de contrato.",
       },
     ],
     ctaText: "Explorar Equipos DaaS en Catálogo",
@@ -43,27 +43,27 @@ const solucionesData = [
     id: "mps",
     badge: "Gestión de Impresión",
     title: "MPS (Managed Print Services)",
-    subtitle: "Servicios Gestionados de Impresión y Control Documental",
+    subtitle: "Servicios Gestionados de Impresión: Arriendo de Impresoras + Mantención e Insumos",
     iconClass: "fas fa-print",
     iconImg: "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/03-iconos/mps.png",
     intro:
-      "Optimiza el entorno de impresión de tu organización. Con MPS tomamos el control proactivo de tu flota de multifuncionales e impresoras, reduciendo hasta un 30% los costos operativos y garantizando la continuidad operativa.",
+      "El modelo MPS integra en un solo servicio el arriendo de la impresora o multifuncional de última generación, la mantención técnica integral (preventiva y correctiva) y el reabastecimiento continuo de tóners e insumos. Tomamos el control proactivo de tu flota reduciendo hasta un 30% los costos operativos.",
     highlights: [
       {
-        title: "Monitoreo y Auditoría de Consumos",
-        desc: "Visibilidad total de volúmenes de impresión por departamento o usuario para evitar abusos y descontrol.",
+        title: "Arriendo de la Impresora o Multifuncional",
+        desc: "Equipo de impresión de alta gama incluido en la suscripción, seleccionado según el volumen y necesidades de tu empresa.",
+      },
+      {
+        title: "Mantención Técnica y Soporte Integral",
+        desc: "Mantenimiento preventivo, soporte especializado y repuestos incluidos sin costo adicional para continuidad total.",
       },
       {
         title: "Reabastecimiento Automático de Tóner",
-        desc: "Despacho proactivo de insumos antes de que el equipo quede sin carga, sin interrumpir tu trabajo.",
+        desc: "Despacho proactivo de insumos antes de que el equipo quede sin carga, garantizando la operatividad constante.",
       },
       {
-        title: "Seguridad e Impresión Confidencial",
-        desc: "Liberación de impresiones mediante PIN o credencial corporativa para proteger datos sensibles.",
-      },
-      {
-        title: "Sostenibilidad y Reducción de Huella",
-        desc: "Disminución del uso innecesario de papel y energía gracias a políticas eficientes de impresión.",
+        title: "Monitoreo y Seguridad Documental",
+        desc: "Auditoría de consumos por departamento y liberación de impresiones mediante PIN o credencial corporativa.",
       },
     ],
     ctaText: "Explorar Impresoras y Multifuncionales en Catálogo",
@@ -71,39 +71,39 @@ const solucionesData = [
   },
   {
     id: "automatizaciones",
-    badge: "Eficiencia con RPA",
-    title: "Automatización de Procesos (RPA)",
-    subtitle: "Robots de Software para Tareas Repetitivas y Gestión de Negocios",
+    badge: "Servicios RPA",
+    title: "Servicios de Automatización (RPA)",
+    subtitle: "Servicios Digitales y Robots de Software para Automatización de Procesos",
     iconClass: "fas fa-robot",
     iconImg: "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/03-iconos/AUTO.png",
     intro:
-      "Implementamos robots de software (RPA) y flujos inteligentes que ejecutan tareas administrativas pesadas 24/7 sin errores humanos, integrándose a tus sistemas existentes (Softland, ERP, portales bancarios, SII y Dirección del Trabajo).",
+      "Brindamos servicios de automatización de procesos mediante robots de software (RPA) y flujos inteligentes que ejecutan tareas administrativas pesadas 24/7 sin errores humanos, integrándose a tus sistemas existentes (Softland, ERP, portales bancarios, SII y Dirección del Trabajo).",
     highlights: [
       {
-        title: "Aceptación Automática de Facturas SII",
+        title: "Servicio de Aceptación Automática de Facturas SII",
         desc: "Procesamiento y validación masiva de facturas recibidas de proveedores directamente en tu ERP.",
       },
       {
-        title: "Cuadratura de Saldos Bancarios 24/7",
+        title: "Servicio de Cuadratura de Saldos Bancarios 24/7",
         desc: "Conciliación automática de cartolas de múltiples bancos en tiempo real sin digitar manualmente.",
       },
       {
-        title: "Carga de Finiquitos en Dirección del Trabajo",
+        title: "Servicio de Carga de Finiquitos en Dirección del Trabajo",
         desc: "Subida automática de documentos de personal cumpliendo los formatos exigidos por ley.",
       },
       {
-        title: "Cero Errores y Alta Eficiencia",
+        title: "Servicios de Alta Eficiencia y Cero Errores",
         desc: "Libera a tu personal de tareas rutinarias para centrarse en labores de alto valor estratégico.",
       },
     ],
-    ctaText: "Ver Automatizaciones en Catálogo",
+    ctaText: "Ver Servicios de Automatización en Catálogo",
     ctaLink: "/catalogo?tipo=Automatizaci%C3%B3n",
   },
   {
     id: "salas",
     badge: "Smart Office",
-    title: "Salas Colaborativas e Inmersivas",
-    subtitle: "Equipamiento de Videoconferencia y Comunicación Inmersiva",
+    title: "Salas Colaborativas",
+    subtitle: "Equipamiento de Videoconferencia y Comunicaciones",
     iconClass: "fas fa-building",
     iconImg: "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/03-iconos/sala.png",
     intro:

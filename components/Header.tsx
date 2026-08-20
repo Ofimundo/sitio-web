@@ -40,8 +40,8 @@ export function Header() {
                   <i className="fas fa-building"></i>
                 </div>
                 <div className="text">
-                  <h4>Salas Inmersivas</h4>
-                  <p>Reuniones inmersivas con tecnología</p>
+                  <h4>Salas Colaborativas</h4>
+                  <p>Equipamiento de videoconferencia y comunicaciones</p>
                 </div>
               </Link>
 
@@ -50,8 +50,8 @@ export function Header() {
                   <i className="fas fa-robot"></i>
                 </div>
                 <div className="text">
-                  <h4>Automatización</h4>
-                  <p>Automatiza tareas repetitivas</p>
+                  <h4>Servicios de Automatización</h4>
+                  <p>Servicios y robots RPA para tu empresa</p>
                 </div>
               </Link>
 

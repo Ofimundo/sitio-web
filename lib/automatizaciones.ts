@@ -94,8 +94,22 @@ export async function getAutomatizaciones(filtros: FiltrosAutomatizacion = {}): 
     const rows = await executeQuery<AutomatizacionRow>(`SELECT * FROM ${VISTAS.automatizacion}`)
     if (!rows || rows.length === 0) return automatizacionesFallback
 
+    const mapped = rows.map(mapResumen)
+    const seen = new Set<string>()
+    const deduplicadas: Automatizacion[] = []
+
+    for (const item of mapped) {
+      const canonical = obtenerAutomatizacionPorSlug(item.slug)
+      if (!seen.has(canonical.slug)) {
+        seen.add(canonical.slug)
+        deduplicadas.push(canonical)
+      }
+    }
+
+    const listado = deduplicadas.length > 0 ? deduplicadas : automatizacionesFallback
     const term = filtros.search?.trim().toLocaleLowerCase("es-CL")
-    return rows.map(mapResumen).filter((item) => {
+
+    return listado.filter((item) => {
       const matchesArea = !filtros.area || item.categoria.toLowerCase() === filtros.area.toLowerCase()
       const matchesModalidad = !filtros.modalidad || item.modalidad.toLowerCase() === filtros.modalidad.toLowerCase()
       const haystack = `${item.nombre} ${item.resumen} ${item.categoria}`.toLocaleLowerCase("es-CL")
@@ -111,14 +125,11 @@ export async function getAutomatizaciones(filtros: FiltrosAutomatizacion = {}): 
 /** Inicio: obtiene las automatizaciones destacadas desde la base de datos SQL. */
 export async function getAutomatizacionesDestacadas(): Promise<Automatizacion[]> {
   try {
-    const rows = await executeQuery<AutomatizacionRow>(`SELECT * FROM ${VISTAS.automatizacion}`)
-    if (!rows || rows.length === 0) return automatizacionesFallback.slice(0, 3)
-
-    const destacadas = rows.map(mapResumen).filter((item) => item.destacada)
-    return destacadas.length > 0 ? destacadas : rows.map(mapResumen).slice(0, 3)
+    const listado = await getAutomatizaciones()
+    return listado.length > 0 ? listado : automatizacionesFallback.slice(0, 4)
   } catch (error) {
     console.error("[getAutomatizacionesDestacadas] Error al consultar la BD, usando fallback:", error)
-    return automatizacionesFallback.slice(0, 3)
+    return automatizacionesFallback.slice(0, 4)
   }
 }
 

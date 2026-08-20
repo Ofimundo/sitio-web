@@ -14,19 +14,19 @@ const soluciones = [
   {
     icon: "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/03-iconos/AUTO.png",
     title: "Automatización",
-    description: "Robots de Tareas Repetitivas (RPA)",
+    description: "Servicios de Automatización RPA",
     link: "/catalogo?tipo=Automatizaci%C3%B3n",
   },
   {
     icon: "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/03-iconos/mps.png",
     title: "MPS",
-    description: "Gestión e Impresión Administrada",
+    description: "Arriendo de Impresoras + Mantención e Insumos",
     link: "/catalogo?tipo=Multifuncional&tipo=Impresora",
   },
   {
     icon: "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/03-iconos/sala.png",
     title: "Salas Colaborativas",
-    description: "Salas Inmersivas y Videoconferencia",
+    description: "Equipamiento de Videoconferencia y Comunicaciones",
     link: "/catalogo?tipo=Salas+colaborativas",
   },
 ]

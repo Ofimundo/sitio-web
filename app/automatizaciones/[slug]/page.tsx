@@ -27,6 +27,7 @@ export default async function AutomatizacionDetallePage({ params }: { params: Pr
   const { slug } = await params
   const item = await obtenerAutomatizacionPorSlug(slug)
   if (!item) notFound()
+  const hasPlanes = Boolean(item.planes && item.planes.length > 0)
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -75,49 +76,61 @@ export default async function AutomatizacionDetallePage({ params }: { params: Pr
                 </div>
               </article>
 
-              <section className="rounded-lg border border-gray-200 bg-background p-6 shadow-sm md:p-8" aria-labelledby="planes-title">
-              <p className="text-sm font-bold uppercase tracking-widest text-ofimundo-magenta">Alternativas de implementación</p>
-              <h2 id="planes-title" className="mt-2 text-3xl font-bold text-ofimundo-navy">Planes para tu operación</h2>
-              <p className="mt-3 leading-relaxed text-gray-600">El valor final depende del volumen, las integraciones y personalizaciones. Nuestro equipo confirmará alcance y condiciones durante la cotización.</p>
-              <div className={`mt-8 grid gap-5 ${item.planes.length === 3 ? "xl:grid-cols-3" : "md:grid-cols-2"}`}>
-                {item.planes.map((plan) => (
-                  <article key={plan.nombre} className={`relative flex flex-col overflow-hidden rounded-lg border bg-background ${plan.recomendado ? "border-ofimundo-magenta shadow-md" : "border-gray-200"}`}>
-                    <div className="bg-linear-to-r from-(--ofimundo-magenta) to-(--ofimundo-purple) px-5 py-6 text-white">
-                      {plan.recomendado && <span className="mb-3 inline-flex rounded-full bg-white px-3 py-1 text-xs font-bold uppercase tracking-wide text-ofimundo-purple">Recomendado</span>}
-                      <h3 className="text-2xl font-bold">{plan.nombre}</h3>
-                      <p className="mt-2 text-sm leading-relaxed text-white/90">{plan.descripcion}</p>
-                    </div>
-                    <div className="flex flex-1 flex-col p-5">
-                      <p className="text-xs font-bold uppercase tracking-wider text-gray-500">Ideal para</p>
-                      <ul className="mt-3 grid gap-2">{plan.idealPara.map((value) => <li key={value} className="flex gap-2 text-sm font-semibold text-ofimundo-navy"><i className="fas fa-circle-check mt-1 text-xs text-ofimundo-purple" aria-hidden="true" />{value}</li>)}</ul>
-                      <ul className="mt-5 grid gap-3 border-t border-gray-100 pt-5">{plan.incluye.map((value) => <li key={value} className="flex gap-3 text-sm text-gray-600"><i className="fas fa-check mt-1 text-ofimundo-magenta" aria-hidden="true" />{value}</li>)}</ul>
-                      <Link href={`/cotizar-automatizaciones/${item.slug}?plan=${encodeURIComponent(plan.nombre)}`} className="mt-7 rounded-lg bg-ofimundo-purple px-5 py-3 text-center font-semibold text-white transition hover:bg-ofimundo-magenta">Cotizar este plan</Link>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </section>
-          </div>
+              {hasPlanes ? (
+                <section className="rounded-lg border border-gray-200 bg-background p-6 shadow-sm md:p-8" aria-labelledby="planes-title">
+                  <p className="text-sm font-bold uppercase tracking-widest text-ofimundo-magenta">Alternativas de implementación</p>
+                  <h2 id="planes-title" className="mt-2 text-3xl font-bold text-ofimundo-navy">Planes para tu operación</h2>
+                  <p className="mt-3 leading-relaxed text-gray-600">El valor final depende del volumen, las integraciones y personalizaciones. Nuestro equipo confirmará alcance y condiciones durante la cotización.</p>
+                  <div className={`mt-8 grid gap-5 ${item.planes.length === 3 ? "xl:grid-cols-3" : "md:grid-cols-2"}`}>
+                    {item.planes.map((plan) => (
+                      <article key={plan.nombre} className={`relative flex flex-col overflow-hidden rounded-lg border bg-background ${plan.recomendado ? "border-ofimundo-magenta shadow-md" : "border-gray-200"}`}>
+                        <div className="bg-linear-to-r from-(--ofimundo-magenta) to-(--ofimundo-purple) px-5 py-6 text-white">
+                          {plan.recomendado && <span className="mb-3 inline-flex rounded-full bg-white px-3 py-1 text-xs font-bold uppercase tracking-wide text-ofimundo-purple">Recomendado</span>}
+                          <h3 className="text-2xl font-bold">{plan.nombre}</h3>
+                          <p className="mt-2 text-sm leading-relaxed text-white/90">{plan.descripcion}</p>
+                        </div>
+                        <div className="flex flex-1 flex-col p-5">
+                          <p className="text-xs font-bold uppercase tracking-wider text-gray-500">Ideal para</p>
+                          <ul className="mt-3 grid gap-2">{plan.idealPara.map((value) => <li key={value} className="flex gap-2 text-sm font-semibold text-ofimundo-navy"><i className="fas fa-circle-check mt-1 text-xs text-ofimundo-purple" aria-hidden="true" />{value}</li>)}</ul>
+                          <ul className="mt-5 grid gap-3 border-t border-gray-100 pt-5">{plan.incluye.map((value) => <li key={value} className="flex gap-3 text-sm text-gray-600"><i className="fas fa-check mt-1 text-ofimundo-magenta" aria-hidden="true" />{value}</li>)}</ul>
+                          <Link href={`/cotizar-automatizaciones/${item.slug}?plan=${encodeURIComponent(plan.nombre)}`} className="mt-7 rounded-lg bg-ofimundo-purple px-5 py-3 text-center font-semibold text-white transition hover:bg-ofimundo-magenta">Cotizar este plan</Link>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                </section>
+              ) : (
+                <div className="grid gap-6 md:grid-cols-3">
+                  <InfoBlock icon="fa-chart-line" title="Cómo dimensionamos" items={item.metricas} compact />
+                  <InfoBlock icon="fa-gears" title="Qué automatiza" items={item.capacidades} compact />
+                  <InfoBlock icon="fa-plug" title="Integraciones" items={item.integraciones} compact />
+                </div>
+              )}
+            </div>
 
-          <aside className="grid content-start gap-6">
-            <section className="rounded-lg border border-gray-200 bg-background p-6 shadow-sm">
-              <h2 className="text-xl font-bold text-ofimundo-navy">Resumen de la solución</h2>
-              <dl className="mt-5 grid gap-4 text-sm">
-                <div className="border-b border-gray-100 pb-4"><dt className="text-gray-500">Área</dt><dd className="mt-1 font-semibold text-ofimundo-navy">{item.categoria}</dd></div>
-                <div className="border-b border-gray-100 pb-4"><dt className="text-gray-500">Categoría</dt><dd className="mt-1 font-semibold text-ofimundo-navy">{item.categoria}</dd></div>
-                <div><dt className="text-gray-500">Modalidad</dt><dd className="mt-1 font-semibold text-ofimundo-navy">{item.modalidad}</dd></div>
-              </dl>
-            </section>
-            <InfoBlock icon="fa-chart-line" title="Cómo dimensionamos" items={item.metricas} compact />
-            <InfoBlock icon="fa-gears" title="Qué automatiza" items={item.capacidades} compact />
-            <InfoBlock icon="fa-plug" title="Integraciones" items={item.integraciones} compact />
-            <section className="rounded-lg bg-ofimundo-navy p-6 text-white shadow-sm">
-              <h2 className="text-xl font-bold">¿Necesitas orientación?</h2>
-              <p className="mt-3 text-sm leading-relaxed text-white/80">Agenda una reunión para revisar tu proceso actual y definir el alcance más adecuado.</p>
-              <a href={AGENDA_URL} target="_blank" rel="noopener noreferrer" className="mt-5 block rounded-lg border-2 border-ofimundo-purple bg-white px-4 py-3 text-center text-sm font-semibold text-ofimundo-purple transition hover:bg-purple-50">Agendar Reunión</a>
-            </section>
-          </aside>
-        </div>
+            <aside className="grid content-start gap-6">
+              <section className="rounded-lg border border-gray-200 bg-background p-6 shadow-sm">
+                <h2 className="text-xl font-bold text-ofimundo-navy">Resumen de la solución</h2>
+                <dl className="mt-5 grid gap-4 text-sm">
+                  <div className="border-b border-gray-100 pb-4"><dt className="text-gray-500">Área</dt><dd className="mt-1 font-semibold text-ofimundo-navy">{item.categoria}</dd></div>
+                  <div className="border-b border-gray-100 pb-4"><dt className="text-gray-500">Categoría</dt><dd className="mt-1 font-semibold text-ofimundo-navy">{item.categoria}</dd></div>
+                  <div><dt className="text-gray-500">Modalidad</dt><dd className="mt-1 font-semibold text-ofimundo-navy">{item.modalidad}</dd></div>
+                </dl>
+              </section>
+              {hasPlanes && (
+                <>
+                  <InfoBlock icon="fa-chart-line" title="Cómo dimensionamos" items={item.metricas} compact />
+                  <InfoBlock icon="fa-gears" title="Qué automatiza" items={item.capacidades} compact />
+                  <InfoBlock icon="fa-plug" title="Integraciones" items={item.integraciones} compact />
+                </>
+              )}
+              <section className="rounded-lg bg-ofimundo-navy p-6 text-white shadow-sm">
+                <h2 className="text-xl font-bold">¿Necesitas orientación?</h2>
+                <p className="mt-3 text-sm leading-relaxed text-white/80">Agenda una reunión para revisar tu proceso actual y definir el alcance más adecuado.</p>
+                <a href={AGENDA_URL} target="_blank" rel="noopener noreferrer" className="mt-5 block rounded-lg border-2 border-ofimundo-purple bg-white px-4 py-3 text-center text-sm font-semibold text-ofimundo-purple transition hover:bg-purple-50">Agendar Reunión</a>
+              </section>
+            </aside>
+          </div>
         </div>
       </section>
       <Footer />
