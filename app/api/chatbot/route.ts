@@ -29,7 +29,7 @@ async function consultarGroq(system: string, user: string) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "openai/gpt-oss-20b",
+          model: "llama-3.3-70b-versatile",
           temperature: 0.2,
           max_completion_tokens: 450,
           messages: [
@@ -101,7 +101,7 @@ async function interpretarConsultaConIA(
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "openai/gpt-oss-20b",
+          model: "llama-3.3-70b-versatile",
           temperature: 0,
           reasoning_effort: "low",
           max_completion_tokens: 160,

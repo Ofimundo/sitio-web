@@ -148,7 +148,7 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
   const [mensaje, setMensaje] = useState("")
   const [cargando, setCargando] = useState(false)
   const [sesionId, setSesionId] = useState("")
-  const chatEndRef = useRef<HTMLDivElement>(null)
+  const messagesContainerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     let id = localStorage.getItem("ofimundo-chatbot-session")
@@ -170,7 +170,12 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
   ])
 
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" })
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTo({
+        top: messagesContainerRef.current.scrollHeight,
+        behavior: "smooth",
+      })
+    }
   }, [mensajes, cargando])
 
   async function enviarMensajeTexto(textoAEnviar?: string) {
@@ -254,7 +259,7 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
   }
 
   // Componente de contenido del chat reutilizable
-  const ContenidoChat = () => (
+  const contenidoChatJSX = (
     <div className="flex h-full flex-col overflow-hidden">
       {/* Header del Chatbot */}
       <div
@@ -326,7 +331,7 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
       </div>
 
       {/* Lista de Mensajes */}
-      <div className="flex-1 space-y-4 overflow-y-auto bg-slate-50 dark:bg-gray-950 p-4">
+      <div ref={messagesContainerRef} className="flex-1 space-y-4 overflow-y-auto bg-slate-50 dark:bg-gray-950 p-4">
         {mensajes.map((item, index) => (
           <div
             key={index}
@@ -449,7 +454,6 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
             </div>
           </div>
         )}
-        <div ref={chatEndRef} />
       </div>
 
       {/* Input del Chatbot */}
@@ -489,7 +493,7 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
   if (embedded) {
     return (
       <div className="w-full max-w-5xl mx-auto h-[390px] rounded-3xl border border-purple-200/80 dark:border-purple-900/40 bg-white dark:bg-gray-900 shadow-xl overflow-hidden my-2">
-        <ContenidoChat />
+        {contenidoChatJSX}
       </div>
     )
   }
@@ -498,7 +502,7 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
     <>
       {abierto && (
         <div className="fixed bottom-24 right-5 z-50 flex h-[580px] w-[420px] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-2xl">
-          <ContenidoChat />
+          {contenidoChatJSX}
         </div>
       )}
 

@@ -1,7 +1,13 @@
+"use client"
+
 import Link from "next/link"
 import Image from "next/image"
 
 export function Footer() {
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" })
+  }
+
   return (
     
     <footer className="relative bg-gray-900 overflow-hidden">
@@ -24,7 +30,9 @@ export function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
 
                     <div>
-                        <Image src="https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/01-logos/logo-ofimundo.png" alt="Ofimundo" width={180} height={40} className="mb-4 brightness-0 invert"/>
+                        <Link href="/" onClick={scrollToTop} className="inline-block hover:opacity-80 transition-opacity" aria-label="Ir al inicio">
+                          <Image src="https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/01-logos/logo-ofimundo.png" alt="Ofimundo" width={180} height={40} className="mb-4 brightness-0 invert"/>
+                        </Link>
                         <p className="text-white/90 text-base mb-6 leading-relaxed">
                             Tu transformación,<br></br>nuestra pasión
                         </p>

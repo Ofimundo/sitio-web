@@ -5,12 +5,16 @@ import Image from "next/image"
 import { ThemeToggle } from "@/components/ThemeToggle"
 
 export function Header() {
+  const handleLogoClick = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" })
+  }
+
   return (
     <header className="navbar-wrapper">
       <nav className="navbar">
         {/* Logo */}
         <div className="logo">
-          <Link href="/" className="logo-link">
+          <Link href="/" className="logo-link" onClick={handleLogoClick} aria-label="Ir al inicio">
             <Image className="logo-light" src="https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/01-logos/logo-ofimundo.png" alt="Ofimundo" width={230} height={50} priority />
             <Image className="logo-dark" src="https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/01-logos/logo-ofimundo-blanco.png" alt="Ofimundo" width={230} height={50} priority />
           </Link>
