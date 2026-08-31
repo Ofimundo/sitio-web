@@ -2,6 +2,8 @@
 
 // Script para el <head>
 export function GoogleTagManagerHead() {
+  return null;
+  /*
   return (
     <script
       dangerouslySetInnerHTML={{
@@ -20,10 +22,13 @@ export function GoogleTagManagerHead() {
       }}
     />
   );
+  */
 }
 
 // NoScript para después del <body>
 export function GoogleTagManagerBody() {
+  return null;
+  /*
   return (
     <noscript>
       <iframe
@@ -34,4 +39,5 @@ export function GoogleTagManagerBody() {
       />
     </noscript>
   );
+  */
 }

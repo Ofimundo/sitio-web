@@ -10,6 +10,7 @@ interface PageProps {
   params: Promise<{ id: string }>
 }
 
+/* SEO Metadata - Comentado
 export async function generateMetadata({ params }: PageProps) {
   const { id } = await params
   const equipo = (await getEquipoById(id)) || getMockEquipo(id)
@@ -23,6 +24,7 @@ export async function generateMetadata({ params }: PageProps) {
     description: equipo.Descripcion_Equipo || `${equipo.Tipo_Equipo} ${equipo.Nombre_Marca}`,
   }
 }
+*/
 
 export default async function EquipoDetallePage({ params }: PageProps) {
   const { id } = await params

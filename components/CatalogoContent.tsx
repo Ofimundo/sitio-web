@@ -109,5 +109,38 @@ export function CatalogoContent() {
   const limpiar = () => { const vacios: FiltrosActivos = { tipos: [], marca: [], tecnologia: [], color: [], tamanosSala: [], lineasSala: [], areasAutomatizacion: [], modalidadesAutomatizacion: [] }; setFiltrosActivos(vacios); setSearchTerm(""); sincronizarUrl(vacios, "") }
   const total = equipos.length + salas.length + automatizacionesFiltradas.length
 
-  return <div className="mx-auto max-w-[1400px] px-4 pb-16"><div className="flex gap-6"><FilterSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} filtros={filtros} filtrosActivos={filtrosActivos} onFiltroChange={handleFiltroChange} onLimpiarFiltros={limpiar} /><div className="flex-1"><div className="mb-6 flex flex-wrap items-center justify-between gap-4"><div className="flex items-center gap-4">{!sidebarOpen && <button onClick={() => setSidebarOpen(true)} className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 transition hover:border-ofimundo-purple"><i className="fas fa-filter text-ofimundo-purple" /><span className="text-sm font-medium">Filtros</span></button>}<span className="text-gray-600"><strong className="text-ofimundo-navy">{total}</strong> soluciones encontradas</span></div><div className="relative"><label htmlFor="catalog-search" className="sr-only">Buscar soluciones</label><input id="catalog-search" value={searchTerm} onChange={(e) => { setSearchTerm(e.target.value); sincronizarUrl(filtrosActivos, e.target.value) }} placeholder="Buscar solución..." className="w-64 rounded-lg border border-gray-200 px-4 py-2 pl-10 focus:border-ofimundo-purple focus:outline-none" /><i className="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" /></div></div>{(loading || loadingSalas || loadingAutomatizaciones) ? <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">{Array.from({ length: 6 }, (_, i) => <div key={i} className="h-96 rounded-xl bg-white" />)}</div> : total === 0 ? <div className="rounded-xl bg-white py-16 text-center"><h3 className="mb-2 text-xl font-semibold text-gray-700">No se encontraron soluciones</h3><p className="mb-4 text-gray-500">Intenta ajustar los filtros de búsqueda.</p><button onClick={limpiar} className="rounded-lg bg-ofimundo-purple px-6 py-2 text-white">Limpiar filtros</button></div> : <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">{equipos.map((item) => <ProductCard key={`equipo-${item.ID_Producto}`} equipo={item} />)}{salas.map((item) => <SalaCard key={`sala-${item.ID_Sala}`} sala={item} />)}{automatizacionesFiltradas.map((item) => <AutomatizacionCard key={`automatizacion-${item.slug}`} automatizacion={item} />)}</div>}</div></div></div>
+  const subtituloHeader = useMemo(() => {
+    const tiposLower = filtrosActivos.tipos.map((t) => t.toLowerCase())
+    const searchTipo = searchParams.getAll("tipo").map((t) => t.toLowerCase())
+    const vista = searchParams.get("vista")?.toLowerCase()
+
+    const isMPSExplicit = searchTipo.includes("mps") || vista === "mps" || tiposLower.includes("mps")
+    const hasMPSTypes = tiposLower.some((t) => ["multifuncional", "impresora", "mps"].includes(t))
+    const hasOtherTypes = tiposLower.some((t) => ["salas colaborativas", "automatización", "automatizacion"].includes(t))
+
+    if (isMPSExplicit || (hasMPSTypes && !hasOtherTypes)) {
+      return "Servicios Gestionados de Impresión: Arriendo de Impresoras + Mantención e Insumos"
+    }
+    if (tiposLower.includes("automatización") || tiposLower.includes("automatizacion")) {
+      return "Servicios Digitales y Flujos de Automatización de Procesos"
+    }
+    if (tiposLower.includes("salas colaborativas")) {
+      return "Equipamiento de Videoconferencia y Comunicaciones"
+    }
+
+    return "Encuentra equipos individuales o una sala colaborativa completa y lista para implementar."
+  }, [filtrosActivos.tipos, searchParams])
+
+  return (
+    <>
+      <div className="px-4 pb-8 pt-36 md:pt-40">
+        <div className="mx-auto flex max-w-7xl flex-col items-center gap-3 text-center">
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-accent">Soluciones para tu empresa</p>
+          <h1 className="text-balance text-4xl font-bold text-foreground md:text-6xl">Catálogo Ofimundo</h1>
+          <p className="max-w-3xl text-pretty text-lg text-muted-foreground transition-colors duration-200">{subtituloHeader}</p>
+        </div>
+      </div>
+      <div className="mx-auto max-w-[1400px] px-4 pb-16"><div className="flex gap-6"><FilterSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} filtros={filtros} filtrosActivos={filtrosActivos} onFiltroChange={handleFiltroChange} onLimpiarFiltros={limpiar} /><div className="flex-1"><div className="mb-6 flex flex-wrap items-center justify-between gap-4"><div className="flex items-center gap-4">{!sidebarOpen && <button onClick={() => setSidebarOpen(true)} className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 transition hover:border-ofimundo-purple"><i className="fas fa-filter text-ofimundo-purple" /><span className="text-sm font-medium">Filtros</span></button>}<span className="text-gray-600"><strong className="text-ofimundo-navy">{total}</strong> soluciones encontradas</span></div><div className="relative"><label htmlFor="catalog-search" className="sr-only">Buscar soluciones</label><input id="catalog-search" value={searchTerm} onChange={(e) => { setSearchTerm(e.target.value); sincronizarUrl(filtrosActivos, e.target.value) }} placeholder="Buscar solución..." className="w-64 rounded-lg border border-gray-200 px-4 py-2 pl-10 focus:border-ofimundo-purple focus:outline-none" /><i className="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" /></div></div>{(loading || loadingSalas || loadingAutomatizaciones) ? <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">{Array.from({ length: 6 }, (_, i) => <div key={i} className="h-96 rounded-xl bg-white" />)}</div> : total === 0 ? <div className="rounded-xl bg-white py-16 text-center"><h3 className="mb-2 text-xl font-semibold text-gray-700">No se encontraron soluciones</h3><p className="mb-4 text-gray-500">Intenta ajustar los filtros de búsqueda.</p><button onClick={limpiar} className="rounded-lg bg-ofimundo-purple px-6 py-2 text-white">Limpiar filtros</button></div> : <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">{equipos.map((item) => <ProductCard key={`equipo-${item.ID_Producto}`} equipo={item} />)}{salas.map((item) => <SalaCard key={`sala-${item.ID_Sala}`} sala={item} />)}{automatizacionesFiltradas.map((item) => <AutomatizacionCard key={`automatizacion-${item.slug}`} automatizacion={item} />)}</div>}</div></div></div>
+    </>
+  )
 }

@@ -3,10 +3,12 @@ import Image from "next/image"
 import { Header } from "@/components/Header"
 import { Footer } from "@/components/Footer"
 
+/* SEO Metadata - Comentado
 export const metadata = {
   title: "Soluciones y Servicios | Ofimundo",
   description: "Conoce nuestras soluciones tecnológicas integrales: MPS (Servicios Gestionados de Impresión), Automatización RPA y Salas Colaborativas.",
 }
+*/
 
 const solucionesData = [
   {

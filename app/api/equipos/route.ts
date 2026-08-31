@@ -24,7 +24,14 @@ export async function GET(request: NextRequest) {
 
     const rows = await executeQuery<ProductoRow>(`SELECT * FROM ${VISTA_PRODUCTO_DETALLE}`)
     const filtrados = rows.map(mapProducto).filter((equipo) => {
-      const matchesType = tipos.length === 0 || tipos.some((tipo) => normalize(tipo) === normalize(equipo.Tipo_Equipo))
+      const matchesType = tipos.length === 0 || tipos.some((tipo) => {
+        const normTipo = normalize(tipo)
+        const normEquipoTipo = normalize(equipo.Tipo_Equipo)
+        if (normTipo === "mps") {
+          return normEquipoTipo === "multifuncional" || normEquipoTipo === "impresora"
+        }
+        return normTipo === normEquipoTipo
+      })
       const matchesBrand = marcas.length === 0 || marcas.some((marca) => normalize(marca) === normalize(equipo.Nombre_Marca))
       const matchesTechnology = tecnologias.length === 0 || tecnologias.some((tecnologia) => normalize(tecnologia) === normalize(equipo.Tecnologia_Equipo))
       const matchesColor = colores.length === 0 || colores.some((color) => normalize(color) === normalize(equipo.Color_Equipo))

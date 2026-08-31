@@ -1,10 +1,12 @@
 import { Header } from "@/components/Header"
 import { Footer } from "@/components/Footer"
 
+/* SEO Metadata - Comentado
 export const metadata = {
   title: "Contacto | Ofimundo",
   description: "Información de contacto oficial, dirección, teléfono, correo y horarios de atención de Ofimundo.",
 }
+*/
 
 const contactCards = [
   {

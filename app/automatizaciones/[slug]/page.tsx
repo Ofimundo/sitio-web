@@ -17,11 +17,13 @@ import {
 import { AGENDA_URL } from "@/components/AutomatizacionCard"
 import { obtenerAutomatizacionPorSlug } from "@/lib/automatizaciones"
 
+/* SEO Metadata - Comentado
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
   const item = await obtenerAutomatizacionPorSlug(slug)
   return item ? { title: `${item.nombre} - Automatización`, description: item.resumen } : { title: "Automatización no encontrada" }
 }
+*/
 
 export default async function AutomatizacionDetallePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params

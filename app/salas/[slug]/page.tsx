@@ -7,10 +7,12 @@ import { Header } from "@/components/Header"
 import { ServiceCard } from "@/components/ServiceCard"
 import { getSalaByIdentifier } from "@/lib/salas"
 
+/* SEO Metadata - Comentado
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const sala = await getSalaByIdentifier((await params).slug)
   return sala ? { title: `${sala.Nombre} - Sala colaborativa`, description: sala.Descripcion } : { title: "Sala no encontrada" }
 }
+*/
 
 export default async function SalaDetallePage({ params }: { params: Promise<{ slug: string }> }) {
   const sala = await getSalaByIdentifier((await params).slug)

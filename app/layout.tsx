@@ -1,12 +1,15 @@
-import type { Metadata, Viewport } from "next"
+// import type { Metadata } from "next"
+import type { Viewport } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
-import GoogleAnalytics from '@/components/seo/GoogleAnalytics';
-import { GoogleTagManagerHead, GoogleTagManagerBody } from '@/components/seo/GoogleTagManager';
-import LinkedInInsight from '@/components/seo/LinkedInInsight';
+// SEO Imports deshabilitados
+// import GoogleAnalytics from '@/components/seo/GoogleAnalytics';
+// import { GoogleTagManagerHead, GoogleTagManagerBody } from '@/components/seo/GoogleTagManager';
+// import LinkedInInsight from '@/components/seo/LinkedInInsight';
 
 const inter = Inter({ subsets: ["latin"] })
 
+/* SEO Metadata - Comentado
 export const metadata: Metadata = {
   title: {
     default: "Ofimundo - Soluciones Tecnológicas para Empresas",
@@ -36,6 +39,7 @@ export const metadata: Metadata = {
     },
   },
 }
+*/
 
 export const viewport: Viewport = {
   themeColor: [
@@ -64,14 +68,10 @@ export default function RootLayout({
     <html lang="es-CL" className="bg-background" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-        {/* Google Tag Manager - lo más arriba posible */}
-        <GoogleTagManagerHead />
-        
-        {/* Google Analytics */}
-        <GoogleAnalytics />
-        
-        {/* LinkedIn Insight Tag */}
-        <LinkedInInsight />
+        {/* SEO - Componentes comentados */}
+        {/* <GoogleTagManagerHead /> */}
+        {/* <GoogleAnalytics /> */}
+        {/* <LinkedInInsight /> */}
         <meta charSet="UTF-8" />
         <link
           rel="stylesheet"
@@ -79,8 +79,8 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.className} antialiased`}>
-        {/* Google Tag Manager (noscript) */}
-        <GoogleTagManagerBody />
+        {/* SEO - Componente comentado */}
+        {/* <GoogleTagManagerBody /> */}
         {children}
       </body>
     </html>

@@ -3,10 +3,12 @@ import Image from "next/image"
 import { Header } from "@/components/Header"
 import { Footer } from "@/components/Footer"
 
+/* SEO Metadata - Comentado
 export const metadata = {
   title: "Somos Ofimundo | Nuestra Historia y Experiencia",
   description: "Conoce a Ofimundo: más de 30 años liderando el mercado de soluciones de impresión, cómputo y transformación digital en Chile.",
 }
+*/
 
 export default function SomosOfimundoPage() {
   return (

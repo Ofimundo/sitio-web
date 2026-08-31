@@ -1,5 +1,7 @@
 // components/LinkedInInsight.tsx
 export default function LinkedInInsight() {
+  return null;
+  /*
   return (
     <>
       <script
@@ -42,4 +44,5 @@ export default function LinkedInInsight() {
       </noscript>
     </>
   );
+  */
 }

@@ -1,14 +1,16 @@
 // components/seo/GoogleAnalytics.tsx
 export default function GoogleAnalytics() {
+  return null;
+  /*
   return (
     <>
-      {/* Google Analytics 4 - G-HP2KGDHVKW */}
+      {/* Google Analytics 4 - G-HP2KGDHVKW * /}
       <script
         async
         src="https://www.googletagmanager.com/gtag/js?id=G-HP2KGDHVKW"
       />
       
-      {/* Google Ads - AW-18087757055 */}
+      {/* Google Ads - AW-18087757055 * /}
       <script
         async
         src="https://www.googletagmanager.com/gtag/js?id=AW-18087757055"
@@ -31,4 +33,5 @@ export default function GoogleAnalytics() {
       />
     </>
   );
+  */
 }
