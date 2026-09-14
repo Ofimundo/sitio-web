@@ -151,6 +151,26 @@ function extraerVolumenDeTexto(texto: string, ultimoMensajeBot?: string): number
   return null
 }
 
+export class GroqRateLimitError extends Error {
+  constructor(message?: string) {
+    super(message || "Groq Rate Limit Exceeded")
+    this.name = "GroqRateLimitError"
+  }
+}
+
+function isRateLimitOrQuotaError(status: number, errorText: string): boolean {
+  const norm = (errorText || "").toLowerCase()
+  return (
+    status === 429 ||
+    norm.includes("rate_limit") ||
+    norm.includes("rate limit") ||
+    norm.includes("quota_exceeded") ||
+    norm.includes("insufficient_quota") ||
+    norm.includes("tokens per") ||
+    norm.includes("too many requests")
+  )
+}
+
 async function consultarGroq(system: string, user: string): Promise<string | null> {
   async function hacerConsulta(modelo: string) {
     return fetch(
@@ -185,6 +205,9 @@ async function consultarGroq(system: string, user: string): Promise<string | nul
 
     if (!response.ok) {
       const errorTexto = await response.text()
+      if (isRateLimitOrQuotaError(response.status, errorTexto)) {
+        throw new GroqRateLimitError(errorTexto)
+      }
       console.warn(`Groq 120B no disponible (${response.status}): ${errorTexto}. Reintentando con modelo secundario openai/gpt-oss-20b...`)
 
       response = await hacerConsulta("openai/gpt-oss-20b")
@@ -192,6 +215,9 @@ async function consultarGroq(system: string, user: string): Promise<string | nul
 
     if (!response.ok) {
       const errorTexto = await response.text()
+      if (isRateLimitOrQuotaError(response.status, errorTexto)) {
+        throw new GroqRateLimitError(errorTexto)
+      }
       console.error("Groq (modelo secundario también falló):", errorTexto)
       return null
     }
@@ -199,6 +225,7 @@ async function consultarGroq(system: string, user: string): Promise<string | nul
     const data = await response.json()
     return data?.choices?.[0]?.message?.content ?? null
   } catch (error) {
+    if (error instanceof GroqRateLimitError) throw error
     console.error("Error al consultar Groq:", error)
     return null
   }
@@ -317,6 +344,9 @@ ${mensaje}
 
     if (!response.ok) {
       const errorTexto = await response.text()
+      if (isRateLimitOrQuotaError(response.status, errorTexto)) {
+        throw new GroqRateLimitError(errorTexto)
+      }
       console.warn(`Groq 120B no disponible (${response.status}): ${errorTexto}. Reintentando con modelo secundario openai/gpt-oss-20b...`)
 
       response = await hacerIntencion("openai/gpt-oss-20b")
@@ -324,6 +354,9 @@ ${mensaje}
 
     if (!response.ok) {
       const errorTexto = await response.text()
+      if (isRateLimitOrQuotaError(response.status, errorTexto)) {
+        throw new GroqRateLimitError(errorTexto)
+      }
       console.error("Error interpretando intención con Groq:", errorTexto)
       return null
     }
@@ -395,6 +428,7 @@ ${mensaje}
       detalles_suficientes: Boolean(resultado.detalles_suficientes),
     }
   } catch (error) {
+    if (error instanceof GroqRateLimitError) throw error
     console.error("Error procesando intención IA:", error)
     return null
   }
@@ -1651,6 +1685,19 @@ ${JSON.stringify(productosParaIA)}
       productos: resultados,
     })
   } catch (error: any) {
+    if (error instanceof GroqRateLimitError || error?.name === "GroqRateLimitError" || error?.status === 429) {
+      console.warn("Límite de tokens/cuota de Groq alcanzado. Retornando mensaje de indisponibilidad temporal.")
+      return NextResponse.json({
+        success: true,
+        categoria: "general",
+        sesion_id: sesionId,
+        pregunta: body?.mensaje ?? "",
+        respuesta: "⚠️ El asistente virtual no se encuentra disponible temporalmente debido a un alto flujo de consultas (límite de servicio de IA). Por favor, intenta de nuevo en unos minutos o agenda una reunión con nuestro equipo comercial.",
+        productos: [],
+        quota_exceeded: true,
+      })
+    }
+
     console.error("Error chatbot STACK TRACE:", error?.stack || error)
 
     return NextResponse.json(

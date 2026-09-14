@@ -324,7 +324,7 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
         {
           rol: "bot",
           texto:
-            "En este momento no pude procesar tu consulta. Intenta nuevamente en unos segundos.",
+            "⚠️ El asistente virtual no se encuentra disponible en este momento debido a un alto volumen de consultas. Por favor, reintenta en un par de minutos o contáctanos directamente.",
         },
       ])
     } finally {
