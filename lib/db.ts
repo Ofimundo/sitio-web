@@ -19,7 +19,6 @@ const sqlConfig: sql.config = {
   options: {
     encrypt: true,
     trustServerCertificate: true,
-    ...(net.isIP(server) ? { serverName: "localhost" } : {}),
     ...(instanceName && !configuredPort ? { instanceName } : {}),
   },
 }

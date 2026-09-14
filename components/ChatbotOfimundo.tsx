@@ -19,63 +19,111 @@ function textoProducto(valor: unknown) {
 }
 
 function obtenerTarjeta(producto: ProductoChat, categoria?: string) {
-  if (categoria === "salas") {
-    const idOriginal = textoProducto(
-      producto.id_Producto ??
-      producto.id_producto ??
-      producto.ID_Producto
-    )
-
-    const slug = idOriginal
-      .replace(/^sala_/i, "")
-      .replace(/_/g, "-")
-      .toLowerCase()
-
-    return {
-      tipo: "🤝 SALA",
-      nombre:
-        textoProducto(producto.nombre_sala) ||
-        textoProducto(producto.titulo_sala) ||
-        "Sala colaborativa",
-      descripcion:
-        textoProducto(producto.descripcion_corta) ||
-        textoProducto(producto.tamano_sala),
-      imagen:
-        textoProducto(producto.imagen_Equipo) ||
-        textoProducto(producto.Imagen_Equipo),
-      cotizar: slug ? `/cotizar-salas/${slug}` : "",
-      detalle: slug ? `/salas/${slug}` : "",
+  // Autodetectar categoría si no viene o viene genérica
+  let cat = categoria
+  if (!cat || cat === "general") {
+    const id = String(
+      producto.ID_Producto ?? producto.id_producto ?? producto.id_Producto ?? ""
+    ).toLowerCase()
+    if (id.startsWith("sala_") || producto.Slug || producto.Tamano || producto.nombre_sala) {
+      cat = "salas"
+    } else if (id.startsWith("auto_") || producto.slug || producto.beneficio || producto.modalidad) {
+      cat = "automatizaciones"
+    } else if (producto.Nombre_Equipo || producto.Tipo_Equipo || producto.Nombre_Marca) {
+      cat = "equipos"
     }
   }
 
-  if (categoria === "equipos") {
+  if (cat === "salas") {
+    const idOriginal = textoProducto(
+      producto.Slug ??
+      producto.slug ??
+      producto.ID_Producto ??
+      producto.id_Producto ??
+      producto.id_producto
+    )
+
+    const slug =
+      textoProducto(producto.Slug ?? producto.slug) ||
+      idOriginal
+        .replace(/^sala_/i, "")
+        .replace(/_/g, "-")
+        .toLowerCase()
+
+    const nombre =
+      textoProducto(producto.Nombre) ||
+      textoProducto(producto.Titulo) ||
+      textoProducto(producto.nombre_sala) ||
+      textoProducto(producto.titulo_sala) ||
+      textoProducto(producto.nombre) ||
+      "Sala colaborativa"
+
+    const tamano = textoProducto(producto.Tamano ?? producto.tamano_sala)
+    const linea = textoProducto(producto.Linea ?? producto.linea)
+    const descRaw = textoProducto(
+      producto.Descripcion ??
+      producto.descripcion ??
+      producto.descripcion_corta
+    )
+
+    let desc = descRaw
+    if (!desc && (linea || tamano)) {
+      desc = [linea, tamano ? `Tamaño ${tamano}` : null].filter(Boolean).join(" · ")
+    }
+
+    const imagen =
+      textoProducto(producto.Imagen_Principal) ||
+      textoProducto(producto.imagen_Equipo) ||
+      textoProducto(producto.Imagen_Equipo) ||
+      textoProducto(producto.imagen)
+
+    return {
+      tipo: "🤝 SALA",
+      nombre,
+      descripcion: desc,
+      imagen,
+      cotizar: slug ? `/cotizar-salas/${encodeURIComponent(slug)}` : "",
+      detalle: slug ? `/salas/${encodeURIComponent(slug)}` : "",
+    }
+  }
+
+  if (cat === "equipos") {
     const id = textoProducto(
       producto.ID_Producto ??
       producto.id_Producto ??
       producto.id_producto
     )
 
+    const nombre =
+      textoProducto(producto.Nombre_Equipo) ||
+      textoProducto(producto.nombre) ||
+      textoProducto(producto.modelo) ||
+      textoProducto(producto.descripcion_corta) ||
+      "Equipo de impresión"
+
+    const marca = textoProducto(producto.Nombre_Marca ?? producto.marca)
+    const tipo = textoProducto(producto.Tipo_Equipo ?? producto.tipo)
+    const desc =
+      [marca, tipo].filter(Boolean).join(" · ") ||
+      textoProducto(producto.Descripcion_Equipo ?? producto.descripcion)
+
+    const imagen =
+      textoProducto(producto.Imagen_Equipo) ||
+      textoProducto(producto.imagen_Equipo) ||
+      textoProducto(producto.imagen) ||
+      textoProducto(producto.Imagen_Principal)
+
     return {
       tipo: "🖨️ EQUIPO",
-      nombre:
-        textoProducto(producto.Nombre_Equipo) ||
-        textoProducto(producto.nombre) ||
-        textoProducto(producto.descripcion_corta) ||
-        "Equipo de impresión",
-      descripcion:
-        [
-          textoProducto(producto.Nombre_Marca),
-          textoProducto(producto.Tipo_Equipo),
-        ].filter(Boolean).join(" · "),
-      imagen:
-        textoProducto(producto.Imagen_Equipo) ||
-        textoProducto(producto.imagen_Equipo),
+      nombre,
+      descripcion: desc,
+      imagen,
       cotizar: id ? `/cotizar-mps/${encodeURIComponent(id)}` : "",
       detalle: id ? `/equipo/${encodeURIComponent(id)}` : "",
     }
   }
 
-  if (categoria === "automatizaciones") {
+  if (cat === "automatizaciones") {
     const textoAutomatizacion = [
       textoProducto(producto.slug),
       textoProducto(producto.id_Producto),
@@ -87,45 +135,84 @@ function obtenerTarjeta(producto: ProductoChat, categoria?: string) {
       .join(" ")
       .toLowerCase()
 
-    let slug = textoProducto(producto.slug)
+    let slug = textoProducto(producto.slug ?? producto.Slug)
 
     if (!slug) {
-      if (
-        textoAutomatizacion.includes("factura") ||
-        textoAutomatizacion.includes("a.r.f")
-      ) {
+      const idStr = textoProducto(producto.ID_Producto ?? producto.id_Producto)
+      if (idStr) {
+        slug = idStr.replace(/^auto_/i, "").replace(/_/g, "-").toLowerCase()
+      }
+    }
+
+    if (!slug) {
+      if (textoAutomatizacion.includes("factura") || textoAutomatizacion.includes("a.r.f")) {
         slug = "aceptacion-rechazo-facturas"
-      } else if (
-        textoAutomatizacion.includes("saldo") ||
-        textoAutomatizacion.includes("bancario")
-      ) {
+      } else if (textoAutomatizacion.includes("saldo") || textoAutomatizacion.includes("bancario")) {
         slug = "saldos-bancarios"
-      } else if (
-        textoAutomatizacion.includes("finiquito") ||
-        textoAutomatizacion.includes("f.q")
-      ) {
+      } else if (textoAutomatizacion.includes("finiquito") || textoAutomatizacion.includes("f.q")) {
         slug = "finiquitos-dt"
-      } else if (
-        textoAutomatizacion.includes("gestion de cuentas") ||
-        textoAutomatizacion.includes("gestión de cuentas") ||
-        textoAutomatizacion.includes("g.c")
-      ) {
+      } else if (textoAutomatizacion.includes("cuenta") || textoAutomatizacion.includes("g.c")) {
         slug = "gestion-cuentas"
       }
     }
 
+    const nombre =
+      textoProducto(producto.nombre) ||
+      textoProducto(producto.nombreCorto) ||
+      textoProducto(producto.nombre_producto) ||
+      textoProducto(producto.modelo) ||
+      "Automatización"
+
+    const desc =
+      textoProducto(producto.resumen) ||
+      textoProducto(producto.beneficio) ||
+      textoProducto(producto.descripcion) ||
+      textoProducto(producto.descripcion_corta)
+
+    const imagen =
+      textoProducto(producto.imagen) ||
+      textoProducto(producto.link_imagen) ||
+      textoProducto(producto.Imagen_Equipo)
+
     return {
       tipo: "⚙️ AUTOMATIZACIÓN",
-      nombre:
-        textoProducto(producto.nombre_producto) ||
-        textoProducto(producto.modelo) ||
-        "Automatización",
-      descripcion:
-        textoProducto(producto.descripcion_corta) ||
-        textoProducto(producto.beneficio),
-      imagen: textoProducto(producto.link_imagen),
-      cotizar: slug ? `/cotizar-automatizaciones/${slug}` : "",
-      detalle: slug ? `/automatizaciones/${slug}` : "",
+      nombre,
+      descripcion: desc,
+      imagen,
+      cotizar: slug ? `/cotizar-automatizaciones/${encodeURIComponent(slug)}` : "",
+      detalle: slug ? `/automatizaciones/${encodeURIComponent(slug)}` : "",
+    }
+  }
+
+  if (cat === "daas") {
+    const id = textoProducto(
+      producto.ID_Producto ??
+      producto.id_Producto ??
+      producto.id_producto ??
+      producto.slug
+    )
+
+    const nombre =
+      textoProducto(producto.Nombre_Equipo) ||
+      textoProducto(producto.nombre) ||
+      "Equipo DaaS"
+
+    const desc =
+      textoProducto(producto.descripcion) ||
+      textoProducto(producto.Descripcion_Equipo) ||
+      "Arriendo de equipamiento tecnológico"
+
+    const imagen =
+      textoProducto(producto.Imagen_Equipo) ||
+      textoProducto(producto.imagen)
+
+    return {
+      tipo: "💻 DAAS",
+      nombre,
+      descripcion: desc,
+      imagen,
+      cotizar: id ? `/cotizar-daas/${encodeURIComponent(id)}` : "/contacto",
+      detalle: id ? `/daas/${encodeURIComponent(id)}` : "/daas",
     }
   }
 
@@ -151,11 +238,11 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
   const messagesContainerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    let id = localStorage.getItem("ofimundo-chatbot-session")
+    let id = sessionStorage.getItem("ofimundo-chatbot-session")
 
     if (!id) {
       id = `sesion-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`
-      localStorage.setItem("ofimundo-chatbot-session", id)
+      sessionStorage.setItem("ofimundo-chatbot-session", id)
     }
 
     setSesionId(id)
@@ -247,7 +334,7 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
 
   function reiniciarChat() {
     const nuevoId = `sesion-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`
-    localStorage.setItem("ofimundo-chatbot-session", nuevoId)
+    sessionStorage.setItem("ofimundo-chatbot-session", nuevoId)
     setSesionId(nuevoId)
     setMensajes([
       {

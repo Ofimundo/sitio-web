@@ -152,30 +152,50 @@ async function getOpciones(identifier: string) {
  * Inicio: la vista de destacadas no expone id_producto. Se cruza con la vista
  * de detalle para conservar el mismo identificador usado por catálogo y detalle.
  */
-export async function getSalasDestacadas() {
-  const [destacadas, detalles] = await Promise.all([
-    executeQuery<SalaRow>(`SELECT * FROM ${VISTAS.destacadas}`),
-    executeQuery<SalaRow>(`SELECT * FROM ${VISTAS.detalle}`),
-  ])
+import salasFallback from "../data/salas.json"
 
-  return destacadas.map((destacada, index) => {
-    const titulo = destacada.titulo_sala?.trim().toLocaleLowerCase("es-CL")
-    const nombre = destacada.nombre_sala?.trim().toLocaleLowerCase("es-CL")
-    const detalle = detalles.find((item) => {
-      const mismoTitulo = titulo && item.titulo_sala?.trim().toLocaleLowerCase("es-CL") === titulo
-      const mismoNombre = nombre && item.nombre_sala?.trim().toLocaleLowerCase("es-CL") === nombre
-      return mismoTitulo || mismoNombre
-    })
+export async function getSalasDestacadas(): Promise<Sala[]> {
+  try {
+    if (salasFallback && salasFallback.length > 0) {
+      return (salasFallback as Sala[]).filter((sala) => sala.Destacada)
+    }
+    const [destacadas, detalles] = await Promise.all([
+      executeQuery<SalaRow>(`SELECT * FROM ${VISTAS.destacadas}`),
+      executeQuery<SalaRow>(`SELECT * FROM ${VISTAS.detalle}`),
+    ])
 
-    return mapResumen(detalle ? { ...destacada, ...detalle } : destacada, index)
-  }).filter((sala) => sala.ID_Producto.length > 0)
+    return destacadas.map((destacada, index) => {
+      const titulo = destacada.titulo_sala?.trim().toLocaleLowerCase("es-CL")
+      const nombre = destacada.nombre_sala?.trim().toLocaleLowerCase("es-CL")
+      const detalle = detalles.find((item) => {
+        const mismoTitulo = titulo && item.titulo_sala?.trim().toLocaleLowerCase("es-CL") === titulo
+        const mismoNombre = nombre && item.nombre_sala?.trim().toLocaleLowerCase("es-CL") === nombre
+        return mismoTitulo || mismoNombre
+      })
+
+      return mapResumen(detalle ? { ...destacada, ...detalle } : destacada, index)
+    }).filter((sala) => sala.ID_Producto.length > 0)
+  } catch (error) {
+    return (salasFallback as Sala[]).filter((sala) => sala.Destacada)
+  }
 }
 
-/** Catálogo: obtiene el resumen de todas las salas desde la vista de detalle. */
-export async function getSalas(filtros: FiltrosSala = {}) {
-  const rows = await executeQuery<SalaRow>(`SELECT * FROM ${VISTAS.detalle}`)
+/** Catálogo: obtiene el resumen de todas las salas desde JSON local o BD. */
+export async function getSalas(filtros: FiltrosSala = {}): Promise<Sala[]> {
+  let list: Sala[] = []
+  try {
+    if (salasFallback && salasFallback.length > 0) {
+      list = salasFallback as Sala[]
+    } else {
+      const rows = await executeQuery<SalaRow>(`SELECT * FROM ${VISTAS.detalle}`)
+      list = rows.map(mapResumen)
+    }
+  } catch (error) {
+    list = (salasFallback as Sala[]) || []
+  }
+
   const term = filtros.search?.trim().toLocaleLowerCase("es-CL")
-  return rows.map(mapResumen).filter((sala) => {
+  return list.filter((sala) => {
     const matchesSize = !filtros.tamano || sala.Tamano === filtros.tamano
     const matchesLine = !filtros.linea || sala.Linea === filtros.linea
     const haystack = `${sala.Nombre} ${sala.Titulo} ${sala.Descripcion}`.toLocaleLowerCase("es-CL")
@@ -183,27 +203,40 @@ export async function getSalas(filtros: FiltrosSala = {}) {
   })
 }
 
-/** Detalle/cotización: compone en paralelo la ficha, características y opciones A/B. */
-export async function getSalaByIdentifier(identifier: string) {
+/** Detalle/cotización: compone la ficha de sala. */
+export async function getSalaByIdentifier(identifier: string): Promise<Sala | null> {
   const normalized = normalizeIdentifier(identifier)
-  const allRows = await executeQuery<SalaRow>(`SELECT * FROM ${VISTAS.detalle}`)
-  const row = allRows.find((candidate) => normalizeIdentifier(idProducto(candidate)) === normalized)
-  if (!row) return null
 
-  const productId = idProducto(row)
-  const [features, optionRows] = await Promise.all([
-    getCaracteristicas(productId),
-    getOpciones(productId),
-  ])
-  const sala = mapResumen(row, allRows.indexOf(row))
-  sala.Beneficios = features
-    .filter((item) => item.tipo?.trim().toLowerCase() === "funcion")
-    .map((item) => item.caracteristica?.trim())
-    .filter((item): item is string => Boolean(item))
-  sala.Compatibilidad = features
-    .filter((item) => item.tipo?.trim().toLowerCase() === "compatibilidad")
-    .map((item) => item.caracteristica?.trim())
-    .filter((item): item is string => Boolean(item))
-  sala.Opciones = groupOpciones(optionRows)
-  return sala
+  if (salasFallback && salasFallback.length > 0) {
+    const found = (salasFallback as Sala[]).find((candidate) =>
+      normalizeIdentifier(candidate.ID_Producto) === normalized ||
+      normalizeIdentifier(candidate.Slug) === normalized
+    )
+    if (found) return found
+  }
+
+  try {
+    const allRows = await executeQuery<SalaRow>(`SELECT * FROM ${VISTAS.detalle}`)
+    const row = allRows.find((candidate) => normalizeIdentifier(idProducto(candidate)) === normalized)
+    if (!row) return null
+
+    const productId = idProducto(row)
+    const [features, optionRows] = await Promise.all([
+      getCaracteristicas(productId),
+      getOpciones(productId),
+    ])
+    const sala = mapResumen(row, allRows.indexOf(row))
+    sala.Beneficios = features
+      .filter((item) => item.tipo?.trim().toLowerCase() === "funcion")
+      .map((item) => item.caracteristica?.trim())
+      .filter((item): item is string => Boolean(item))
+    sala.Compatibilidad = features
+      .filter((item) => item.tipo?.trim().toLowerCase() === "compatibilidad")
+      .map((item) => item.caracteristica?.trim())
+      .filter((item): item is string => Boolean(item))
+    sala.Opciones = groupOpciones(optionRows)
+    return sala
+  } catch (error) {
+    return null
+  }
 }

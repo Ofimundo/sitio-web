@@ -3,6 +3,10 @@
 .env.local
 .env.*.local
 
+# Scratch and temporary scripts
+scratch/
+scratch/*
+
 # Dependencies
 node_modules
 /.pnp

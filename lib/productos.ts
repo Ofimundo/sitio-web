@@ -1,3 +1,4 @@
+import { executeQuery } from "./db"
 import type { Equipo } from "./types"
 
 export const VISTA_PRODUCTOS = "[THE_COOLER_SGCX].[MPR].[VT_SEL_PRODUCTO]"
@@ -35,8 +36,18 @@ function numero(value: unknown) {
 }
 
 function tipoProducto(row: ProductoRow) {
-  const contenido = `${texto(row.funciones_equipo)} ${texto(row.descripcion_corta)} ${texto(row.descripcion_larga)}`.toLocaleLowerCase("es-CL")
-  return contenido.includes("multifunci") || contenido.includes("escáner") || contenido.includes("escaner")
+  const contenido = `${texto(row.funciones_equipo)} ${texto(row.descripcion_corta)} ${texto(row.descripcion_larga)} ${texto(row.modelo)}`.toLocaleLowerCase("es-CL")
+  return (
+    contenido.includes("multifunci") ||
+    contenido.includes("escáner") ||
+    contenido.includes("escaner") ||
+    contenido.includes("escaneo") ||
+    contenido.includes("copia") ||
+    contenido.includes("copiadora") ||
+    contenido.includes("copiado") ||
+    contenido.includes("fax") ||
+    contenido.includes("scan")
+  )
     ? "Multifuncional"
     : "Impresora"
 }
@@ -76,3 +87,19 @@ export function mapProducto(row: ProductoRow): Equipo {
     Nombre_Marca: texto(row.marca),
   }
 }
+
+import equiposFallback from "../data/equipos.json"
+
+export async function getEquipos(): Promise<Equipo[]> {
+  try {
+    if (equiposFallback && equiposFallback.length > 0) {
+      return equiposFallback as Equipo[]
+    }
+    const rows = await executeQuery<ProductoRow>(`SELECT * FROM ${VISTA_PRODUCTO_DETALLE}`)
+    return rows.map(mapProducto)
+  } catch (error) {
+    console.warn("Error o ausencia de BD. Usando catálogo estático JSON:", error)
+    return (equiposFallback as Equipo[]) || []
+  }
+}
+

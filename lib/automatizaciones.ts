@@ -88,25 +88,34 @@ function mapResumen(row: AutomatizacionRow): Automatizacion {
   }
 }
 
-/** Catálogo: obtiene el listado de automatizaciones desde la base de datos SQL. */
+import automatizacionesJson from "../data/automatizaciones.json"
+
+/** Catálogo: obtiene el listado de automatizaciones desde la base de datos SQL o JSON local. */
 export async function getAutomatizaciones(filtros: FiltrosAutomatizacion = {}): Promise<Automatizacion[]> {
   try {
-    const rows = await executeQuery<AutomatizacionRow>(`SELECT * FROM ${VISTAS.automatizacion}`)
-    if (!rows || rows.length === 0) return automatizacionesFallback
+    let listado: Automatizacion[] = []
 
-    const mapped = rows.map(mapResumen)
-    const seen = new Set<string>()
-    const deduplicadas: Automatizacion[] = []
-
-    for (const item of mapped) {
-      const canonical = obtenerAutomatizacionPorSlug(item.slug)
-      if (!seen.has(canonical.slug)) {
-        seen.add(canonical.slug)
-        deduplicadas.push(canonical)
+    if (automatizacionesJson && automatizacionesJson.length > 0) {
+      listado = automatizacionesJson as Automatizacion[]
+    } else {
+      const rows = await executeQuery<AutomatizacionRow>(`SELECT * FROM ${VISTAS.automatizacion}`)
+      if (rows && rows.length > 0) {
+        const mapped = rows.map(mapResumen)
+        const seen = new Set<string>()
+        for (const item of mapped) {
+          const canonical = obtenerAutomatizacionPorSlug(item.slug)
+          if (!seen.has(canonical.slug)) {
+            seen.add(canonical.slug)
+            listado.push(canonical)
+          }
+        }
       }
     }
 
-    const listado = deduplicadas.length > 0 ? deduplicadas : automatizacionesFallback
+    if (!listado || listado.length === 0) {
+      listado = automatizacionesFallback
+    }
+
     const term = filtros.search?.trim().toLocaleLowerCase("es-CL")
 
     return listado.filter((item) => {
@@ -117,7 +126,7 @@ export async function getAutomatizaciones(filtros: FiltrosAutomatizacion = {}): 
       return matchesArea && matchesModalidad && matchesSearch
     })
   } catch (error) {
-    console.error("[getAutomatizaciones] Error al consultar la BD, usando fallback:", error)
+    console.warn("[getAutomatizaciones] Error o ausencia de BD, usando fallback JSON:", error)
     return automatizacionesFallback
   }
 }

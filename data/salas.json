@@ -1,0 +1,398 @@
+[
+  {
+    "ID_Sala": 1,
+    "ID_Producto": "sala_advanced_l",
+    "Slug": "advanced-l",
+    "Nombre": "ADVANCED L",
+    "Linea": "ADVANCED",
+    "Tamano": "L",
+    "Titulo": "SOLUCIÓN ADVANCED - SALA GRANDE",
+    "Descripcion": "Solución para espacios de mayor capacidad, preparada para reuniones híbridas eficientes, claras y profesionales.",
+    "Imagen_Principal": "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/06-Advanced_L.webp",
+    "Beneficios": [],
+    "Compatibilidad": [],
+    "Destacada": true,
+    "Orden": 1,
+    "Opciones": [],
+    "Complementos": [
+      {
+        "ID_Producto": "I3-ELM2",
+        "Nombre_Equipo": "ELM2",
+        "Nombre_Marca": "I3 Technologies",
+        "Descripcion": "Pantalla interactiva para salas de clases y reuniones.",
+        "Categoria": "Pantallas interactivas",
+        "Orden": 1
+      },
+      {
+        "ID_Producto": "SAMSUNG-WAF",
+        "Nombre_Equipo": "WAF",
+        "Nombre_Marca": "Samsung",
+        "Descripcion": "Pantalla interactiva disponible en distintos tamaños.",
+        "Categoria": "Pantallas interactivas",
+        "Orden": 2
+      },
+      {
+        "ID_Producto": "LOGI-SCRIBE",
+        "Nombre_Equipo": "Scribe",
+        "Nombre_Marca": "Logitech",
+        "Descripcion": "Capturador de pizarra para colaboración híbrida.",
+        "Categoria": "Captura de pizarra",
+        "Orden": 3
+      },
+      {
+        "ID_Producto": "KAPTIVO",
+        "Nombre_Equipo": "Kaptivo",
+        "Nombre_Marca": "Kaptivo",
+        "Descripcion": "Capturador de pizarra para compartir contenido en línea.",
+        "Categoria": "Captura de pizarra",
+        "Orden": 4
+      },
+      {
+        "ID_Producto": "LOGI-SCHEDULER",
+        "Nombre_Equipo": "Scheduler",
+        "Nombre_Marca": "Logitech",
+        "Descripcion": "Panel para agendamiento y disponibilidad de salas.",
+        "Categoria": "Agendamiento",
+        "Orden": 5
+      },
+      {
+        "ID_Producto": "BIAMP-EVOKO",
+        "Nombre_Equipo": "Evoko",
+        "Nombre_Marca": "Biamp",
+        "Descripcion": "Solución de agendamiento y gestión de salas.",
+        "Categoria": "Agendamiento",
+        "Orden": 6
+      }
+    ]
+  },
+  {
+    "ID_Sala": 2,
+    "ID_Producto": "sala_advanced_m",
+    "Slug": "advanced-m",
+    "Nombre": "ADVANCED M",
+    "Linea": "ADVANCED",
+    "Tamano": "M",
+    "Titulo": "SOLUCIÓN ADVANCED - SALA MEDIANA",
+    "Descripcion": "Tecnología para mejorar la experiencia de reuniones híbridas y facilitar una comunicación clara y profesional.",
+    "Imagen_Principal": "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/05-Advanced_M.webp",
+    "Beneficios": [],
+    "Compatibilidad": [],
+    "Destacada": false,
+    "Orden": 2,
+    "Opciones": [],
+    "Complementos": [
+      {
+        "ID_Producto": "I3-ELM2",
+        "Nombre_Equipo": "ELM2",
+        "Nombre_Marca": "I3 Technologies",
+        "Descripcion": "Pantalla interactiva para salas de clases y reuniones.",
+        "Categoria": "Pantallas interactivas",
+        "Orden": 1
+      },
+      {
+        "ID_Producto": "SAMSUNG-WAF",
+        "Nombre_Equipo": "WAF",
+        "Nombre_Marca": "Samsung",
+        "Descripcion": "Pantalla interactiva disponible en distintos tamaños.",
+        "Categoria": "Pantallas interactivas",
+        "Orden": 2
+      },
+      {
+        "ID_Producto": "LOGI-SCRIBE",
+        "Nombre_Equipo": "Scribe",
+        "Nombre_Marca": "Logitech",
+        "Descripcion": "Capturador de pizarra para colaboración híbrida.",
+        "Categoria": "Captura de pizarra",
+        "Orden": 3
+      },
+      {
+        "ID_Producto": "KAPTIVO",
+        "Nombre_Equipo": "Kaptivo",
+        "Nombre_Marca": "Kaptivo",
+        "Descripcion": "Capturador de pizarra para compartir contenido en línea.",
+        "Categoria": "Captura de pizarra",
+        "Orden": 4
+      },
+      {
+        "ID_Producto": "LOGI-SCHEDULER",
+        "Nombre_Equipo": "Scheduler",
+        "Nombre_Marca": "Logitech",
+        "Descripcion": "Panel para agendamiento y disponibilidad de salas.",
+        "Categoria": "Agendamiento",
+        "Orden": 5
+      },
+      {
+        "ID_Producto": "BIAMP-EVOKO",
+        "Nombre_Equipo": "Evoko",
+        "Nombre_Marca": "Biamp",
+        "Descripcion": "Solución de agendamiento y gestión de salas.",
+        "Categoria": "Agendamiento",
+        "Orden": 6
+      }
+    ]
+  },
+  {
+    "ID_Sala": 3,
+    "ID_Producto": "sala_bussiness_s",
+    "Slug": "bussiness-s",
+    "Nombre": "BUSINESS S",
+    "Linea": "BUSINESS",
+    "Tamano": "S",
+    "Titulo": "SOLUCIÓN BUSINESS - SALA PEQUEÑA",
+    "Descripcion": "Solución para espacios reducidos con tecnología diseñada para reuniones más ágiles y profesionales.",
+    "Imagen_Principal": "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/01-Business_S.webp",
+    "Beneficios": [],
+    "Compatibilidad": [],
+    "Destacada": false,
+    "Orden": 3,
+    "Opciones": [],
+    "Complementos": [
+      {
+        "ID_Producto": "I3-ELM2",
+        "Nombre_Equipo": "ELM2",
+        "Nombre_Marca": "I3 Technologies",
+        "Descripcion": "Pantalla interactiva para salas de clases y reuniones.",
+        "Categoria": "Pantallas interactivas",
+        "Orden": 1
+      },
+      {
+        "ID_Producto": "SAMSUNG-WAF",
+        "Nombre_Equipo": "WAF",
+        "Nombre_Marca": "Samsung",
+        "Descripcion": "Pantalla interactiva disponible en distintos tamaños.",
+        "Categoria": "Pantallas interactivas",
+        "Orden": 2
+      },
+      {
+        "ID_Producto": "LOGI-SCRIBE",
+        "Nombre_Equipo": "Scribe",
+        "Nombre_Marca": "Logitech",
+        "Descripcion": "Capturador de pizarra para colaboración híbrida.",
+        "Categoria": "Captura de pizarra",
+        "Orden": 3
+      },
+      {
+        "ID_Producto": "KAPTIVO",
+        "Nombre_Equipo": "Kaptivo",
+        "Nombre_Marca": "Kaptivo",
+        "Descripcion": "Capturador de pizarra para compartir contenido en línea.",
+        "Categoria": "Captura de pizarra",
+        "Orden": 4
+      },
+      {
+        "ID_Producto": "LOGI-SCHEDULER",
+        "Nombre_Equipo": "Scheduler",
+        "Nombre_Marca": "Logitech",
+        "Descripcion": "Panel para agendamiento y disponibilidad de salas.",
+        "Categoria": "Agendamiento",
+        "Orden": 5
+      },
+      {
+        "ID_Producto": "BIAMP-EVOKO",
+        "Nombre_Equipo": "Evoko",
+        "Nombre_Marca": "Biamp",
+        "Descripcion": "Solución de agendamiento y gestión de salas.",
+        "Categoria": "Agendamiento",
+        "Orden": 6
+      }
+    ]
+  },
+  {
+    "ID_Sala": 4,
+    "ID_Producto": "sala_essential_l",
+    "Slug": "essential-l",
+    "Nombre": "ESSENTIAL L",
+    "Linea": "ESSENTIAL",
+    "Tamano": "L",
+    "Titulo": "SOLUCIÓN ESSENTIAL - SALA GRANDE",
+    "Descripcion": "Una configuración equilibrada para reuniones híbridas claras, ágiles y profesionales.",
+    "Imagen_Principal": "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/04-Essential_L.webp",
+    "Beneficios": [],
+    "Compatibilidad": [],
+    "Destacada": false,
+    "Orden": 4,
+    "Opciones": [],
+    "Complementos": [
+      {
+        "ID_Producto": "I3-ELM2",
+        "Nombre_Equipo": "ELM2",
+        "Nombre_Marca": "I3 Technologies",
+        "Descripcion": "Pantalla interactiva para salas de clases y reuniones.",
+        "Categoria": "Pantallas interactivas",
+        "Orden": 1
+      },
+      {
+        "ID_Producto": "SAMSUNG-WAF",
+        "Nombre_Equipo": "WAF",
+        "Nombre_Marca": "Samsung",
+        "Descripcion": "Pantalla interactiva disponible en distintos tamaños.",
+        "Categoria": "Pantallas interactivas",
+        "Orden": 2
+      },
+      {
+        "ID_Producto": "LOGI-SCRIBE",
+        "Nombre_Equipo": "Scribe",
+        "Nombre_Marca": "Logitech",
+        "Descripcion": "Capturador de pizarra para colaboración híbrida.",
+        "Categoria": "Captura de pizarra",
+        "Orden": 3
+      },
+      {
+        "ID_Producto": "KAPTIVO",
+        "Nombre_Equipo": "Kaptivo",
+        "Nombre_Marca": "Kaptivo",
+        "Descripcion": "Capturador de pizarra para compartir contenido en línea.",
+        "Categoria": "Captura de pizarra",
+        "Orden": 4
+      },
+      {
+        "ID_Producto": "LOGI-SCHEDULER",
+        "Nombre_Equipo": "Scheduler",
+        "Nombre_Marca": "Logitech",
+        "Descripcion": "Panel para agendamiento y disponibilidad de salas.",
+        "Categoria": "Agendamiento",
+        "Orden": 5
+      },
+      {
+        "ID_Producto": "BIAMP-EVOKO",
+        "Nombre_Equipo": "Evoko",
+        "Nombre_Marca": "Biamp",
+        "Descripcion": "Solución de agendamiento y gestión de salas.",
+        "Categoria": "Agendamiento",
+        "Orden": 6
+      }
+    ]
+  },
+  {
+    "ID_Sala": 5,
+    "ID_Producto": "sala_essential_m",
+    "Slug": "essential-m",
+    "Nombre": "ESSENTIAL M",
+    "Linea": "ESSENTIAL",
+    "Tamano": "M",
+    "Titulo": "SOLUCIÓN ESSENTIAL - SALA MEDIANA",
+    "Descripcion": "Una configuración equilibrada para reuniones híbridas claras, ágiles y profesionales.",
+    "Imagen_Principal": "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/03-Essential_M.webp",
+    "Beneficios": [],
+    "Compatibilidad": [],
+    "Destacada": false,
+    "Orden": 5,
+    "Opciones": [],
+    "Complementos": [
+      {
+        "ID_Producto": "I3-ELM2",
+        "Nombre_Equipo": "ELM2",
+        "Nombre_Marca": "I3 Technologies",
+        "Descripcion": "Pantalla interactiva para salas de clases y reuniones.",
+        "Categoria": "Pantallas interactivas",
+        "Orden": 1
+      },
+      {
+        "ID_Producto": "SAMSUNG-WAF",
+        "Nombre_Equipo": "WAF",
+        "Nombre_Marca": "Samsung",
+        "Descripcion": "Pantalla interactiva disponible en distintos tamaños.",
+        "Categoria": "Pantallas interactivas",
+        "Orden": 2
+      },
+      {
+        "ID_Producto": "LOGI-SCRIBE",
+        "Nombre_Equipo": "Scribe",
+        "Nombre_Marca": "Logitech",
+        "Descripcion": "Capturador de pizarra para colaboración híbrida.",
+        "Categoria": "Captura de pizarra",
+        "Orden": 3
+      },
+      {
+        "ID_Producto": "KAPTIVO",
+        "Nombre_Equipo": "Kaptivo",
+        "Nombre_Marca": "Kaptivo",
+        "Descripcion": "Capturador de pizarra para compartir contenido en línea.",
+        "Categoria": "Captura de pizarra",
+        "Orden": 4
+      },
+      {
+        "ID_Producto": "LOGI-SCHEDULER",
+        "Nombre_Equipo": "Scheduler",
+        "Nombre_Marca": "Logitech",
+        "Descripcion": "Panel para agendamiento y disponibilidad de salas.",
+        "Categoria": "Agendamiento",
+        "Orden": 5
+      },
+      {
+        "ID_Producto": "BIAMP-EVOKO",
+        "Nombre_Equipo": "Evoko",
+        "Nombre_Marca": "Biamp",
+        "Descripcion": "Solución de agendamiento y gestión de salas.",
+        "Categoria": "Agendamiento",
+        "Orden": 6
+      }
+    ]
+  },
+  {
+    "ID_Sala": 6,
+    "ID_Producto": "sala_essential_s",
+    "Slug": "essential-s",
+    "Nombre": "ESSENTIAL S",
+    "Linea": "ESSENTIAL",
+    "Tamano": "S",
+    "Titulo": "SOLUCIÓN ESSENTIAL - SALA PEQUEÑA",
+    "Descripcion": "Solución para espacios reducidos con tecnologia diseñada para reuniones más ágiles y profesionales.",
+    "Imagen_Principal": "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/02-Essential_S.webp",
+    "Beneficios": [],
+    "Compatibilidad": [],
+    "Destacada": true,
+    "Orden": 6,
+    "Opciones": [],
+    "Complementos": [
+      {
+        "ID_Producto": "I3-ELM2",
+        "Nombre_Equipo": "ELM2",
+        "Nombre_Marca": "I3 Technologies",
+        "Descripcion": "Pantalla interactiva para salas de clases y reuniones.",
+        "Categoria": "Pantallas interactivas",
+        "Orden": 1
+      },
+      {
+        "ID_Producto": "SAMSUNG-WAF",
+        "Nombre_Equipo": "WAF",
+        "Nombre_Marca": "Samsung",
+        "Descripcion": "Pantalla interactiva disponible en distintos tamaños.",
+        "Categoria": "Pantallas interactivas",
+        "Orden": 2
+      },
+      {
+        "ID_Producto": "LOGI-SCRIBE",
+        "Nombre_Equipo": "Scribe",
+        "Nombre_Marca": "Logitech",
+        "Descripcion": "Capturador de pizarra para colaboración híbrida.",
+        "Categoria": "Captura de pizarra",
+        "Orden": 3
+      },
+      {
+        "ID_Producto": "KAPTIVO",
+        "Nombre_Equipo": "Kaptivo",
+        "Nombre_Marca": "Kaptivo",
+        "Descripcion": "Capturador de pizarra para compartir contenido en línea.",
+        "Categoria": "Captura de pizarra",
+        "Orden": 4
+      },
+      {
+        "ID_Producto": "LOGI-SCHEDULER",
+        "Nombre_Equipo": "Scheduler",
+        "Nombre_Marca": "Logitech",
+        "Descripcion": "Panel para agendamiento y disponibilidad de salas.",
+        "Categoria": "Agendamiento",
+        "Orden": 5
+      },
+      {
+        "ID_Producto": "BIAMP-EVOKO",
+        "Nombre_Equipo": "Evoko",
+        "Nombre_Marca": "Biamp",
+        "Descripcion": "Solución de agendamiento y gestión de salas.",
+        "Categoria": "Agendamiento",
+        "Orden": 6
+      }
+    ]
+  }
+]
