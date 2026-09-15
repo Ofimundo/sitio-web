@@ -480,14 +480,22 @@ function parseTamanoSala(
 }
 
 export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json()
-    const pregunta = normalizar(body?.mensaje)
+  let body: any = {}
+  let sesionId = ""
 
-    const sesionId =
-      typeof body?.sesion_id === "string" && body.sesion_id.trim()
-        ? body.sesion_id.trim()
-        : crypto.randomUUID()
+  try {
+    try {
+      body = await request.json()
+      sesionId =
+        typeof body?.sesion_id === "string" && body.sesion_id.trim()
+          ? body.sesion_id.trim()
+          : crypto.randomUUID()
+    } catch {
+      body = {}
+      sesionId = crypto.randomUUID()
+    }
+
+    const pregunta = normalizar(body?.mensaje)
 
     if (!pregunta) {
       return NextResponse.json(

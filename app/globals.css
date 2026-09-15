@@ -451,9 +451,6 @@ body {
 .dark .bg-gray-50,
 .dark .bg-gray-100,
 .dark .bg-gray-200,
-.dark .bg-slate-50,
-.dark .bg-slate-100,
-.dark .bg-slate-200,
 .dark .from-gray-50,
 .dark .to-gray-100 {
   background-color: var(--surface-elevated) !important;
@@ -463,9 +460,6 @@ body {
 .dark .text-gray-900,
 .dark .text-gray-800,
 .dark .text-gray-700,
-.dark .text-slate-900,
-.dark .text-slate-800,
-.dark .text-slate-700,
 .dark .text-\[\#2d2944\],
 .dark .text-\[\#2D2944\] {
   color: var(--foreground) !important;
@@ -474,19 +468,13 @@ body {
 .dark .text-gray-600,
 .dark .text-gray-500,
 .dark .text-gray-400,
-.dark .text-gray-200,
-.dark .text-slate-600,
-.dark .text-slate-500,
-.dark .text-slate-400 {
+.dark .text-gray-200 {
   color: var(--muted-foreground) !important;
 }
 
 .dark .border-gray-100,
 .dark .border-gray-200,
-.dark .border-gray-300,
-.dark .border-slate-100,
-.dark .border-slate-200,
-.dark .border-slate-300 {
+.dark .border-gray-300 {
   border-color: var(--border) !important;
 }
 
