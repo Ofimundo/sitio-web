@@ -21,14 +21,6 @@ export function SalasSection({ salas }: { salas: Sala[] }) {
           ))}
         </div>
 
-        {salas.length > 3 && (
-          <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {salas.slice(3, 6).map((sala) => (
-              <SalaCard key={sala.ID_Sala} sala={sala} />
-            ))}
-          </div>
-        )}
-
         <div className="mt-10 text-center">
           <Link
             href="/catalogo?tipo=Salas+colaborativas"

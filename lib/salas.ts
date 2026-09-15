@@ -156,15 +156,12 @@ import salasFallback from "../data/salas.json"
 
 export async function getSalasDestacadas(): Promise<Sala[]> {
   try {
-    if (salasFallback && salasFallback.length > 0) {
-      return (salasFallback as Sala[]).filter((sala) => sala.Destacada)
-    }
     const [destacadas, detalles] = await Promise.all([
       executeQuery<SalaRow>(`SELECT * FROM ${VISTAS.destacadas}`),
       executeQuery<SalaRow>(`SELECT * FROM ${VISTAS.detalle}`),
     ])
 
-    return destacadas.map((destacada, index) => {
+    let mapped = destacadas.map((destacada, index) => {
       const titulo = destacada.titulo_sala?.trim().toLocaleLowerCase("es-CL")
       const nombre = destacada.nombre_sala?.trim().toLocaleLowerCase("es-CL")
       const detalle = detalles.find((item) => {
@@ -175,8 +172,31 @@ export async function getSalasDestacadas(): Promise<Sala[]> {
 
       return mapResumen(detalle ? { ...destacada, ...detalle } : destacada, index)
     }).filter((sala) => sala.ID_Producto.length > 0)
+
+    if (mapped.length < 3 && detalles.length > 0) {
+      const allMapped = detalles.map(mapResumen)
+      for (const s of allMapped) {
+        if (mapped.length >= 3) break
+        if (!mapped.some((m) => m.ID_Producto === s.ID_Producto)) {
+          mapped.push(s)
+        }
+      }
+    }
+
+    if (mapped.length > 0) return mapped
+    throw new Error("No DB rooms")
   } catch (error) {
-    return (salasFallback as Sala[]).filter((sala) => sala.Destacada)
+    const list = (salasFallback as Sala[]) || []
+    const destacadas = list.filter((sala) => sala.Destacada)
+    if (destacadas.length >= 3) return destacadas
+    const result = [...destacadas]
+    for (const s of list) {
+      if (result.length >= 3) break
+      if (!result.some((r) => r.ID_Producto === s.ID_Producto)) {
+        result.push(s)
+      }
+    }
+    return result
   }
 }
 
@@ -207,36 +227,44 @@ export async function getSalas(filtros: FiltrosSala = {}): Promise<Sala[]> {
 export async function getSalaByIdentifier(identifier: string): Promise<Sala | null> {
   const normalized = normalizeIdentifier(identifier)
 
+  let fallbackSala: Sala | null = null
   if (salasFallback && salasFallback.length > 0) {
-    const found = (salasFallback as Sala[]).find((candidate) =>
+    fallbackSala = (salasFallback as Sala[]).find((candidate) =>
       normalizeIdentifier(candidate.ID_Producto) === normalized ||
       normalizeIdentifier(candidate.Slug) === normalized
-    )
-    if (found) return found
+    ) || null
   }
 
   try {
     const allRows = await executeQuery<SalaRow>(`SELECT * FROM ${VISTAS.detalle}`)
     const row = allRows.find((candidate) => normalizeIdentifier(idProducto(candidate)) === normalized)
-    if (!row) return null
+    if (row) {
+      const productId = idProducto(row)
+      const [features, optionRows] = await Promise.all([
+        getCaracteristicas(productId),
+        getOpciones(productId),
+      ])
+      const sala = mapResumen(row, allRows.indexOf(row))
+      sala.Beneficios = features
+        .filter((item) => item.tipo?.trim().toLowerCase() === "funcion")
+        .map((item) => item.caracteristica?.trim())
+        .filter((item): item is string => Boolean(item))
+      sala.Compatibilidad = features
+        .filter((item) => item.tipo?.trim().toLowerCase() === "compatibilidad")
+        .map((item) => item.caracteristica?.trim())
+        .filter((item): item is string => Boolean(item))
+      sala.Opciones = groupOpciones(optionRows)
 
-    const productId = idProducto(row)
-    const [features, optionRows] = await Promise.all([
-      getCaracteristicas(productId),
-      getOpciones(productId),
-    ])
-    const sala = mapResumen(row, allRows.indexOf(row))
-    sala.Beneficios = features
-      .filter((item) => item.tipo?.trim().toLowerCase() === "funcion")
-      .map((item) => item.caracteristica?.trim())
-      .filter((item): item is string => Boolean(item))
-    sala.Compatibilidad = features
-      .filter((item) => item.tipo?.trim().toLowerCase() === "compatibilidad")
-      .map((item) => item.caracteristica?.trim())
-      .filter((item): item is string => Boolean(item))
-    sala.Opciones = groupOpciones(optionRows)
-    return sala
+      if (fallbackSala) {
+        if (sala.Opciones.length === 0) sala.Opciones = fallbackSala.Opciones
+        if (sala.Beneficios.length === 0) sala.Beneficios = fallbackSala.Beneficios
+        if (sala.Compatibilidad.length === 0) sala.Compatibilidad = fallbackSala.Compatibilidad
+      }
+      return sala
+    }
   } catch (error) {
-    return null
+    // DB fail, use fallback
   }
+
+  return fallbackSala
 }

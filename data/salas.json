@@ -9,11 +9,84 @@
     "Titulo": "SOLUCIÓN ADVANCED - SALA GRANDE",
     "Descripcion": "Solución para espacios de mayor capacidad, preparada para reuniones híbridas eficientes, claras y profesionales.",
     "Imagen_Principal": "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/06-Advanced_L.webp",
-    "Beneficios": [],
-    "Compatibilidad": [],
+    "Beneficios": [
+      "Videoconferencia 4K de alta definición con cámaras PTZ y encuadre óptico",
+      "Cancelación activa de ruido e inteligencia acústica para salas amplias",
+      "Encuadre automático e inteligente de hablantes por IA",
+      "Inicio de reunión con un solo toque (One-Touch Join) e integración directa"
+    ],
+    "Compatibilidad": [
+      "Microsoft Teams Rooms",
+      "Zoom Rooms",
+      "Google Meet",
+      "BYOD (Modo USB / HDMI genérico)"
+    ],
     "Destacada": true,
     "Orden": 1,
-    "Opciones": [],
+    "Opciones": [
+      {
+        "ID_Opcion": 1,
+        "Codigo": "A",
+        "Nombre": "Opción A",
+        "Equipos": [
+          {
+            "ID_Producto": "LOGI-RALLY-PLUS",
+            "Nombre_Equipo": "Rally Plus",
+            "Nombre_Marca": "Logitech",
+            "Descripcion": "Sistema de videoconferencia modular 4K con cámaras PTZ y altavoces independientes para salas grandes.",
+            "Imagen_Equipo": null,
+            "Orden": 1
+          },
+          {
+            "ID_Producto": "LOGI-TAP",
+            "Nombre_Equipo": "Tap",
+            "Nombre_Marca": "Logitech",
+            "Descripcion": "Panel táctil de control de sala de 10.1 pulgadas con sensor de movimiento y gestión limpia de cables.",
+            "Imagen_Equipo": null,
+            "Orden": 2
+          },
+          {
+            "ID_Producto": "LOGI-ROOMMATE",
+            "Nombre_Equipo": "RoomMate",
+            "Nombre_Marca": "Logitech",
+            "Descripcion": "Computador dedicado para videoconferencias con sistema operativo cerrado optimizado para Teams / Zoom.",
+            "Imagen_Equipo": null,
+            "Orden": 3
+          }
+        ]
+      },
+      {
+        "ID_Opcion": 2,
+        "Codigo": "B",
+        "Nombre": "Opción B",
+        "Equipos": [
+          {
+            "ID_Producto": "POLY-STUDIO-X70",
+            "Nombre_Equipo": "Studio X70",
+            "Nombre_Marca": "Poly",
+            "Descripcion": "Barra de video dual 4K inteligente con encuadre automático por IA y filtros de audio NoiseBlockAI.",
+            "Imagen_Equipo": null,
+            "Orden": 1
+          },
+          {
+            "ID_Producto": "POLY-TC10",
+            "Nombre_Equipo": "TC10",
+            "Nombre_Marca": "Poly",
+            "Descripcion": "Pantalla táctil de control para gestión de reuniones e interfaz intuitiva de inicio rápido.",
+            "Imagen_Equipo": null,
+            "Orden": 2
+          },
+          {
+            "ID_Producto": "POLY-EXP-MIC",
+            "Nombre_Equipo": "Micrófono de Expansión",
+            "Nombre_Marca": "Poly",
+            "Descripcion": "Micrófono de mesa adicional para máxima cobertura y nitidez de voz en mesas largas.",
+            "Imagen_Equipo": null,
+            "Orden": 3
+          }
+        ]
+      }
+    ],
     "Complementos": [
       {
         "ID_Producto": "I3-ELM2",
@@ -75,11 +148,84 @@
     "Titulo": "SOLUCIÓN ADVANCED - SALA MEDIANA",
     "Descripcion": "Tecnología para mejorar la experiencia de reuniones híbridas y facilitar una comunicación clara y profesional.",
     "Imagen_Principal": "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/05-Advanced_M.webp",
-    "Beneficios": [],
-    "Compatibilidad": [],
-    "Destacada": false,
+    "Beneficios": [
+      "Sistema de video 4K en formato barra todo-en-uno",
+      "Supresión inteligente de ruido ambiental y ecos",
+      "Seguimiento de rostro y voz de los participantes",
+      "Pantalla de control de toque único para iniciar llamadas"
+    ],
+    "Compatibilidad": [
+      "Microsoft Teams Rooms",
+      "Zoom Rooms",
+      "Google Meet",
+      "BYOD (Modo USB / HDMI)"
+    ],
+    "Destacada": true,
     "Orden": 2,
-    "Opciones": [],
+    "Opciones": [
+      {
+        "ID_Opcion": 1,
+        "Codigo": "A",
+        "Nombre": "Opción A",
+        "Equipos": [
+          {
+            "ID_Producto": "LOGI-RALLY-BAR",
+            "Nombre_Equipo": "Rally Bar",
+            "Nombre_Marca": "Logitech",
+            "Descripcion": "Barra de video todo-en-uno 4K con tecnología RightSight y RightSound para salas medianas.",
+            "Imagen_Equipo": null,
+            "Orden": 1
+          },
+          {
+            "ID_Producto": "LOGI-TAP-IP",
+            "Nombre_Equipo": "Tap IP",
+            "Nombre_Marca": "Logitech",
+            "Descripcion": "Panel de control táctil con conexión IP para inicio inmediato de videollamadas.",
+            "Imagen_Equipo": null,
+            "Orden": 2
+          },
+          {
+            "ID_Producto": "LOGI-MIC-POD",
+            "Nombre_Equipo": "Rally Mic Pod",
+            "Nombre_Marca": "Logitech",
+            "Descripcion": "Micrófono de mesa adicional con tecnología de nivelación de voz y cancelación de eco.",
+            "Imagen_Equipo": null,
+            "Orden": 3
+          }
+        ]
+      },
+      {
+        "ID_Opcion": 2,
+        "Codigo": "B",
+        "Nombre": "Opción B",
+        "Equipos": [
+          {
+            "ID_Producto": "NEAT-BAR-PRO",
+            "Nombre_Equipo": "Bar Pro",
+            "Nombre_Marca": "Neat",
+            "Descripcion": "Sistema compacto de barra de video dual 4K con procesamiento avanzado y audio inmersivo.",
+            "Imagen_Equipo": null,
+            "Orden": 1
+          },
+          {
+            "ID_Producto": "NEAT-PAD",
+            "Nombre_Equipo": "Pad",
+            "Nombre_Marca": "Neat",
+            "Descripcion": "Pantalla táctil multifunción de control de conferencias y reserva de espacio.",
+            "Imagen_Equipo": null,
+            "Orden": 2
+          },
+          {
+            "ID_Producto": "NEAT-CENTER",
+            "Nombre_Equipo": "Center",
+            "Nombre_Marca": "Neat",
+            "Descripcion": "Cámara de centro de mesa para captar las expresiones de todos los asistentes.",
+            "Imagen_Equipo": null,
+            "Orden": 3
+          }
+        ]
+      }
+    ],
     "Complementos": [
       {
         "ID_Producto": "I3-ELM2",
@@ -141,11 +287,68 @@
     "Titulo": "SOLUCIÓN BUSINESS - SALA PEQUEÑA",
     "Descripcion": "Solución para espacios reducidos con tecnología diseñada para reuniones más ágiles y profesionales.",
     "Imagen_Principal": "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/01-Business_S.webp",
-    "Beneficios": [],
-    "Compatibilidad": [],
+    "Beneficios": [
+      "Solución ultracompacta para huddle rooms y salas reducidas",
+      "Audio bidireccional cristalino optimizado para voz",
+      "Cámara gran angular para encuadres perfectos a corta distancia",
+      "Despliegue rápido y plug & play"
+    ],
+    "Compatibilidad": [
+      "Microsoft Teams Rooms",
+      "Zoom Rooms",
+      "Google Meet",
+      "BYOD (Modo USB / HDMI)"
+    ],
     "Destacada": false,
     "Orden": 3,
-    "Opciones": [],
+    "Opciones": [
+      {
+        "ID_Opcion": 1,
+        "Codigo": "A",
+        "Nombre": "Opción A",
+        "Equipos": [
+          {
+            "ID_Producto": "LOGI-RALLY-MINI",
+            "Nombre_Equipo": "Rally Bar Mini",
+            "Nombre_Marca": "Logitech",
+            "Descripcion": "Barra de video compacta todo-en-uno para espacios reducidos y salas pequeñas.",
+            "Imagen_Equipo": null,
+            "Orden": 1
+          },
+          {
+            "ID_Producto": "LOGI-TAP-IP",
+            "Nombre_Equipo": "Tap IP",
+            "Nombre_Marca": "Logitech",
+            "Descripcion": "Panel de control táctil con conexión de red IP para agendar e iniciar llamadas.",
+            "Imagen_Equipo": null,
+            "Orden": 2
+          }
+        ]
+      },
+      {
+        "ID_Opcion": 2,
+        "Codigo": "B",
+        "Nombre": "Opción B",
+        "Equipos": [
+          {
+            "ID_Producto": "JABRA-PANACAST-50",
+            "Nombre_Equipo": "PanaCast 50",
+            "Nombre_Marca": "Jabra",
+            "Descripcion": "Barra de sonido y video con campo de visión panorámico de 180° en 4K.",
+            "Imagen_Equipo": null,
+            "Orden": 1
+          },
+          {
+            "ID_Producto": "JABRA-PANACAST-CTRL",
+            "Nombre_Equipo": "PanaCast Control",
+            "Nombre_Marca": "Jabra",
+            "Descripcion": "Panel de control táctil dedicado para gestión sencilla de llamadas en sala.",
+            "Imagen_Equipo": null,
+            "Orden": 2
+          }
+        ]
+      }
+    ],
     "Complementos": [
       {
         "ID_Producto": "I3-ELM2",
@@ -207,11 +410,84 @@
     "Titulo": "SOLUCIÓN ESSENTIAL - SALA GRANDE",
     "Descripcion": "Una configuración equilibrada para reuniones híbridas claras, ágiles y profesionales.",
     "Imagen_Principal": "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/04-Essential_L.webp",
-    "Beneficios": [],
-    "Compatibilidad": [],
+    "Beneficios": [
+      "Configuración equilibrada para reuniones efectivas en espacios de gran escala",
+      "Captura de voz de alta fidelidad con expansión de micrófonos",
+      "Video 4K ultra nítido con encuadre automático inteligente",
+      "Control de reunión táctil unificado"
+    ],
+    "Compatibilidad": [
+      "Microsoft Teams Rooms",
+      "Zoom Rooms",
+      "Google Meet",
+      "BYOD (Modo USB / HDMI)"
+    ],
     "Destacada": false,
     "Orden": 4,
-    "Opciones": [],
+    "Opciones": [
+      {
+        "ID_Opcion": 1,
+        "Codigo": "A",
+        "Nombre": "Opción A",
+        "Equipos": [
+          {
+            "ID_Producto": "LOGI-RALLY-PLUS",
+            "Nombre_Equipo": "Rally Plus",
+            "Nombre_Marca": "Logitech",
+            "Descripcion": "Sistema de videoconferencia modular 4K con cámaras PTZ y altavoces independientes para salas grandes.",
+            "Imagen_Equipo": null,
+            "Orden": 1
+          },
+          {
+            "ID_Producto": "LOGI-TAP",
+            "Nombre_Equipo": "Tap",
+            "Nombre_Marca": "Logitech",
+            "Descripcion": "Panel táctil de control de sala de 10.1 pulgadas con sensor de movimiento y gestión limpia de cables.",
+            "Imagen_Equipo": null,
+            "Orden": 2
+          },
+          {
+            "ID_Producto": "LOGI-ROOMMATE",
+            "Nombre_Equipo": "RoomMate",
+            "Nombre_Marca": "Logitech",
+            "Descripcion": "Computador dedicado para videoconferencias en salas de reuniones.",
+            "Imagen_Equipo": null,
+            "Orden": 3
+          }
+        ]
+      },
+      {
+        "ID_Opcion": 2,
+        "Codigo": "B",
+        "Nombre": "Opción B",
+        "Equipos": [
+          {
+            "ID_Producto": "POLY-STUDIO-X70",
+            "Nombre_Equipo": "Studio X70",
+            "Nombre_Marca": "Poly",
+            "Descripcion": "Barra de video dual 4K inteligente con encuadre automático por IA y filtros de audio NoiseBlockAI.",
+            "Imagen_Equipo": null,
+            "Orden": 1
+          },
+          {
+            "ID_Producto": "POLY-TC10",
+            "Nombre_Equipo": "TC10",
+            "Nombre_Marca": "Poly",
+            "Descripcion": "Pantalla táctil de control para gestión de reuniones e interfaz intuitiva de inicio rápido.",
+            "Imagen_Equipo": null,
+            "Orden": 2
+          },
+          {
+            "ID_Producto": "POLY-EXP-MIC",
+            "Nombre_Equipo": "Micrófono de Expansión",
+            "Nombre_Marca": "Poly",
+            "Descripcion": "Micrófono de mesa adicional para máxima cobertura y nitidez de voz en mesas largas.",
+            "Imagen_Equipo": null,
+            "Orden": 3
+          }
+        ]
+      }
+    ],
     "Complementos": [
       {
         "ID_Producto": "I3-ELM2",
@@ -273,11 +549,84 @@
     "Titulo": "SOLUCIÓN ESSENTIAL - SALA MEDIANA",
     "Descripcion": "Una configuración equilibrada para reuniones híbridas claras, ágiles y profesionales.",
     "Imagen_Principal": "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/03-Essential_M.webp",
-    "Beneficios": [],
-    "Compatibilidad": [],
+    "Beneficios": [
+      "Equipamiento completo para salas de tamaño mediano (6 a 10 personas)",
+      "Audio envolvente con tecnología de matriz de micrófonos beamforming",
+      "Calidad de video Ultra HD 4K con ajuste automático de exposición",
+      "Control de sala táctil fácil e intuitivo"
+    ],
+    "Compatibilidad": [
+      "Microsoft Teams Rooms",
+      "Zoom Rooms",
+      "Google Meet",
+      "BYOD (Modo USB / HDMI)"
+    ],
     "Destacada": false,
     "Orden": 5,
-    "Opciones": [],
+    "Opciones": [
+      {
+        "ID_Opcion": 1,
+        "Codigo": "A",
+        "Nombre": "Opción A",
+        "Equipos": [
+          {
+            "ID_Producto": "LOGI-RALLY-BAR",
+            "Nombre_Equipo": "Rally Bar",
+            "Nombre_Marca": "Logitech",
+            "Descripcion": "Barra de video todo-en-uno 4K con tecnología RightSight y RightSound para salas medianas.",
+            "Imagen_Equipo": null,
+            "Orden": 1
+          },
+          {
+            "ID_Producto": "LOGI-TAP-IP",
+            "Nombre_Equipo": "Tap IP",
+            "Nombre_Marca": "Logitech",
+            "Descripcion": "Panel de control táctil con conexión IP para inicio inmediato de videollamadas.",
+            "Imagen_Equipo": null,
+            "Orden": 2
+          },
+          {
+            "ID_Producto": "LOGI-MIC-POD",
+            "Nombre_Equipo": "Rally Mic Pod",
+            "Nombre_Marca": "Logitech",
+            "Descripcion": "Micrófono de mesa adicional con tecnología de nivelación de voz y cancelación de eco.",
+            "Imagen_Equipo": null,
+            "Orden": 3
+          }
+        ]
+      },
+      {
+        "ID_Opcion": 2,
+        "Codigo": "B",
+        "Nombre": "Opción B",
+        "Equipos": [
+          {
+            "ID_Producto": "NEAT-BAR-PRO",
+            "Nombre_Equipo": "Bar Pro",
+            "Nombre_Marca": "Neat",
+            "Descripcion": "Sistema compacto de barra de video dual 4K con procesamiento avanzado y audio inmersivo.",
+            "Imagen_Equipo": null,
+            "Orden": 1
+          },
+          {
+            "ID_Producto": "NEAT-PAD",
+            "Nombre_Equipo": "Pad",
+            "Nombre_Marca": "Neat",
+            "Descripcion": "Pantalla táctil multifunción de control de conferencias y reserva de espacio.",
+            "Imagen_Equipo": null,
+            "Orden": 2
+          },
+          {
+            "ID_Producto": "NEAT-CENTER",
+            "Nombre_Equipo": "Center",
+            "Nombre_Marca": "Neat",
+            "Descripcion": "Cámara de centro de mesa para captar las expresiones de todos los asistentes.",
+            "Imagen_Equipo": null,
+            "Orden": 3
+          }
+        ]
+      }
+    ],
     "Complementos": [
       {
         "ID_Producto": "I3-ELM2",
@@ -337,13 +686,70 @@
     "Linea": "ESSENTIAL",
     "Tamano": "S",
     "Titulo": "SOLUCIÓN ESSENTIAL - SALA PEQUEÑA",
-    "Descripcion": "Solución para espacios reducidos con tecnologia diseñada para reuniones más ágiles y profesionales.",
+    "Descripcion": "Solución para espacios reducidos con tecnología diseñada para reuniones más ágiles y profesionales.",
     "Imagen_Principal": "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/02-Essential_S.webp",
-    "Beneficios": [],
-    "Compatibilidad": [],
+    "Beneficios": [
+      "Solución optimizada para salas ejecutivas pequeñas (2 a 5 personas)",
+      "Cámara 4K Ultra HD con campo visual panorámico y enfoque dinámico",
+      "Cancelación avanzada de ruido para llamadas ultra nítidas",
+      "Instalación limpia en pared o sobre monitor"
+    ],
+    "Compatibilidad": [
+      "Microsoft Teams Rooms",
+      "Zoom Rooms",
+      "Google Meet",
+      "BYOD (Modo USB / HDMI)"
+    ],
     "Destacada": true,
     "Orden": 6,
-    "Opciones": [],
+    "Opciones": [
+      {
+        "ID_Opcion": 1,
+        "Codigo": "A",
+        "Nombre": "Opción A",
+        "Equipos": [
+          {
+            "ID_Producto": "LOGI-RALLY-MINI",
+            "Nombre_Equipo": "Rally Bar Mini",
+            "Nombre_Marca": "Logitech",
+            "Descripcion": "Barra de video compacta todo-en-uno para espacios reducidos y salas pequeñas.",
+            "Imagen_Equipo": null,
+            "Orden": 1
+          },
+          {
+            "ID_Producto": "LOGI-TAP-IP",
+            "Nombre_Equipo": "Tap IP",
+            "Nombre_Marca": "Logitech",
+            "Descripcion": "Panel de control táctil con conexión de red IP para agendar e iniciar llamadas.",
+            "Imagen_Equipo": null,
+            "Orden": 2
+          }
+        ]
+      },
+      {
+        "ID_Opcion": 2,
+        "Codigo": "B",
+        "Nombre": "Opción B",
+        "Equipos": [
+          {
+            "ID_Producto": "JABRA-PANACAST-50",
+            "Nombre_Equipo": "PanaCast 50",
+            "Nombre_Marca": "Jabra",
+            "Descripcion": "Barra de sonido y video con campo de visión panorámico de 180° en 4K.",
+            "Imagen_Equipo": null,
+            "Orden": 1
+          },
+          {
+            "ID_Producto": "JABRA-PANACAST-CTRL",
+            "Nombre_Equipo": "PanaCast Control",
+            "Nombre_Marca": "Jabra",
+            "Descripcion": "Panel de control táctil dedicado para gestión sencilla de llamadas en sala.",
+            "Imagen_Equipo": null,
+            "Orden": 2
+          }
+        ]
+      }
+    ],
     "Complementos": [
       {
         "ID_Producto": "I3-ELM2",
