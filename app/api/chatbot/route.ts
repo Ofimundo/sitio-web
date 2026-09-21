@@ -158,6 +158,10 @@ export class GroqRateLimitError extends Error {
   }
 }
 
+export const MENSAJE_FUERA_DE_SERVICIO =
+  "⚠️ El asistente virtual se encuentra fuera de servicio o recibiendo muchas consultas en este momento. Por favor, vuelve a intentarlo en un rato o contáctanos directamente."
+
+
 function isRateLimitOrQuotaError(status: number, errorText: string): boolean {
   const norm = (errorText || "").toLowerCase()
   return (
@@ -184,7 +188,7 @@ async function consultarGroq(system: string, user: string): Promise<string | nul
         body: JSON.stringify({
           model: modelo,
           temperature: 0.5,
-          max_completion_tokens: 850,
+          max_tokens: 850,
           messages: [
             {
               role: "system",
@@ -208,9 +212,9 @@ async function consultarGroq(system: string, user: string): Promise<string | nul
       if (isRateLimitOrQuotaError(response.status, errorTexto)) {
         throw new GroqRateLimitError(errorTexto)
       }
-      console.warn(`Groq 120B no disponible (${response.status}): ${errorTexto}. Reintentando con modelo secundario openai/gpt-oss-20b...`)
+      console.warn(`Groq GPT-OSS 120B no disponible (${response.status}): ${errorTexto}. Reintentando con modelo secundario groq/compound...`)
 
-      response = await hacerConsulta("openai/gpt-oss-20b")
+      response = await hacerConsulta("groq/compound")
     }
 
     if (!response.ok) {
@@ -244,6 +248,7 @@ type IntencionChatbot = {
   tema: string | null
   listado_solicitado: boolean
   detalles_suficientes: boolean
+  es_pregunta_seguimiento: boolean
 }
 
 async function interpretarConsultaConIA(
@@ -262,7 +267,7 @@ async function interpretarConsultaConIA(
         body: JSON.stringify({
           model: modelo,
           temperature: 0,
-          max_completion_tokens: 1000,
+          max_tokens: 1000,
           response_format: {
             type: "json_object",
           },
@@ -270,11 +275,9 @@ async function interpretarConsultaConIA(
             {
               role: "system",
               content: `
-Eres el intérprete de intención del asistente comercial de Ofimundo.
+Eres el intérprete de intención del asistente comercial autónomo de Ofimundo.
 
-Tu única tarea es entender qué necesita el usuario utilizando:
-1. el mensaje actual;
-2. la conversación anterior.
+Tu tarea es analizar la consulta del usuario y el historial previo para extraer la intención y deducir sus necesidades de forma inteligente.
 
 Devuelve EXCLUSIVAMENTE un objeto JSON válido.
 
@@ -290,7 +293,8 @@ Formato obligatorio:
   "uso": null,
   "tema": null,
   "listado_solicitado": false,
-  "detalles_suficientes": false
+  "detalles_suficientes": true,
+  "es_pregunta_seguimiento": false
 }
 
 Categorías válidas:
@@ -300,27 +304,13 @@ Categorías válidas:
 - daas (arriendo de computadores/notebooks, dispositivo como servicio)
 - general (saludos, preguntas institucionales)
 
-Reglas de uso:
-- uso: "hogar" si menciona casa, hogar, uso personal, tareas, estudiante o fotos en casa.
-- uso: "pyme" si menciona oficina pequeña, negocio, tienda, local, pyme o 2-10 usuarios.
-- uso: "corporativo" si menciona gran empresa, corporación, alto volumen, imprenta o uso masivo.
+Reglas de deducción:
+- es_pregunta_seguimiento: asigna true si el usuario hace una pregunta sobre los productos o temas previamente discutidos (ej: "¿cuál es más rápida?", "¿tienen wifi?", "¿qué garantía tienen?", "¿cuál es el precio?", "¿diferencia entre la primera y la segunda?", "¿cuántas personas caben?"). Si el usuario está solicitando o consultando sobre una nueva categoría o servicio distinto (ej: pasando de impresoras a salas o automatizaciones), asigna FALSE.
+- uso: "hogar" si menciona casa, hogar, uso personal, tareas, estudiante; "pyme" si menciona oficina pequeña, negocio, tienda, pyme o 2-10 usuarios; "corporativo" si menciona gran empresa, corporación, alto volumen.
+- volumen: número entero si indicó páginas al mes.
+- detalles_suficientes: DEBE SER true por defecto siempre que haya una categoría clara o pregunta del usuario, para permitir recomendación inmediata o respuesta autónoma.
 
-Reglas de volumen:
-- Asigna "volumen" (número entero) ÚNICAMENTE si el usuario proporcionó un NÚMERO O CIFRA EXPLÍCITA de páginas al mes (ej. 100, 300, 500, 2000, 5000, 10000, 50000).
-- NO asignes un valor numérico a "volumen" si el usuario solo dijo "para mi casa", "para la oficina" o "pyme" sin dar un número numérico de páginas. En ese caso mantén "volumen" como null.
-- Convierte números con separadores o notación (ej: "50.000", "50 000", "50k") a entero puro (ej: 50000).
-- Si da un número de páginas al mes -> volumen = <numero>.
-
-Reglas generales:
-- Si el usuario solo saluda o pregunta en general -> categoria = "general", detalles_suficientes = false, listado_solicitado = false.
-- Si el usuario habla de impresoras o multifuncionales sin haber indicado TANTO la cantidad o número de páginas mensuales (número explícito) COMO la preferencia de Color o Blanco y Negro, y no ha pedido explícitamente el catálogo -> categoria = "equipos", detalles_suficientes = false, listado_solicitado = false.
-- Asigna listado_solicitado = true ÚNICAMENTE si el usuario pidió explícitamente "ver el catálogo", "ver modelos", "mostrar opciones" o "qué impresoras tienen". Si solo dice "busco una impresora" o "necesito impresora", listado_solicitado DEBE SER false.
-- detalles_suficientes = true ÚNICAMENTE cuando el usuario indicó TANTO la cantidad de páginas mensuales (número explícito) COMO el tipo de impresión (Color o Blanco y Negro), O si pidió explícitamente el catálogo o modelos.
-- Si hablan de salas colaborativas y el usuario indica tamaño (S/pequeña, M/mediana, L/grande) o número de personas -> tamano = "S"/"M"/"L", detalles_suficientes = true. Si solo menciona salas en general -> detalles_suficientes = false.
-- Si hablan de automatizaciones y especifica el tema/proceso (facturas, finiquitos, cuentas) -> tema = "...", detalles_suficientes = true. Si es consulta general -> detalles_suficientes = false.
-- Interpreta las respuestas a preguntas anteriores del asistente usando el historial.
-- No inventes productos.
-- Solo devuelve JSON.
+Interpreta contextualmente basándote en la conversación previa. Solo devuelve JSON.
 `,
             },
             {
@@ -347,9 +337,9 @@ ${mensaje}
       if (isRateLimitOrQuotaError(response.status, errorTexto)) {
         throw new GroqRateLimitError(errorTexto)
       }
-      console.warn(`Groq 120B no disponible (${response.status}): ${errorTexto}. Reintentando con modelo secundario openai/gpt-oss-20b...`)
+      console.warn(`Groq GPT-OSS 120B no disponible (${response.status}): ${errorTexto}. Reintentando con modelo secundario groq/compound...`)
 
-      response = await hacerIntencion("openai/gpt-oss-20b")
+      response = await hacerIntencion("groq/compound")
     }
 
     if (!response.ok) {
@@ -425,7 +415,8 @@ ${mensaje}
           ? resultado.tema.trim()
           : null,
       listado_solicitado: Boolean(resultado.listado_solicitado),
-      detalles_suficientes: Boolean(resultado.detalles_suficientes),
+      detalles_suficientes: true,
+      es_pregunta_seguimiento: Boolean(resultado.es_pregunta_seguimiento),
     }
   } catch (error) {
     if (error instanceof GroqRateLimitError) throw error
@@ -439,49 +430,67 @@ function parseTamanoSala(
   textoMensajesUsuario: string,
   intencionTamano?: string | null
 ): "S" | "M" | "L" | null {
-  const textoCompleto = normalizar(`${textoMensajesUsuario} ${pregunta}`)
+  const normPregunta = normalizar(pregunta)
+  const normHistorial = normalizar(textoMensajesUsuario)
 
-  // 1. Extracción de número explícito de personas en los mensajes del usuario
-  const matches = textoCompleto.match(/\b([0-9]{1,2})\b/g)
-  if (matches) {
-    for (const match of matches) {
-      const val = parseInt(match, 10)
-      if (val >= 1 && val <= 5) return "S"
-      if (val >= 6 && val <= 11) return "M"
-      if (val >= 12 && val <= 50) return "L"
+  const extraerTamano = (texto: string): "S" | "M" | "L" | null => {
+    const matchPax =
+      texto.match(/\b(\d{1,2})\s*(personas|asistentes|participantes|pax|usuarios|integrantes)\b/i) ||
+      texto.match(/\bpara\s+(\d{1,2})\s*(personas|asistentes|participantes|pax|usuarios)?\b/i) ||
+      texto.match(/\b(capacidad|de)\s+(\d{1,2})\s*(personas|asistentes|participantes|pax)?\b/i)
+
+    if (matchPax) {
+      const num = parseInt(matchPax[1] || matchPax[2], 10)
+      if (!isNaN(num)) {
+        if (num >= 1 && num <= 5) return "S"
+        if (num >= 6 && num <= 11) return "M"
+        if (num >= 12 && num <= 100) return "L"
+      }
     }
+
+    if (contiene(texto, ["pequena", "pequeno", "small", "chica", "huddle", "1 a 4", "1 a 5", "2 a 5"])) {
+      return "S"
+    }
+    if (contiene(texto, ["mediana", "mediano", "medium", "6 a 10", "6 a 11", "5 a 10"])) {
+      return "M"
+    }
+    if (contiene(texto, ["grande", "large", "directorio", "auditorio", "gran escala", "mas de 10", "mas de 12", "10 a 20"])) {
+      return "L"
+    }
+    return null
   }
 
-  // 2. Coincidencias por palabras de tamaño directas en los mensajes del usuario
-  if (contiene(textoCompleto, ["pequena", "pequeno", "small", "chica", "huddle", "1 a 4", "2 a 4", "1 a 5"])) {
-    return "S"
-  }
-  if (contiene(textoCompleto, ["mediana", "mediano", "medium", "6 a 10", "6 a 11", "5 a 10"])) {
-    return "M"
-  }
-  if (contiene(textoCompleto, ["grande", "large", "directorio", "auditorio", "mas de 10", "mas de 12", "10 a 20"])) {
-    return "L"
-  }
+  let t = extraerTamano(normPregunta)
+  if (t) return t
 
-  // 3. Fallback: Si la IA devolvió S, M o L directamente y el usuario no dijo número
   if (intencionTamano) {
-    const t = String(intencionTamano).trim().toUpperCase()
-    if (t === "S" || t === "M" || t === "L") {
-      return t as "S" | "M" | "L"
-    }
+    const val = String(intencionTamano).trim().toUpperCase()
+    if (val === "S" || val === "M" || val === "L") return val as "S" | "M" | "L"
   }
 
-  // 4. Búsqueda aislada de s, m o l
-  if (/\b(s|peque[nñ]a)\b/i.test(pregunta)) return "S"
-  if (/\b(m|mediana)\b/i.test(pregunta)) return "M"
-  if (/\b(l|grande)\b/i.test(pregunta)) return "L"
+  t = extraerTamano(normHistorial)
+  if (t) return t
+
+  if (/\b(s|peque[nñ]a)\b/i.test(normPregunta)) return "S"
+  if (/\b(m|mediana)\b/i.test(normPregunta)) return "M"
+  if (/\b(l|grande)\b/i.test(normPregunta)) return "L"
 
   return null
 }
 
+function parseLineaSala(pregunta: string, textoMensajesUsuario: string): "ADVANCED" | "BUSINESS" | "ESSENTIAL" | null {
+  const combo = normalizar(`${textoMensajesUsuario} ${pregunta}`)
+  if (contiene(combo, ["advanced", "premium", "alta gama", "alta tecnologia", "inteligencia artificial", "ia"])) return "ADVANCED"
+  if (contiene(combo, ["business", "estandar", "standard", "agil"])) return "BUSINESS"
+  if (contiene(combo, ["essential", "basica", "economica", "equilibrada", "costo eficiente"])) return "ESSENTIAL"
+  return null
+}
+
+
 export async function POST(request: NextRequest) {
   let body: any = {}
   let sesionId = ""
+  let ultimosProductosRecomendados: any[] = []
 
   try {
     try {
@@ -528,43 +537,38 @@ export async function POST(request: NextRequest) {
       console.error("No se pudo cargar historial directamente de DB:", error)
     }
 
+    if (historial.length === 0 && Array.isArray(body?.historial) && body.historial.length > 0) {
+      historial = body.historial
+        .filter((item: any) => item.texto)
+        .map((item: any) => ({
+          mensaje_usuario: item.rol === "usuario" ? item.texto : null,
+          respuesta_bot: item.rol === "bot" ? item.texto : null,
+          productos_recomendados: item.productos ?? [],
+          categoria: item.categoria ?? null,
+        }))
+    }
 
-    // Filtrar el historial para aislar ÚNICAMENTE los turnos de la búsqueda activa actual.
-    // Si un turno anterior entregó productos_recomendados, esa búsqueda previa concluyó.
-    // Los turnos anteriores a esa recomendación entregada NO deben aportar parámetros a la búsqueda actual.
+    // Preservar la secuencia de mensajes para contexto completo
     let historialBusquedaActiva = Array.isArray(historial) ? [...historial] : []
-    let ultimoIndiceProductos = -1
-    for (let i = historialBusquedaActiva.length - 1; i >= 0; i--) {
-      const item = historialBusquedaActiva[i]
-      if (item?.productos_recomendados) {
-        try {
-          const prods = typeof item.productos_recomendados === "string"
-            ? JSON.parse(item.productos_recomendados)
-            : item.productos_recomendados
-          if (Array.isArray(prods) && prods.length > 0) {
-            ultimoIndiceProductos = i
-            break
-          }
-        } catch (e) {}
-      }
-    }
-
-    if (ultimoIndiceProductos !== -1) {
-      historialBusquedaActiva = historialBusquedaActiva.slice(ultimoIndiceProductos + 1)
-    }
 
     let textoMensajesUsuarioActivo = normalizar(
-      historialBusquedaActiva.map((item) => item.mensaje_usuario ?? "").join(" ") + " " + body.mensaje
+      historialBusquedaActiva
+        .map((item) => item.mensaje_usuario ?? "")
+        .filter(Boolean)
+        .join(" ") + " " + body.mensaje
     )
 
     const textoMensajesUsuario = normalizar(
-      historial.map((item) => item.mensaje_usuario ?? "").join(" ") + " " + body.mensaje
+      historial
+        .map((item) => item.mensaje_usuario ?? "")
+        .filter(Boolean)
+        .join(" ") + " " + body.mensaje
     )
 
     const contextoConversacion = historial
       .map(
         (item) =>
-          `Usuario: ${item.mensaje_usuario}\nAsistente: ${item.respuesta_bot ?? ""}`
+          `Usuario: ${item.mensaje_usuario || ""}\nAsistente: ${item.respuesta_bot ?? ""}`
       )
       .join("\n\n")
 
@@ -673,47 +677,39 @@ ${body.mensaje}`
         "esa opción",
       ])
 
-    const textoHistorial = normalizar(
-      historial
-        .map((item) => `${item.mensaje_usuario} ${item.respuesta_bot ?? ""}`)
-        .join(" ")
-    )
+    let ultimoTurnoCategoria: string | null = null
+    if (Array.isArray(historial) && historial.length > 0) {
+      for (let i = historial.length - 1; i >= 0; i--) {
+        const cat = (historial[i] as any)?.categoria
+        if (cat && cat !== "general") {
+          ultimoTurnoCategoria = cat
+          break
+        }
+      }
+    }
 
-    const categoriaAnterior =
-      contiene(textoHistorial, [
-        "automatizacion",
-        "automatizaciones",
-        "finiquito",
-        "facturas",
-        "gestion de cuentas",
-      ])
-        ? "automatizaciones"
-        : contiene(textoHistorial, [
-            "sala",
-            "salas",
-            "advanced",
-            "essential",
-            "business",
-            "videoconferencia",
-          ])
-          ? "salas"
-          : contiene(textoHistorial, [
-              "daas",
-              "dispositivo como servicio",
-              "arriendo de equipos",
-            ])
-            ? "daas"
-            : contiene(textoHistorial, [
-                "impresora",
-                "multifuncional",
-                "xerox",
-                "epson",
-                "brother",
-                "kyocera",
-                "lexmark",
-              ])
-              ? "equipos"
-              : null
+    let categoriaAnterior = ultimoTurnoCategoria
+    if (!categoriaAnterior && Array.isArray(historial) && historial.length > 0) {
+      for (let i = historial.length - 1; i >= 0; i--) {
+        const itemText = normalizar(`${historial[i].mensaje_usuario || ""} ${historial[i].respuesta_bot || ""}`)
+        if (contiene(itemText, ["automatizacion", "automatizaciones", "finiquito", "facturas", "gestion de cuentas"])) {
+          categoriaAnterior = "automatizaciones"
+          break
+        }
+        if (contiene(itemText, ["sala", "salas", "advanced", "essential", "business", "videoconferencia"])) {
+          categoriaAnterior = "salas"
+          break
+        }
+        if (contiene(itemText, ["daas", "dispositivo como servicio", "arriendo de equipos"])) {
+          categoriaAnterior = "daas"
+          break
+        }
+        if (contiene(itemText, ["impresora", "multifuncional", "xerox", "epson", "brother", "kyocera", "lexmark"])) {
+          categoriaAnterior = "equipos"
+          break
+        }
+      }
+    }
 
     const esSaludoPuro =
       contiene(pregunta, [
@@ -766,34 +762,58 @@ ${body.mensaje}`
     const categoria =
       esSaludoPuro
         ? "general"
-        : esDaas
-          ? "daas"
-          : esAutomatizacion
-            ? "automatizaciones"
-            : esSala
-              ? "salas"
-              : esEquipoExplicit
-                ? "equipos"
-                : intencionIA?.categoria && intencionIA.categoria !== "general"
-                  ? intencionIA.categoria
+        : intencionIA?.categoria && intencionIA.categoria !== "general"
+          ? intencionIA.categoria
+          : esDaas
+            ? "daas"
+            : esAutomatizacion
+              ? "automatizaciones"
+              : esSala
+                ? "salas"
+                : esEquipoExplicit
+                  ? "equipos"
                   : mensajeEsContinuacion && categoriaAnterior
                     ? categoriaAnterior
-                    : "equipos"
+                    : (categoriaAnterior ?? "equipos")
+
+    const esCambioDeCategoria = Boolean(
+      ultimoTurnoCategoria &&
+      ultimoTurnoCategoria !== categoria &&
+      categoria !== "general"
+    )
+
+    if (esCambioDeCategoria) {
+      historialBusquedaActiva = []
+    }
+
+    let productosAnteriores: any[] = []
+    if (Array.isArray(historial) && historial.length > 0) {
+      for (let i = historial.length - 1; i >= 0; i--) {
+        const item = historial[i]
+        const prods = (item as any)?.productos_recomendados ?? (item as any)?.productos
+        if (Array.isArray(prods) && prods.length > 0) {
+          productosAnteriores = prods
+          break
+        }
+      }
+    }
+
+    const esSeguimientoReal = Boolean(
+      (intencionIA?.es_pregunta_seguimiento || mensajeEsContinuacion) &&
+      !esCambioDeCategoria &&
+      productosAnteriores.length > 0
+    )
 
 
     if (categoria === "general") {
       const respuestaGroq = await consultarGroq(
         `
 Eres el asistente comercial virtual de Ofimundo.
-Atiendes a clientes interesados en soluciones tecnológicas empresariales (impresión, salas colaborativas de videoconferencia, arriendo DaaS y automatizaciones).
-
-REGLAS DE CONVERSACIÓN NATURAL:
-- Habla de manera cercana, empática, fluida y profesional, como un asesor comercial humano experto.
-- Si el usuario saluda o hace una pregunta general, responde con calidez y simpatía natural.
-- ESTRICTAMENTE PROHIBIDO MENCIONAR MODELOS ESPECÍFICOS O CONSULTAS ANTERIORES DE IMPRESIÓN (ej: NO digas "veo que estás interesado en la Epson WorkForce" o "retomando la impresora").
-- Explica brevemente cómo puedes orientarlo (equipos de impresión, salas colaborativas, arriendo DaaS o automatizaciones).
-- Mantén un tono conciso (máximo 3 o 4 líneas) sin lenguaje robótico o frío.
-- Termina con una pregunta abierta y amable para continuar la conversación.
+REGLAS ESTRICTAS:
+- Responde en MÁXIMO 2 LÍNEAS en español con un tono amable, fluido y comercial.
+- Si saluda o pregunta en general, explícale de forma directa que puedes orientarlo en impresión MPS, salas colaborativas, arriendo DaaS o automatizaciones.
+- ESTRICTAMENTE PROHIBIDO inventar modelos o menciones de impresoras previas si está saludando.
+- Cierra con una sola pregunta corta.
 `,
         `
 Consulta del cliente:
@@ -801,9 +821,7 @@ ${body.mensaje}
 `
       )
 
-      const respuesta =
-        respuestaGroq ??
-        "👋 ¡Hola! Qué gusto saludarte. Soy el asistente de Ofimundo. Puedo orientarte con 🖨️ impresión, 🤝 salas colaborativas, 💻 arriendo DaaS o ⚙️ automatización de procesos. ¿En qué te puedo ayudar hoy?"
+      const respuesta = respuestaGroq ?? MENSAJE_FUERA_DE_SERVICIO
 
       const origin = new URL(request.url).origin
       await registrarEnHistorial(origin, sesionId, body.mensaje, respuesta)
@@ -838,15 +856,11 @@ ${body.mensaje}
 
       const respuestaGroq = await consultarGroq(
         `
-Eres el asistente comercial virtual de Ofimundo.
-El cliente está consultando sobre DaaS (Dispositivo como Servicio).
-
-REGLAS:
-- Responde siempre en español, de forma breve, natural y comercial (máximo 4 líneas).
-- Usa emojis simples como ✅, 🔹 o 💻 cuando ayuden a leer mejor.
-- No uses tablas Markdown.
-- Explica DaaS de forma clara. Si el cliente quiere contratar o cotizar, indícale que puede solicitar asesoría comercial.
-- Termina con una sola pregunta corta para continuar la conversación.
+Eres el asistente comercial virtual de Ofimundo experto en DaaS (Dispositivo como Servicio).
+REGLAS ESTRICTAS:
+- Responde siempre en español, de forma ultra concisa (MÁXIMO 2 LÍNEAS).
+- Explica de forma breve y comercial el servicio DaaS (arriendo de computadores/notebooks con mantenimiento y soporte).
+- Cierra con una sola pregunta corta.
 `,
         `
 Consulta del cliente:
@@ -857,9 +871,7 @@ ${JSON.stringify(informacionDaas)}
 `
       )
 
-      const respuesta =
-        respuestaGroq ??
-        "DaaS (Dispositivo como Servicio) te permite arrendar infraestructura tecnológica (notebooks, computadores, monitores) con soporte y mantenimiento incluido, sin realizar una compra inicial importante. ¿Te gustaría cotizar equipos para tu empresa?"
+      const respuesta = respuestaGroq ?? MENSAJE_FUERA_DE_SERVICIO
 
       const origin = new URL(request.url).origin
       await registrarEnHistorial(origin, sesionId, body.mensaje, respuesta)
@@ -875,188 +887,144 @@ ${JSON.stringify(informacionDaas)}
 
     if (categoria === "salas") {
       const salas = await getSalas()
+      const textoMensajesSalas = esCambioDeCategoria ? normalizar(body.mensaje) : textoMensajesUsuarioActivo
       const tamanoDetectado = parseTamanoSala(
-        pregunta,
-        textoMensajesUsuarioActivo,
+        body.mensaje,
+        textoMensajesSalas,
         intencionIA?.tamano
       )
+      const lineaDetectada = parseLineaSala(body.mensaje, textoMensajesSalas)
+      const normPreguntaSalas = normalizar(`${textoMensajesSalas} ${body.mensaje}`)
 
-      const tieneTamano = Boolean(tamanoDetectado)
-      const pideListado = contiene(pregunta, [
-        "catalogo",
-        "catalogos",
-        "ver las salas",
-        "ver salas",
-        "mostrar salas",
-        "mostrar las salas",
-        "lista de salas",
-        "ver catalogo",
-      ])
-      const tieneDetalles = Boolean(tieneTamano || pideListado)
+      let salasFiltradas = esSeguimientoReal ? productosAnteriores : salas
 
-      if (!tieneDetalles) {
-        const respuesta = "¡Con gusto te orientamos para equipar tu sala de reuniones! 😊 Para recomendarte la opción más idónea, ¿para cuántas personas aproximadamente está pensada la sala o de qué tamaño es (pequeña, mediana o grande)?"
+      if (!esSeguimientoReal) {
+        const scored = salasFiltradas.map((sala: any) => {
+          let score = 0
 
-        const origin = new URL(request.url).origin
-        await registrarEnHistorial(origin, sesionId, body.mensaje, respuesta)
+          if (tamanoDetectado && normalizar(String(sala.Tamano ?? sala.tamano_sala ?? "")) === normalizar(tamanoDetectado)) {
+            score += 1000
+          }
 
-        return NextResponse.json({
-          success: true,
-          categoria: "salas",
-          pregunta: body.mensaje,
-          respuesta,
-          productos: [],
+          if (lineaDetectada && normalizar(String(sala.Linea ?? "")) === normalizar(lineaDetectada)) {
+            score += 500
+          }
+
+          const opcionesStr = JSON.stringify(sala.Opciones || []).toLowerCase()
+          const complementosStr = JSON.stringify(sala.Complementos || []).toLowerCase()
+
+          if (contiene(normPreguntaSalas, ["logi", "logitech"])) {
+            if (opcionesStr.includes("logitech")) score += 200
+          }
+          if (contiene(normPreguntaSalas, ["poly"])) {
+            if (opcionesStr.includes("poly")) score += 200
+          }
+          if (contiene(normPreguntaSalas, ["neat"])) {
+            if (opcionesStr.includes("neat")) score += 200
+          }
+          if (contiene(normPreguntaSalas, ["jabra"])) {
+            if (opcionesStr.includes("jabra")) score += 200
+          }
+
+          if (contiene(normPreguntaSalas, ["agendamiento", "reserva", "scheduler", "evoko"])) {
+            if (complementosStr.includes("agendamiento")) score += 300
+          }
+          if (contiene(normPreguntaSalas, ["pizarra", "scribe", "kaptivo"])) {
+            if (complementosStr.includes("pizarra")) score += 300
+          }
+          if (contiene(normPreguntaSalas, ["pantalla interactiva", "tactil", "touch", "i3", "samsung"])) {
+            if (complementosStr.includes("pantallas interactivas")) score += 300
+          }
+
+          return { sala, score }
         })
+
+        scored.sort((a, b) => b.score - a.score)
+        salasFiltradas = scored.map((entry) => entry.sala)
       }
 
+      ultimosProductosRecomendados = salasFiltradas.slice(0, 3)
 
-
-      const lineaDetectada =
-        contiene(pregunta, ["advanced"]) ? "ADVANCED" :
-        contiene(pregunta, ["business"]) ? "BUSINESS" :
-        contiene(pregunta, ["essential"]) ? "ESSENTIAL" : null
-
-      let salasFiltradas = salas
-
-      if (tamanoDetectado) {
-        salasFiltradas = salasFiltradas.filter((sala: any) =>
-          normalizar(String(sala.Tamano ?? sala.tamano_sala ?? "")) === normalizar(tamanoDetectado)
-        )
-      }
-
-      if (lineaDetectada) {
-        const salasPorLinea = salasFiltradas.filter((sala: any) =>
-          normalizar(String(sala.Linea ?? "")) === normalizar(lineaDetectada)
-        )
-        if (salasPorLinea.length > 0) {
-          salasFiltradas = salasPorLinea
-        }
-      }
-
-      if (salasFiltradas.length === 0) {
-        salasFiltradas = salas
-      }
-
-      const salasParaIA = salasFiltradas.slice(0, 3).map((sala: any) => ({
+      const salasParaIA = ultimosProductosRecomendados.map((sala: any) => ({
         nombre: sala.Titulo ?? sala.Nombre ?? sala.nombre,
-        tamano: sala.Tamano ?? sala.tamano_sala,
         linea: sala.Linea,
+        tamano: `${sala.Tamano} (${sala.Tamano === "S" ? "1 a 5 personas / Huddle" : sala.Tamano === "M" ? "6 a 11 personas / Mediana" : "12+ personas / Grande o Directorio"})`,
         descripcion: sala.Descripcion ?? sala.descripcion,
+        beneficios: Array.isArray(sala.Beneficios) ? sala.Beneficios.slice(0, 3) : [],
+        opciones_hardware: (sala.Opciones || []).map((op: any) => ({
+          opcion: op.Nombre,
+          equipos: (op.Equipos || []).map((eq: any) => `${eq.Nombre_Marca} ${eq.Nombre_Equipo}`)
+        })),
+        compatibilidad: sala.Compatibilidad,
+        complementos: (sala.Complementos || []).map((c: any) => `${c.Nombre_Marca} ${c.Nombre_Equipo} (${c.Categoria})`)
       }))
 
       const respuestaGroq = await consultarGroq(
         `
-Eres el asistente comercial virtual de Ofimundo experto en salas colaborativas.
-El cliente solicitó recomendaciones de salas de reuniones para un espacio de tamaño ${tamanoDetectado ?? "general"}.
+Eres el asistente comercial virtual de Ofimundo experto en soluciones para salas colaborativas de videoconferencia.
 
-REGLAS DE RECOMENDACIÓN PRECISA Y CONCORDANTE:
-- Responde siempre en español, de forma breve, natural y comercial (máximo 3 líneas).
-- Usa ÚNICAMENTE la información de las salas proporcionadas. No inventes modelos ni precios.
-- Si el usuario especificó capacidad o tamaño (S, M o L), destaca por qué la sala filtrada es la opción ideal para ese número de personas.
-- Como la interfaz mostrará las tarjetas visuales de las salas, da una breve introducción.
-- Haz solo una pregunta corta y amable al final para continuar la conversación.
+REGLAS ESTRICTAS DE RESPUESTA COMERCIAL:
+- Responde siempre en español, de forma muy breve y comercial (MÁXIMO 2 LÍNEAS).
+- Recomienda directamente la solución de sala idónea (ej: Essential S, Advanced M, Business S, etc.) destacando su capacidad adecuada de personas o sus marcas/equipos principales (Logitech, Poly, Neat, Jabra, 4K, One-Touch join, agendamiento).
+- Usa ÚNICAMENTE la información oficial suministrada de las salas filtradas.
+- Cierra con una sola pregunta corta.
 `,
         `
 Consulta del cliente:
 ${mensajeConContexto}
 
-Salas filtradas disponibles:
+Salas disponibles filtradas por idoneidad (de mayor a menor relevancia):
 ${JSON.stringify(salasParaIA)}
 `
       )
 
-      const respuesta =
-        respuestaGroq ??
-        "Aquí tienes las soluciones de salas colaborativas que mejor se adaptan a tu espacio. Puedes revisar sus características a continuación."
+      const respuesta = respuestaGroq ?? MENSAJE_FUERA_DE_SERVICIO
+      const productosSalas = respuestaGroq ? ultimosProductosRecomendados : []
 
       const origin = new URL(request.url).origin
-      await registrarEnHistorial(origin, sesionId, body.mensaje, respuesta, salasFiltradas.slice(0, 3))
+      await registrarEnHistorial(origin, sesionId, body.mensaje, respuesta, productosSalas)
 
       return NextResponse.json({
         success: true,
         categoria: "salas",
         pregunta: body.mensaje,
         respuesta,
-        productos: salasFiltradas.slice(0, 3),
+        productos: productosSalas,
       })
     }
 
     if (categoria === "automatizaciones") {
       const automatizaciones = await getAutomatizaciones()
+      const temaDetectado = esCambioDeCategoria ? normalizar(body.mensaje) : textoMensajesUsuarioActivo
 
-      const temaDetectado = textoMensajesUsuarioActivo
-      const tieneTemaExplicit = contiene(normalizar(String(temaDetectado)), [
-        "factura",
-        "facturas",
-        "finiquito",
-        "finiquitos",
-        "cuenta",
-        "cuentas",
-        "rrhh",
-        "proveedores",
-        "banco",
-        "bancos",
-        "saldo",
-        "saldos",
-        "erp",
-        "tesoreria",
-        "asiento",
-        "finanzas",
-        "contabilidad",
-      ])
+      let automatizacionesFiltradas = esSeguimientoReal
+        ? productosAnteriores
+        : automatizaciones
+            .map((item: any) => {
+              let score = 0
+              const haystack = normalizar(`${item.nombre} ${item.slug} ${item.resumen} ${item.descripcion} ${item.categoria} ${item.beneficio}`)
 
-      const pideListadoExplicitamente = contiene(pregunta, [
-        "catalogo",
-        "catalogos",
-        "ver automatizaciones",
-        "mostrar automatizaciones",
-        "lista de automatizaciones",
-        "ver catalogo",
-      ])
+              if (contiene(temaDetectado, ["factura", "facturas", "proveedores", "sii", "dte"])) {
+                if (haystack.includes("factura") || haystack.includes("sii")) score += 1000
+              }
+              if (contiene(temaDetectado, ["finiquito", "finiquitos", "rrhh", "personal", "despido"])) {
+                if (haystack.includes("finiquito") || haystack.includes("dt")) score += 1000
+              }
+              if (contiene(temaDetectado, ["cuenta", "cuentas", "erp", "asiento", "contabilidad", "finanzas", "cobrar", "pagar"])) {
+                if (haystack.includes("cuenta") || haystack.includes("finanzas")) score += 1000
+              }
+              if (contiene(temaDetectado, ["banco", "bancos", "saldo", "saldos", "tesoreria", "cartola"])) {
+                if (haystack.includes("saldo") || haystack.includes("banco")) score += 1000
+              }
 
-      const tieneDetalles = Boolean(tieneTemaExplicit || pideListadoExplicitamente)
+              return { item, score }
+            })
+            .sort((a, b) => b.score - a.score)
+            .map((entry) => entry.item)
 
-      if (!tieneDetalles) {
-        const respuesta = "Optimizamos y automatizamos procesos clave para reducir tareas manuales y errores. ⚙️ ¿Qué área o flujo te gustaría automatizar en tu empresa (por ejemplo: Finanzas, Contabilidad, Recursos Humanos, aprobación de facturas o gestión de finiquitos)?"
+      ultimosProductosRecomendados = automatizacionesFiltradas.slice(0, 3)
 
-        const origin = new URL(request.url).origin
-        await registrarEnHistorial(origin, sesionId, body.mensaje, respuesta)
-
-        return NextResponse.json({
-          success: true,
-          categoria: "automatizaciones",
-          pregunta: body.mensaje,
-          respuesta,
-          productos: [],
-        })
-      }
-
-
-
-      let automatizacionesFiltradas = automatizaciones
-        .map((item: any) => {
-          let score = 0
-          const haystack = normalizar(`${item.nombre} ${item.slug} ${item.resumen} ${item.descripcion} ${item.categoria} ${item.beneficio}`)
-
-          if (contiene(temaDetectado, ["factura", "facturas", "proveedores", "sii", "dte"])) {
-            if (haystack.includes("factura") || haystack.includes("sii")) score += 1000
-          }
-          if (contiene(temaDetectado, ["finiquito", "finiquitos", "rrhh", "personal", "despido"])) {
-            if (haystack.includes("finiquito") || haystack.includes("dt")) score += 1000
-          }
-          if (contiene(temaDetectado, ["cuenta", "cuentas", "erp", "asiento", "contabilidad", "finanzas", "cobrar", "pagar"])) {
-            if (haystack.includes("cuenta") || haystack.includes("finanzas")) score += 1000
-          }
-          if (contiene(temaDetectado, ["banco", "bancos", "saldo", "saldos", "tesoreria", "cartola"])) {
-            if (haystack.includes("saldo") || haystack.includes("banco")) score += 1000
-          }
-
-          return { item, score }
-        })
-        .sort((a, b) => b.score - a.score)
-        .map((entry) => entry.item)
-
-      const automatizacionesParaIA = automatizacionesFiltradas.slice(0, 3).map((item: any) => ({
+      const automatizacionesParaIA = ultimosProductosRecomendados.map((item: any) => ({
         nombre: item.nombre ?? item.nombreCorto,
         categoria: item.categoria,
         beneficio: item.beneficio,
@@ -1065,15 +1033,13 @@ ${JSON.stringify(salasParaIA)}
 
       const respuestaGroq = await consultarGroq(
         `
-Eres el asistente comercial virtual de Ofimundo experto en automatizaciones.
-El cliente consulta sobre automatizaciones para un proceso específico.
+Eres el asistente comercial virtual de Ofimundo experto en automatización de procesos empresariales.
 
-REGLAS DE RECOMENDACIÓN PRECISA Y CONCORDANTE:
-- Responde siempre en español, de forma breve, natural y comercial (máximo 3 líneas).
-- Usa ÚNICAMENTE la información de las automatizaciones proporcionadas.
-- Si el usuario solicitó automatizar un área (facturas, finiquitos, cuentas, bancos, finanzas), destaca la solución que resuelve esa necesidad concreta.
-- Como la interfaz mostrará las tarjetas visuales, brinda una breve introducción.
-- Haz solo una pregunta corta al final para continuar la conversación.
+REGLAS ESTRICTAS DE RESPUESTA COMERCIAL:
+- Responde siempre en español, de forma muy breve y comercial (MÁXIMO 2 LÍNEAS).
+- Presenta de forma directa la solución de automatización ideal para la necesidad del usuario o responde su duda técnica.
+- Usa ÚNICAMENTE la información oficial suministrada.
+- Cierra con una sola pregunta corta.
 `,
         `
 Consulta del cliente:
@@ -1084,19 +1050,18 @@ ${JSON.stringify(automatizacionesParaIA)}
 `
       )
 
-      const respuesta =
-        respuestaGroq ??
-        "Estas son nuestras soluciones de automatización de procesos. ¿Te gustaría solicitar una demostración o asesoría técnica?"
+      const respuesta = respuestaGroq ?? MENSAJE_FUERA_DE_SERVICIO
+      const productosAuto = respuestaGroq ? automatizacionesFiltradas.slice(0, 3) : []
 
       const origin = new URL(request.url).origin
-      await registrarEnHistorial(origin, sesionId, body.mensaje, respuesta, automatizacionesFiltradas.slice(0, 3))
+      await registrarEnHistorial(origin, sesionId, body.mensaje, respuesta, productosAuto)
 
       return NextResponse.json({
         success: true,
         categoria: "automatizaciones",
         pregunta: body.mensaje,
         respuesta,
-        productos: automatizacionesFiltradas.slice(0, 3),
+        productos: productosAuto,
       })
     }
 
@@ -1138,16 +1103,9 @@ ${JSON.stringify(automatizacionesParaIA)}
       "facturas sii",
     ])
 
-    let ultimoTurnoCategoria: string | null = null
-    if (historialBusquedaActiva.length > 0) {
-      const ultimo = historialBusquedaActiva[historialBusquedaActiva.length - 1]
-      ultimoTurnoCategoria = (ultimo as any)?.categoria ?? null
-    }
-    const cambioDeCategoria = Boolean(ultimoTurnoCategoria && ultimoTurnoCategoria !== categoria)
-
     const esNuevaBusqueda =
       solicitaNuevaBusquedaExplicitamente ||
-      cambioDeCategoria ||
+      esCambioDeCategoria ||
       historialBusquedaActiva.length === 0
 
     if (esNuevaBusqueda) {
@@ -1194,7 +1152,9 @@ ${JSON.stringify(automatizacionesParaIA)}
       "canon",
     ]
     const marcaEnTexto = marcasDisponibles.find((marca) => contiene(textoParametros, [marca])) ?? null
-    const finalMarca = esNuevaBusqueda ? marcaEnTexto : (marcaEnTexto ?? marcaEnHistorial)
+    const finalMarca = esNuevaBusqueda
+      ? (marcaEnTexto || (intencionIA?.marca ? normalizar(intencionIA.marca) : null))
+      : (marcaEnTexto ?? (intencionIA?.marca ? normalizar(intencionIA.marca) : null) ?? marcaEnHistorial)
 
     // 2. TIPO (Multifuncional vs Impresora)
     let tipoEnTexto: "Multifuncional" | "Impresora" | null = null
@@ -1225,118 +1185,54 @@ ${JSON.stringify(automatizacionesParaIA)}
     ) {
       tipoEnTexto = "Impresora"
     }
-    const finalTipo = esNuevaBusqueda ? tipoEnTexto : (tipoEnTexto ?? tipoEnHistorial)
+    const finalTipo = esNuevaBusqueda
+      ? (tipoEnTexto || intencionIA?.tipo || null)
+      : (tipoEnTexto ?? intencionIA?.tipo ?? tipoEnHistorial)
 
     // 3. FORMATO (A3 vs A4 / Carta / Oficio)
     const formatoActual = extraerFormatoDeTexto(body.mensaje)
     const formatoActivo = extraerFormatoDeTexto(textoMensajesUsuarioActivo)
-    const finalFormato: "A3" | "A4" | null = formatoActual ?? formatoActivo
+    const finalFormato: "A3" | "A4" | null = formatoActual ?? formatoActivo ?? intencionIA?.formato ?? null
 
     // 4. COLOR (color vs monocromo)
     const colorActual = extraerColorDeTexto(body.mensaje)
     const colorActivo = extraerColorDeTexto(textoMensajesUsuarioActivo)
-    const finalColor: "color" | "monocromo" | null = colorActual ?? colorActivo
+    const finalColor: "color" | "monocromo" | null = colorActual ?? colorActivo ?? intencionIA?.color ?? null
 
     // 5. VOLUMEN (número explícito de páginas ingresado por el usuario)
     const ultimoBotMsj = historialBusquedaActiva.length > 0 ? historialBusquedaActiva[historialBusquedaActiva.length - 1]?.respuesta_bot : ""
     const volumenEnTextoActual = extraerVolumenDeTexto(body.mensaje, ultimoBotMsj)
     const volumenEnTextoActivo = extraerVolumenDeTexto(textoMensajesUsuarioActivo, ultimoBotMsj)
 
-    // Un volumen es explícito ÚNICAMENTE si el usuario escribió un número real de páginas en su texto
     const tieneNumeroPaginasExplicito = Boolean(
-      volumenEnTextoActual !== null || volumenEnTextoActivo !== null
+      volumenEnTextoActual !== null || volumenEnTextoActivo !== null || intencionIA?.volumen
     )
 
     let finalVolumen: number | null = tieneNumeroPaginasExplicito
-      ? (volumenEnTextoActual ?? volumenEnTextoActivo)
+      ? (volumenEnTextoActual ?? volumenEnTextoActivo ?? intencionIA?.volumen ?? null)
       : null
 
     const contieneUsoHogar = contiene(textoParametros, ["casa", "hogar", "domestico", "domestica", "estudiante", "personal"])
-    const contieneUsoPyme = contiene(textoParametros, ["pyme", "negocio", "local", "pequeña empresa"])
     const contieneUsoCorp = contiene(textoParametros, ["corporativo", "gran empresa", "alto volumen"])
 
     if (!finalVolumen) {
-      if (contieneUsoHogar) finalVolumen = 500
-      else if (contieneUsoPyme) finalVolumen = 3000
-      else if (contieneUsoCorp) finalVolumen = 15000
+      if (contieneUsoHogar || intencionIA?.uso === "hogar") finalVolumen = 500
+      else if (contieneUsoCorp || intencionIA?.uso === "corporativo") finalVolumen = 15000
+      else finalVolumen = 3000 // Valor por defecto PYME para recomendación inmediata
     }
 
     const tieneColorExplicito = Boolean(finalColor)
     const tieneFormatoExplicito = Boolean(finalFormato)
 
-    const pideListadoExplicitamenteEquipos = contiene(pregunta, [
-      "catalogo",
-      "catalogos",
-      "ver impresoras",
-      "ver los equipos",
-      "mostrar impresoras",
-      "mostrar los equipos",
-      "lista de impresoras",
-      "ver catalogo",
-    ])
-
-    const tieneDetallesEquipos = Boolean(
-      (tieneColorExplicito && tieneNumeroPaginasExplicito && tieneFormatoExplicito) ||
-      pideListadoExplicitamenteEquipos
-    )
-
-    console.log("--> CHATBOT FILTROS DETECTADOS:", {
+    console.log("--> CHATBOT FILTROS DETECTADOS AUTÓNOMOS DE ALTA PRECISIÓN:", {
       esNuevaBusqueda,
       finalMarca,
       finalTipo,
       finalFormato,
       finalColor,
       finalVolumen,
-      tieneDetallesEquipos,
+      esPreguntaSeguimiento: intencionIA?.es_pregunta_seguimiento,
     })
-
-    if (!tieneDetallesEquipos) {
-      let respuesta = ""
-
-      const botPreguntoColor = contiene(normalizar(ultimoBotMsj), ["color o en blanco y negro", "monocromo"])
-      const botPreguntoVolumen = contiene(normalizar(ultimoBotMsj), ["volumen aproximado", "paginas que imprimen"])
-      const botPreguntoFormato = contiene(normalizar(ultimoBotMsj), ["tamano de papel", "carta", "oficio", "a4", "a3"])
-
-      if (!tieneColorExplicito) {
-        if (botPreguntoColor) {
-          respuesta = "No logré entender tu respuesta debido a un error de escritura o falta de ortografía. 😅 Por favor, ingresa nuevamente si prefieres que imprima a **Color** o en **Blanco y Negro (Monocromo)**."
-        } else {
-          respuesta = "¡Con gusto te asesoro con tu equipo de impresión! 😊 Para recomendarte la opción más idónea, ¿prefieres que imprima a **Color** o en **Blanco y Negro (Monocromo)**?"
-        }
-      } else if (!tieneNumeroPaginasExplicito) {
-        if (botPreguntoVolumen) {
-          respuesta = "No logré entender la cifra de páginas debido a un error de escritura. 😅 Por favor, ingresa nuevamente la cantidad aproximada de páginas que imprimen al mes (por ejemplo: 5.000, 10.000 o 20.000)."
-        } else {
-          respuesta = `¡Perfecto, a ${finalColor === "color" ? "Color" : "Blanco y Negro"}! 😊 ¿Cuál es el volumen aproximado de páginas que imprimen al mes (por ejemplo 500, 2 000, 10 000 o 30 000 páginas)?`
-        }
-      } else if (!tieneFormatoExplicito) {
-        if (botPreguntoFormato) {
-          respuesta = "No logré entender el tamaño de papel debido a un error de escritura. 😅 Por favor, ingresa nuevamente si necesitas **Carta**, **Oficio**, **A4** o **A3**."
-        } else {
-          respuesta = "¡Excelente! Para recomendarte la opción más idónea, ¿qué tamaño de papel necesitas utilizar principalmente: **Carta**, **Oficio**, **A4** o **A3**?"
-        }
-      }
-
-      const origin = new URL(request.url).origin
-      await registrarEnHistorial(origin, sesionId, body.mensaje, respuesta, [], {
-        marca: finalMarca,
-        color: finalColor,
-        formato: finalFormato,
-        tipo: finalTipo,
-      })
-
-      return NextResponse.json({
-        success: true,
-        categoria: "equipos",
-        pregunta: body.mensaje,
-        respuesta,
-        productos: [],
-      })
-    }
-
-
-
-
 
     const palabrasIgnoradas = new Set([
       "necesito",
@@ -1407,7 +1303,10 @@ ${JSON.stringify(automatizacionesParaIA)}
     function filtrarYRankearEquipos(
       lista: typeof productos,
       strictVolume: boolean = true,
-      strictFormat: boolean = true
+      strictFormat: boolean = true,
+      strictBrand: boolean = true,
+      strictColor: boolean = true,
+      strictType: boolean = true
     ) {
       return lista
         .filter((producto) => {
@@ -1434,24 +1333,26 @@ ${JSON.stringify(automatizacionesParaIA)}
               "versalink b6",
             ])
 
-          // 1. Filtro de Marca (SIEMPRE estricto si el usuario la indicó)
-          if (finalMarca && !marca.includes(normalizar(finalMarca))) {
+          // 1. Filtro de Marca
+          if (strictBrand && finalMarca && !marca.includes(normalizar(finalMarca))) {
             return false
           }
 
-          // 2. Filtro de Color (SIEMPRE estricto si el usuario lo indicó)
-          if (finalColor === "color" && color !== "color") {
-            return false
-          }
-          if (
-            finalColor === "monocromo" &&
-            !contiene(color, ["blanco y negro", "monocromo"])
-          ) {
-            return false
+          // 2. Filtro de Color
+          if (strictColor && finalColor) {
+            if (finalColor === "color" && !color.includes("color")) {
+              return false
+            }
+            if (
+              finalColor === "monocromo" &&
+              !contiene(color, ["blanco y negro", "monocromo", "bn", "b/n", "b&w"])
+            ) {
+              return false
+            }
           }
 
           // 3. Filtro de Formato (A4 vs A3)
-          if (strictFormat) {
+          if (strictFormat && finalFormato) {
             if (finalFormato === "A4" && formato.includes("a3")) {
               return false
             }
@@ -1461,24 +1362,22 @@ ${JSON.stringify(automatizacionesParaIA)}
           }
 
           // 4. Filtro de Tipo (Multifuncional vs Solo Impresora)
-          if (finalTipo) {
+          if (strictType && finalTipo) {
             const normTipoSol = normalizar(finalTipo)
-            if (normTipoSol === "impresora" && tipo !== "impresora") {
+            if (normTipoSol === "impresora" && (tipo.includes("multifuncional") || tipo.includes("copiad"))) {
               return false
             }
-            if (normTipoSol === "multifuncional" && tipo !== "multifuncional") {
+            if (normTipoSol === "multifuncional" && !tipo.includes("multifuncional") && !tipo.includes("copiad")) {
               return false
             }
           }
 
           // 5. Filtro de Volumen y Tipo de Uso
           if (strictVolume && finalVolumen) {
-            // Descartar equipos subdimensionados (el volumen exigido supera en 80% su máximo recomendado)
-            if (finalVolumen > cicloInfo.max * 1.8) {
+            if (finalVolumen > cicloInfo.max * 2.0) {
               return false
             }
 
-            // Descartar equipos sobredimensionados según rango
             if (finalUso === "hogar" || finalVolumen <= 1500) {
               if (formato.includes("a3") || cicloInfo.max > 25000 || esMaquinariaAlta) {
                 return false
@@ -1488,7 +1387,7 @@ ${JSON.stringify(automatizacionesParaIA)}
                 return false
               }
             } else if (finalVolumen >= 25000) {
-              if (cicloInfo.max < 12000) {
+              if (cicloInfo.max < 10000) {
                 return false
               }
             }
@@ -1515,8 +1414,18 @@ ${JSON.stringify(automatizacionesParaIA)}
 
           let rankingScore = 1000
 
+          if (finalTipo) {
+            const normTipoSol = normalizar(finalTipo)
+            if (normTipoSol === "multifuncional" && (normalizar(producto.Tipo_Equipo).includes("multifuncional") || normalizar(producto.Tipo_Equipo).includes("copiad"))) {
+              rankingScore += 1000
+            }
+            if (normTipoSol === "impresora" && !normalizar(producto.Tipo_Equipo).includes("multifuncional")) {
+              rankingScore += 1000
+            }
+          }
+
           if (finalVolumen) {
-            const { min, max } = parseCicloRecomendado(producto.Ciclo_Recomendado_Equipo)
+            const { max } = parseCicloRecomendado(producto.Ciclo_Recomendado_Equipo)
             const ppm = producto.Velocidad_BN_Equipo ?? producto.Velocidad_Color_Equipo ?? 25
 
             let idealPPM = 25
@@ -1536,13 +1445,19 @@ ${JSON.stringify(automatizacionesParaIA)}
           }
 
           if (finalMarca && normalizar(producto.Nombre_Marca).includes(normalizar(finalMarca))) {
-            rankingScore += 1000
+            rankingScore += 2000
           }
 
           if (finalFormato) {
             const normPapel = normalizar(producto.Tamano_Papel_Equipo)
-            if (finalFormato === "A3" && normPapel.includes("a3")) rankingScore += 500
-            if (finalFormato === "A4" && !normPapel.includes("a3")) rankingScore += 500
+            if (finalFormato === "A3" && normPapel.includes("a3")) rankingScore += 1000
+            if (finalFormato === "A4" && !normPapel.includes("a3")) rankingScore += 1000
+          }
+
+          if (finalColor) {
+            const normColor = normalizar(producto.Color_Equipo)
+            if (finalColor === "color" && normColor.includes("color")) rankingScore += 1000
+            if (finalColor === "monocromo" && contiene(normColor, ["blanco y negro", "monocromo"])) rankingScore += 1000
           }
 
           const textoConsulta = normalizar(`${pregunta} ${textoMensajesUsuario}`)
@@ -1592,16 +1507,37 @@ ${JSON.stringify(automatizacionesParaIA)}
         })
     }
 
-    // Intentos progresivos de filtrado
-    let candidatos = filtrarYRankearEquipos(productos, true, true)
-    if (candidatos.length === 0) {
-      candidatos = filtrarYRankearEquipos(productos, false, true)
-    }
-    if (candidatos.length === 0) {
-      candidatos = filtrarYRankearEquipos(productos, false, false)
+    let resultados: any[] = []
+    if (esSeguimientoReal) {
+      resultados = productosAnteriores.slice(0, 3)
+    } else {
+      // 1. Strict all: Brand, Color, Format, Type, Volume
+      let candidatos = filtrarYRankearEquipos(productos, true, true, true, true, true)
+
+      // 2. Relax Volume: Brand, Color, Format, Type
+      if (candidatos.length === 0) {
+        candidatos = filtrarYRankearEquipos(productos, false, true, true, true, true)
+      }
+
+      // 3. Relax Brand: Color, Format, Type (e.g. when HP/Canon not in stock or brand lacks requested A3 Monocromo)
+      if (candidatos.length === 0) {
+        candidatos = filtrarYRankearEquipos(productos, false, true, false, true, true)
+      }
+
+      // 4. Relax Format: Color, Type
+      if (candidatos.length === 0) {
+        candidatos = filtrarYRankearEquipos(productos, false, false, false, true, true)
+      }
+
+      // 5. General Fallback
+      if (candidatos.length === 0) {
+        candidatos = filtrarYRankearEquipos(productos, false, false, false, false, false)
+      }
+
+      resultados = candidatos.slice(0, 3)
     }
 
-    const resultados = candidatos.slice(0, 3)
+    ultimosProductosRecomendados = resultados
 
     if (resultados.length === 0) {
       return NextResponse.json({
@@ -1638,39 +1574,65 @@ ${JSON.stringify(automatizacionesParaIA)}
       descripcion: producto.Descripcion_Equipo,
     }))
 
+    const esMarcaFueraDeStock = Boolean(
+      finalMarca &&
+      resultados.length > 0 &&
+      !resultados.some((p) => normalizar(p.Nombre_Marca).includes(normalizar(finalMarca)))
+    )
+
+    const esFormatoDiferente = Boolean(
+      finalFormato &&
+      resultados.length > 0 &&
+      !resultados.some((p) => normalizar(p.Tamano_Papel_Equipo).includes(normalizar(finalFormato)))
+    )
+
     const respuestaGroq = await consultarGroq(
       `
-Eres el asesor comercial virtual de Ofimundo experto en equipos de impresión.
-El cliente solicitó recomendaciones para cubrir sus necesidades concretas de impresión.
+Eres el asesor comercial virtual de Ofimundo experto en soluciones y equipos de impresión.
 
-REGLAS DE RECOMENDACIÓN PRECISA Y CONCORDANTE:
-- Responde siempre en español, de forma breve, natural y comercial (máximo 3 líneas).
-- Explica de forma clara y directa por qué la primera opción recomendada (${productosParaIA[0]?.marca} ${productosParaIA[0]?.nombre}) es una excelente alternativa. ${finalVolumen ? `Destaca que es ideal para sus ${finalVolumen} páginas mensuales.` : ""} ${finalColor ? `Menciona su impresión a ${finalColor === "color" ? "color" : "blanco y negro"}.` : ""} ESTRICTAMENTE PROHIBIDO inventar números de páginas o colores si el usuario NO los ha indicado en su mensaje.
-- PROHIBIDO mencionar o sugerir modelos que NO estén en la lista de productos suministrada: ${JSON.stringify(productosParaIA.map((p) => `${p.marca} ${p.nombre}`))}.
-- PROHIBIDO INVENTAR NÚMEROS O ESPECIFICACIONES QUE NO ESTÉN EN LA LISTA.
-- Como la interfaz mostrará las tarjetas visuales justo debajo de tu mensaje, da una breve introducción concordante.
-- Haz solo una pregunta corta y amable al final para continuar la conversación.
+REGLAS DE RECOMENDACIÓN DE ALTA PRECISIÓN Y CONCORDANCIA:
+- Responde siempre en español, de forma breve, empática, profesional y comercial (máximo 2 a 3 líneas).
+${
+  esMarcaFueraDeStock
+    ? `- El cliente solicitó expresamente la marca "${finalMarca}" (la cual no se encuentra en nuestro catálogo actual). Explica amablemente que Ofimundo trabaja comercialmente con las marcas líderes Xerox, Epson, Kyocera, Brother y Lexmark, y presenta la mejor alternativa equivalente de la lista.`
+    : ""
+}
+${
+  esFormatoDiferente
+    ? `- El cliente solicitó formato "${finalFormato}", pero para esa combinación la mejor alternativa disponible es el formato de la lista. Explícale amablemente el beneficio del equipo.`
+    : ""
+}
+- SI EL USUARIO RETORNA O CAMBIA DE OTRA CATEGORÍA, realiza una transición fluida retomando sus necesidades de equipamiento de impresión.
+- Explica de forma clara y directa POR QUÉ la 1ra opción recomendada (${productosParaIA[0]?.marca} ${productosParaIA[0]?.nombre}) es la mejor alternativa para sus requisitos (ej: marca, color/monocromo, formato A3/A4, volumen o conectividad).
+- SI EL CLIENTE HACE UNA PREGUNTA DE SEGUIMIENTO: Responde DIRECTAMENTE su duda técnica basándote ÚNICAMENTE en los datos de los productos suministrados.
+- ESTRICTAMENTE PROHIBIDO inventar números de páginas, velocidades o especificaciones que no estén en la lista.
+- Cierra con una pregunta corta y amable para orientar el siguiente paso del cliente.
 `,
       `
-Consulta del cliente:
-
+Consulta del cliente e historial:
 ${mensajeConContexto}
 
-Productos filtrados disponibles (el primero es la recomendación principal):
+Criterios de búsqueda analizados en la conversación:
+- Marca solicitada: ${finalMarca || "Cualquiera"}
+- Color de impresión: ${finalColor || "Cualquiera"}
+- Formato de papel: ${finalFormato || "Cualquiera"}
+- Tipo de equipo: ${finalTipo || "Cualquiera"}
+- Volumen mensual estimado: ${finalVolumen ? `${finalVolumen} pág/mes` : "No especificado"}
+
+Productos seleccionados por el motor de búsqueda (el 1ro es el de mayor precisión):
 ${JSON.stringify(productosParaIA)}
 `
     )
 
-    const respuesta =
-      respuestaGroq ??
-      "Encontré los siguientes equipos recomendados para tus necesidades. Puedes revisar sus detalles a continuación. ¿Te gustaría cotizar alguno en particular?"
+    const respuesta = respuestaGroq ?? MENSAJE_FUERA_DE_SERVICIO
+    const productosEquipos = respuestaGroq ? resultados : []
 
     /*
      * GUARDAR HISTORIAL
      */
 
     const origin = new URL(request.url).origin
-    await registrarEnHistorial(origin, sesionId, body.mensaje, respuesta, resultados, {
+    await registrarEnHistorial(origin, sesionId, body.mensaje, respuesta, productosEquipos, {
       marca: finalMarca,
       color: finalColor,
       formato: finalFormato,
@@ -1688,19 +1650,24 @@ ${JSON.stringify(productosParaIA)}
         formato: finalFormato,
         tipo: finalTipo,
       },
-      total: resultados.length,
+      total: productosEquipos.length,
       respuesta,
-      productos: resultados,
+      productos: productosEquipos,
     })
   } catch (error: any) {
-    if (error instanceof GroqRateLimitError || error?.name === "GroqRateLimitError" || error?.status === 429) {
-      console.warn("Límite de tokens/cuota de Groq alcanzado. Retornando mensaje de indisponibilidad temporal.")
+    if (
+      error instanceof GroqRateLimitError ||
+      error?.name === "GroqRateLimitError" ||
+      error?.status === 429 ||
+      isRateLimitOrQuotaError(error?.status || 0, String(error?.message || ""))
+    ) {
+      console.warn("Límite de tokens/cuota de Groq alcanzado.")
       return NextResponse.json({
         success: true,
         categoria: "general",
         sesion_id: sesionId,
         pregunta: body?.mensaje ?? "",
-        respuesta: "⚠️ El asistente virtual no se encuentra disponible temporalmente debido a un alto flujo de consultas (límite de servicio de IA). Por favor, intenta de nuevo en unos minutos o agenda una reunión con nuestro equipo comercial.",
+        respuesta: MENSAJE_FUERA_DE_SERVICIO,
         productos: [],
         quota_exceeded: true,
       })
@@ -1711,7 +1678,7 @@ ${JSON.stringify(productosParaIA)}
     return NextResponse.json(
       {
         success: false,
-        error: error?.message || "Error procesando la consulta",
+        error: MENSAJE_FUERA_DE_SERVICIO,
       },
       { status: 500 }
     )

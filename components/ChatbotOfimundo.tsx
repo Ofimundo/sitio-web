@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState, useRef } from "react"
-import { MessageCircle, Send, X, Loader2, RefreshCw, Sparkles } from "lucide-react"
+import { MessageCircle, Send, X, Loader2, RefreshCw, Sparkles, Minus, ChevronUp } from "lucide-react"
 
 const AVATAR_CHATBOT = "/chatbot/chatofi.png"
 
@@ -232,10 +232,19 @@ interface ChatbotOfimundoProps {
 
 export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoProps) {
   const [abierto, setAbierto] = useState(false)
+  const [minimizado, setMinimizado] = useState(false) // Predeterminado NO minimizado
   const [mensaje, setMensaje] = useState("")
   const [cargando, setCargando] = useState(false)
   const [sesionId, setSesionId] = useState("")
   const messagesContainerRef = useRef<HTMLDivElement>(null)
+
+  const MENSAJE_INICIAL: Mensaje = {
+    rol: "bot",
+    texto:
+      "¡Hola! Soy el asistente virtual de Ofimundo. Cuéntame qué tipo de equipo de impresión, sala colaborativa o servicio de automatización necesitas.",
+  }
+
+  const [mensajes, setMensajes] = useState<Mensaje[]>([MENSAJE_INICIAL])
 
   useEffect(() => {
     let id = sessionStorage.getItem("ofimundo-chatbot-session")
@@ -246,15 +255,27 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
     }
 
     setSesionId(id)
+
+    try {
+      const guardados = localStorage.getItem("ofimundo-chatbot-messages")
+      if (guardados) {
+        const parsed = JSON.parse(guardados)
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setMensajes(parsed)
+        }
+      }
+    } catch (e) {
+      console.error("Error al cargar mensajes guardados:", e)
+    }
   }, [])
 
-  const [mensajes, setMensajes] = useState<Mensaje[]>([
-    {
-      rol: "bot",
-      texto:
-        "¡Hola! Soy el asistente virtual de Ofimundo. Cuéntame qué tipo de equipo de impresión, sala colaborativa o servicio de automatización necesitas.",
-    },
-  ])
+  useEffect(() => {
+    if (mensajes.length > 0) {
+      try {
+        localStorage.setItem("ofimundo-chatbot-messages", JSON.stringify(mensajes))
+      } catch (e) {}
+    }
+  }, [mensajes])
 
   useEffect(() => {
     if (messagesContainerRef.current) {
@@ -290,6 +311,12 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
         body: JSON.stringify({
           mensaje: texto,
           sesion_id: sesionId,
+          historial: mensajes.map((m) => ({
+            rol: m.rol,
+            texto: m.texto,
+            categoria: m.categoria,
+            productos: m.productos,
+          })),
         }),
       })
 
@@ -324,7 +351,7 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
         {
           rol: "bot",
           texto:
-            "⚠️ El asistente virtual no se encuentra disponible en este momento debido a un alto volumen de consultas. Por favor, reintenta en un par de minutos o contáctanos directamente.",
+            "⚠️ El asistente virtual se encuentra fuera de servicio o recibiendo muchas consultas en este momento. Por favor, vuelve a intentarlo en un rato o contáctanos directamente.",
         },
       ])
     } finally {
@@ -335,14 +362,11 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
   function reiniciarChat() {
     const nuevoId = `sesion-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`
     sessionStorage.setItem("ofimundo-chatbot-session", nuevoId)
+    try {
+      localStorage.removeItem("ofimundo-chatbot-messages")
+    } catch (e) {}
     setSesionId(nuevoId)
-    setMensajes([
-      {
-        rol: "bot",
-        texto:
-          "¡Hola! Soy el asistente virtual de Ofimundo. Cuéntame qué tipo de equipo de impresión, sala colaborativa o servicio de automatización necesitas.",
-      },
-    ])
+    setMensajes([MENSAJE_INICIAL])
   }
 
   // Componente de contenido del chat reutilizable
@@ -350,7 +374,12 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
     <div className="flex h-full flex-col overflow-hidden">
       {/* Header del Chatbot */}
       <div
-        className="flex items-center justify-between px-5 py-4 text-white shrink-0 shadow-md"
+        onClick={() => {
+          if (minimizado) setMinimizado(false)
+        }}
+        className={`flex items-center justify-between px-5 py-4 text-white shrink-0 shadow-md ${
+          minimizado ? "cursor-pointer" : ""
+        }`}
         style={{
           background: "linear-gradient(90deg, #552B7E 0%, #A33A5E 100%)",
         }}
@@ -378,20 +407,30 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
           </div>
         </div>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
           <button
             onClick={reiniciarChat}
-            className="rounded-lg p-2 transition hover:bg-white/10 text-white/90 hover:text-white"
-            title="Reiniciar conversación"
-            aria-label="Reiniciar conversación"
+            className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 bg-white/10 hover:bg-white/20 text-white text-xs font-medium transition border border-white/20 shadow-xs"
+            title="Iniciar nueva conversación"
+            aria-label="Nueva conversación"
           >
-            <RefreshCw size={18} />
+            <RefreshCw size={14} />
+            <span className="hidden sm:inline">Nueva conversación</span>
+          </button>
+
+          <button
+            onClick={() => setMinimizado((prev) => !prev)}
+            className="rounded-lg p-2 transition hover:bg-white/20 text-white/90 hover:text-white"
+            title={minimizado ? "Expandir conversación" : "Minimizar ventana"}
+            aria-label={minimizado ? "Expandir conversación" : "Minimizar ventana"}
+          >
+            {minimizado ? <ChevronUp size={18} /> : <Minus size={18} />}
           </button>
 
           {!embedded && (
             <button
               onClick={() => setAbierto(false)}
-              className="rounded-lg p-2 transition hover:bg-white/10"
+              className="rounded-lg p-2 transition hover:bg-white/20 text-white/90 hover:text-white"
               aria-label="Cerrar chatbot"
             >
               <X size={20} />
@@ -579,7 +618,11 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
 
   if (embedded) {
     return (
-      <div className="w-full max-w-5xl mx-auto h-[390px] rounded-3xl border border-purple-200/80 dark:border-purple-900/40 bg-white dark:bg-gray-900 shadow-xl overflow-hidden my-2">
+      <div
+        className={`w-full max-w-5xl mx-auto rounded-3xl border border-purple-200/80 dark:border-purple-900/40 bg-white dark:bg-gray-900 shadow-xl overflow-hidden my-2 transition-all duration-300 ease-in-out ${
+          minimizado ? "h-[76px]" : "h-[580px]"
+        }`}
+      >
         {contenidoChatJSX}
       </div>
     )
@@ -588,7 +631,11 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
   return (
     <>
       {abierto && (
-        <div className="fixed bottom-24 right-5 z-50 flex h-[580px] w-[420px] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-2xl">
+        <div
+          className={`fixed bottom-24 right-5 z-50 flex w-[460px] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-2xl transition-all duration-300 ease-in-out ${
+            minimizado ? "h-[76px]" : "h-[640px]"
+          }`}
+        >
           {contenidoChatJSX}
         </div>
       )}
