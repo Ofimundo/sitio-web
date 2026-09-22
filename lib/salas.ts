@@ -183,7 +183,27 @@ export async function getSalasDestacadas(): Promise<Sala[]> {
       }
     }
 
-    if (mapped.length > 0) return mapped
+    if (mapped.length > 0) {
+      await Promise.all(
+        mapped.map(async (sala) => {
+          try {
+            const optionRows = await getOpciones(sala.ID_Producto)
+            if (optionRows && optionRows.length > 0) {
+              sala.Opciones = groupOpciones(optionRows)
+            }
+          } catch {}
+          if (sala.Opciones.length === 0 && salasFallback) {
+            const fb = (salasFallback as Sala[]).find(
+              (f) =>
+                normalizeIdentifier(f.ID_Producto) === normalizeIdentifier(sala.ID_Producto) ||
+                normalizeIdentifier(f.Slug) === normalizeIdentifier(sala.Slug)
+            )
+            if (fb?.Opciones) sala.Opciones = fb.Opciones
+          }
+        })
+      )
+      return mapped
+    }
     throw new Error("No DB rooms")
   } catch (error) {
     const list = (salasFallback as Sala[]) || []
@@ -200,15 +220,33 @@ export async function getSalasDestacadas(): Promise<Sala[]> {
   }
 }
 
-/** Catálogo: obtiene el resumen de todas las salas desde JSON local o BD. */
+/** Catálogo: obtiene el resumen de todas las salas desde BD o JSON local como fallback. */
 export async function getSalas(filtros: FiltrosSala = {}): Promise<Sala[]> {
   let list: Sala[] = []
   try {
-    if (salasFallback && salasFallback.length > 0) {
-      list = salasFallback as Sala[]
-    } else {
-      const rows = await executeQuery<SalaRow>(`SELECT * FROM ${VISTAS.detalle}`)
+    const rows = await executeQuery<SalaRow>(`SELECT * FROM ${VISTAS.detalle}`)
+    if (rows && rows.length > 0) {
       list = rows.map(mapResumen)
+      await Promise.all(
+        list.map(async (sala) => {
+          try {
+            const optionRows = await getOpciones(sala.ID_Producto)
+            if (optionRows && optionRows.length > 0) {
+              sala.Opciones = groupOpciones(optionRows)
+            }
+          } catch {}
+          if (sala.Opciones.length === 0 && salasFallback) {
+            const fb = (salasFallback as Sala[]).find(
+              (f) =>
+                normalizeIdentifier(f.ID_Producto) === normalizeIdentifier(sala.ID_Producto) ||
+                normalizeIdentifier(f.Slug) === normalizeIdentifier(sala.Slug)
+            )
+            if (fb?.Opciones) sala.Opciones = fb.Opciones
+          }
+        })
+      )
+    } else {
+      list = (salasFallback as Sala[]) || []
     }
   } catch (error) {
     list = (salasFallback as Sala[]) || []
