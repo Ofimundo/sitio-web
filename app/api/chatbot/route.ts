@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getEquipos } from "@/lib/productos"
-import { getSalas } from "@/lib/salas"
-import { getAutomatizaciones } from "@/lib/automatizaciones"
-import { executeQuery } from "@/lib/db"
+import equiposData from "@/data/equipos.json"
+import salasData from "@/data/salas.json"
+import automatizacionesData from "@/data/automatizaciones.json"
 
 export const dynamic = "force-dynamic"
 export const revalidate = 0
@@ -15,37 +14,8 @@ async function registrarEnHistorial(
   productosRecomendados: any[] = [],
   filtrosDetectados: any = {}
 ) {
-  try {
-    await executeQuery(
-      `
-      INSERT INTO [THE_COOLER_SGCX].[MPR].[CHATBOT_CONVERSACION]
-      (
-        sesion_id,
-        mensaje_usuario,
-        respuesta_bot,
-        productos_recomendados,
-        filtros_detectados
-      )
-      VALUES
-      (
-        @sesion_id,
-        @mensaje_usuario,
-        @respuesta_bot,
-        @productos_recomendados,
-        @filtros_detectados
-      )
-      `,
-      {
-        sesion_id: sesionId,
-        mensaje_usuario: mensajeUsuario,
-        respuesta_bot: respuestaBot ?? null,
-        productos_recomendados: JSON.stringify(productosRecomendados ?? []),
-        filtros_detectados: JSON.stringify(filtrosDetectados ?? {}),
-      }
-    )
-  } catch (errorRegistro) {
-    console.error("Error guardando conversación en DB:", errorRegistro)
-  }
+  // Operación 100% segura y aislada en cliente/JSON sin consultas SQL
+  return
 }
 
 
@@ -99,11 +69,11 @@ function extraerFormatoDeTexto(texto: string): "A3" | "A4" | null {
 
 function extraerColorDeTexto(texto: string): "color" | "monocromo" | null {
   const norm = limpiarTextoTokens(texto)
-  if (/\b(blanco\s+y\s+negro|blanco\s+negro|monocromo|monocramatica|monocromatico|mono|b\/n|bn|b\s*y\s*n|negro|solo\s+negro)\b/i.test(norm)) {
-    return "monocromo"
-  }
   if (/\b(color|colores|full\s+color|a\s+color)\b/i.test(norm)) {
     return "color"
+  }
+  if (/\b(blanco\s+y\s+negro|blanco\s+negro|monocromo|monocramatica|monocromatico|mono|b\/n|bn|b\s*y\s*n|negro|solo\s+negro)\b/i.test(norm)) {
+    return "monocromo"
   }
   return null
 }
@@ -160,6 +130,96 @@ export class GroqRateLimitError extends Error {
 
 export const MENSAJE_FUERA_DE_SERVICIO =
   "⚠️ El asistente virtual se encuentra fuera de servicio o recibiendo muchas consultas en este momento. Por favor, vuelve a intentarlo en un rato o contáctanos directamente."
+
+export const MENSAJE_FUERA_DE_AMBITO =
+  "Como asistente virtual de Ofimundo, solo puedo orientarte sobre nuestro catálogo de equipos de impresión MPS, salas colaborativas de videoconferencia y automatizaciones de procesos empresariales."
+
+function limpiarPreguntasAlFinal(texto: string | null | undefined): string {
+  if (!texto) return ""
+
+  let limpio = texto.trim()
+
+  // 1. Si existe '¿', truncar inmediatamente todo lo que empiece desde '¿'
+  if (limpio.includes("¿")) {
+    limpio = limpio.split("¿")[0].trim()
+  }
+
+  // 2. Si existe '?', recortar hasta el último punto '.' anterior al primer '?'
+  if (limpio.includes("?")) {
+    const primerInterrogacion = limpio.indexOf("?")
+    const partePrevia = limpio.substring(0, primerInterrogacion)
+    const ultimoPunto = partePrevia.lastIndexOf(".")
+    if (ultimoPunto !== -1) {
+      limpio = partePrevia.substring(0, ultimoPunto + 1).trim()
+    } else {
+      limpio = partePrevia.trim()
+    }
+  }
+
+  // 3. Patrones de cierre o preguntas sin signo de interrogación
+  const patronesPreguntaOCierre = [
+    /\b(te gustaría|te gustaria|prefieres|deseas|quieres|te interesa)\b/i,
+    /\b(envíe|envie|enviarte|mandarte|hacerte llegar|compartirte)\s+(la\s+)?(cotización|cotizacion|ficha|información|informacion|detalles)\b/i,
+    /\b(opciones\s+de\s+(conectividad|red|consumo|entrega)|disponibilidad)\b/i,
+    /\b(cuéntame|cuentame|dime\s+si|avísame|avisame|quedo\s+atento|quedo\s+a\s+tu\s+disposición|quedo\s+a\s+tu\s+disposicion)\b/i,
+    /\b(si\s+(quieres|deseas|necesitas|buscas)\s+(que\s+te|saber|conocer))\b/i,
+    /\b(hacer\s+una\s+pregunta|alguna\s+duda|otra\s+consulta|otra\s+pregunta)\b/i,
+    /\b(conectividad|wi-fi|wifi|usb)\??$/i
+  ]
+
+  // Limpiar líneas individuales que contengan patrones de cierre
+  let lineas = limpio.split("\n").map((l) => l.trim()).filter(Boolean)
+  lineas = lineas.filter((linea) => !patronesPreguntaOCierre.some((regex) => regex.test(linea)))
+  limpio = lineas.join(" ")
+
+  // Limpiar oraciones finales que contengan patrones de cierre
+  let oraciones = limpio.split(/(?<=\.)\s+/).map((o) => o.trim()).filter(Boolean)
+  while (oraciones.length > 0) {
+    const ultimaOracion = oraciones[oraciones.length - 1]
+    const esPreguntaOCierre = patronesPreguntaOCierre.some((regex) => regex.test(ultimaOracion))
+    if (esPreguntaOCierre) {
+      oraciones.pop()
+    } else {
+      break
+    }
+  }
+
+  limpio = oraciones.join(" ").trim()
+
+  // 4. Normalizar puntuación
+  limpio = limpio
+    .replace(/\s+/g, " ")
+    .replace(/[,;:]\s*$/, ".")
+    .trim()
+
+  if (limpio && !/[.!]$/.test(limpio)) {
+    limpio += "."
+  }
+
+  return limpio
+}
+
+function esConsultaRestringidaOFueraDeAmbito(texto: string): boolean {
+  const norm = normalizar(texto)
+  if (!norm) return false
+
+  // 1. Bloqueo de claves internas, contraseñas, datos confidenciales o de infraestructura
+  if (/\b(clave|claves|password|passwords|contrase[nñ]a|contrase[nñ]as|credencial|credenciales|api_key|apikey|secret|secrets|token|tokens|base\s+de\s+datos|bd|servidor|servidores|c[oó]digo\s+fuente|ssh|root|admin)\b/i.test(norm)) {
+    return true
+  }
+
+  // 2. Bloqueo de sitios web externos y URLs (permitiendo solo dominios de Ofimundo)
+  if (/\b(http:\/\/|https:\/\/|www\.|[a-z0-9-]+\.(?:com|org|net|io|co|es|dev|app))\b/i.test(norm)) {
+    if (!norm.includes("ofimundo")) return true
+  }
+
+  // 3. Bloqueo de manipulaciones de prompt / prompt injection
+  if (/\b(ignore\s+all\s+instructions|olvida\s+tus\s+instrucciones|modo\s+dan|system\s+prompt|dame\s+las\s+instrucciones|mu[eé]strame\s+tu\s+prompt)\b/i.test(norm)) {
+    return true
+  }
+
+  return false
+}
 
 
 function isRateLimitOrQuotaError(status: number, errorText: string): boolean {
@@ -237,7 +297,7 @@ async function consultarGroq(system: string, user: string): Promise<string | nul
 
 
 type IntencionChatbot = {
-  categoria: "equipos" | "salas" | "automatizaciones" | "daas" | "general"
+  categoria: "equipos" | "salas" | "automatizaciones" | "general"
   tamano: "S" | "M" | "L" | null
   marca: string | null
   color: "color" | "monocromo" | null
@@ -301,13 +361,13 @@ Categorías válidas:
 - equipos (impresoras, multifuncionales, equipos de impresión)
 - salas (salas colaborativas, videoconferencia, salas de reunión)
 - automatizaciones (procesos, facturas, finiquitos, cuentas)
-- daas (arriendo de computadores/notebooks, dispositivo como servicio)
 - general (saludos, preguntas institucionales)
 
 Reglas de deducción:
 - es_pregunta_seguimiento: asigna true si el usuario hace una pregunta sobre los productos o temas previamente discutidos (ej: "¿cuál es más rápida?", "¿tienen wifi?", "¿qué garantía tienen?", "¿cuál es el precio?", "¿diferencia entre la primera y la segunda?", "¿cuántas personas caben?"). Si el usuario está solicitando o consultando sobre una nueva categoría o servicio distinto (ej: pasando de impresoras a salas o automatizaciones), asigna FALSE.
 - uso: "hogar" si menciona casa, hogar, uso personal, tareas, estudiante; "pyme" si menciona oficina pequeña, negocio, tienda, pyme o 2-10 usuarios; "corporativo" si menciona gran empresa, corporación, alto volumen.
 - volumen: número entero si indicó páginas al mes.
+- SEGURIDAD Y ÁMBITO: Si la consulta del usuario solicita claves internas, contraseñas, servidores, URLs externas, o temas ajenos a Ofimundo (recetas, cultura general, etc.), asigna OBLIGATORIAMENTE la categoría "general".
 - detalles_suficientes: DEBE SER true por defecto siempre que haya una categoría clara o pregunta del usuario, para permitir recomendación inmediata o respuesta autónoma.
 
 Interpreta contextualmente basándote en la conversación previa. Solo devuelve JSON.
@@ -362,7 +422,6 @@ ${mensaje}
       "equipos",
       "salas",
       "automatizaciones",
-      "daas",
       "general",
     ]
 
@@ -515,29 +574,20 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       )
     }
+
+    if (esConsultaRestringidaOFueraDeAmbito(body?.mensaje ?? "")) {
+      return NextResponse.json({
+        success: true,
+        categoria: "general",
+        sesion_id: sesionId,
+        pregunta: body.mensaje,
+        respuesta: MENSAJE_FUERA_DE_AMBITO,
+        productos: [],
+      })
+    }
     let historial: any[] = []
 
-    try {
-      const rows = await executeQuery<any>(
-        `
-        SELECT TOP 10
-          mensaje_usuario,
-          respuesta_bot,
-          productos_recomendados,
-          filtros_detectados,
-          fecha_registro
-        FROM [THE_COOLER_SGCX].[MPR].[CHATBOT_CONVERSACION]
-        WHERE sesion_id = @sesion_id
-        ORDER BY fecha_registro DESC
-        `,
-        { sesion_id: sesionId }
-      )
-      historial = rows.reverse()
-    } catch (error) {
-      console.error("No se pudo cargar historial directamente de DB:", error)
-    }
-
-    if (historial.length === 0 && Array.isArray(body?.historial) && body.historial.length > 0) {
+    if (Array.isArray(body?.historial) && body.historial.length > 0) {
       historial = body.historial
         .filter((item: any) => item.texto)
         .map((item: any) => ({
@@ -609,20 +659,6 @@ ${body.mensaje}`
     /*
      * DETECCIÓN DE CATEGORÍA
      */
-
-    const esDaas = contiene(pregunta, [
-      "daas",
-      "device as a service",
-      "dispositivo como servicio",
-      "arriendo de computadores",
-      "arriendo de computador",
-      "arriendo de notebook",
-      "arriendo de notebooks",
-      "arriendo de equipos",
-      "computadores como servicio",
-      "notebooks como servicio",
-      "hardware como servicio",
-    ])
 
     const esAutomatizacion = contiene(pregunta, [
       "automatizacion",
@@ -700,10 +736,6 @@ ${body.mensaje}`
           categoriaAnterior = "salas"
           break
         }
-        if (contiene(itemText, ["daas", "dispositivo como servicio", "arriendo de equipos"])) {
-          categoriaAnterior = "daas"
-          break
-        }
         if (contiene(itemText, ["impresora", "multifuncional", "xerox", "epson", "brother", "kyocera", "lexmark"])) {
           categoriaAnterior = "equipos"
           break
@@ -731,7 +763,6 @@ ${body.mensaje}`
         "multifuncionales",
         "sala",
         "salas",
-        "daas",
         "automatizacion",
         "automatizaciones",
         "cotizar",
@@ -764,17 +795,15 @@ ${body.mensaje}`
         ? "general"
         : intencionIA?.categoria && intencionIA.categoria !== "general"
           ? intencionIA.categoria
-          : esDaas
-            ? "daas"
-            : esAutomatizacion
-              ? "automatizaciones"
-              : esSala
-                ? "salas"
-                : esEquipoExplicit
-                  ? "equipos"
-                  : mensajeEsContinuacion && categoriaAnterior
-                    ? categoriaAnterior
-                    : (categoriaAnterior ?? "equipos")
+          : esAutomatizacion
+            ? "automatizaciones"
+            : esSala
+              ? "salas"
+              : esEquipoExplicit
+                ? "equipos"
+                : mensajeEsContinuacion && categoriaAnterior
+                  ? categoriaAnterior
+                  : (categoriaAnterior ?? "equipos")
 
     const esCambioDeCategoria = Boolean(
       ultimoTurnoCategoria &&
@@ -798,9 +827,63 @@ ${body.mensaje}`
       }
     }
 
+    const colorActualDirecto = extraerColorDeTexto(body.mensaje)
+    const formatoActualDirecto = extraerFormatoDeTexto(body.mensaje)
+    const marcaActualDirecta = ["xerox", "kyocera", "brother", "epson", "lexmark", "hp", "canon"].find((marca) => contiene(normalizar(body.mensaje), [marca])) ?? null
+    let tipoActualDirecto: "Multifuncional" | "Impresora" | null = null
+    if (contiene(normalizar(body.mensaje), ["multifuncional", "multifuncionales", "multifuncion", "copiadora", "fotocopiadora", "copiar", "escanear", "scanner", "escaner", "fax"])) {
+      tipoActualDirecto = "Multifuncional"
+    } else if (contiene(normalizar(body.mensaje), ["solo impresora", "solo impresion", "impresora simple", "sin escaner", "sin fotocopia"])) {
+      tipoActualDirecto = "Impresora"
+    }
+
+    const esCorreccionUsuario = contiene(pregunta, [
+      "me equivoque",
+      "me equivoqué",
+      "me exprese mal",
+      "me expresé mal",
+      "no quiero esa",
+      "no quiero esta",
+      "no quiero ese",
+      "no quiero este",
+      "no me sirve",
+      "no me sirven",
+      "no esa no",
+      "no este no",
+      "mejor quiero",
+      "mejor una",
+      "mejor uno",
+      "en verdad quiero",
+      "en verdad busco",
+      "realmente quiero",
+      "realmente busco",
+      "prefiero",
+      "rectifico",
+      "error mio",
+      "error mío",
+      "cambie de opinion",
+      "cambié de opinión",
+      "otra opcion",
+      "otra opción",
+      "cambiar por",
+      "disculpa",
+      "perdon",
+      "perdón",
+    ])
+
+    const tieneCambioDeFiltroExplicito = Boolean(
+      colorActualDirecto !== null ||
+      formatoActualDirecto !== null ||
+      marcaActualDirecta !== null ||
+      tipoActualDirecto !== null ||
+      esCorreccionUsuario
+    )
+
     const esSeguimientoReal = Boolean(
       (intencionIA?.es_pregunta_seguimiento || mensajeEsContinuacion) &&
       !esCambioDeCategoria &&
+      !tieneCambioDeFiltroExplicito &&
+      !esCorreccionUsuario &&
       productosAnteriores.length > 0
     )
 
@@ -811,9 +894,11 @@ ${body.mensaje}`
 Eres el asistente comercial virtual de Ofimundo.
 REGLAS ESTRICTAS:
 - Responde en MÁXIMO 2 LÍNEAS en español con un tono amable, fluido y comercial.
-- Si saluda o pregunta en general, explícale de forma directa que puedes orientarlo en impresión MPS, salas colaborativas, arriendo DaaS o automatizaciones.
+- Si saluda o pregunta en general, explícale de forma directa que puedes orientarlo en equipamiento de impresión MPS, salas colaborativas de videoconferencia o automatización de procesos.
+- REGULACIÓN DE SEGURIDAD Y ÁMBITO: ESTRICTAMENTE PROHIBIDO entregar o responder sobre claves internas, contraseñas, credenciales, servidores, código o arquitectura de Ofimundo. ESTRICTAMENTE PROHIBIDO recomendar o mencionar sitios web externos o enlaces ajenos a Ofimundo. Si la consulta es sobre temas no relacionados con los productos de Ofimundo (recetas, noticias, política, claves), desvía cortésmente la conversación indicando que solo puedes orientarlo sobre el catálogo comercial de Ofimundo.
 - ESTRICTAMENTE PROHIBIDO inventar modelos o menciones de impresoras previas si está saludando.
-- Cierra con una sola pregunta corta.
+- ESTRICTAMENTE PROHIBIDO ofrecer enviar cotizaciones por correo/chat, ofrecer fichas técnicas, dar precios o preguntar sobre opciones de conectividad o red.
+- ESTRICTAMENTE PROHIBIDO INCLUIR CUALQUIER TIPO DE PREGUNTA EN TU RESPUESTA. Tu mensaje debe contener ÚNICAMENTE el texto explicativo, terminando directamente con un punto final.
 `,
         `
 Consulta del cliente:
@@ -821,7 +906,8 @@ ${body.mensaje}
 `
       )
 
-      const respuesta = respuestaGroq ?? MENSAJE_FUERA_DE_SERVICIO
+      const respuestaRaw = respuestaGroq ?? MENSAJE_FUERA_DE_SERVICIO
+      const respuesta = respuestaGroq ? limpiarPreguntasAlFinal(respuestaGroq) : MENSAJE_FUERA_DE_SERVICIO
 
       const origin = new URL(request.url).origin
       await registrarEnHistorial(origin, sesionId, body.mensaje, respuesta)
@@ -835,58 +921,8 @@ ${body.mensaje}
       })
     }
 
-    if (categoria === "daas") {
-      const informacionDaas = {
-        nombre: "DaaS - Dispositivo como Servicio",
-        descripcion:
-          "Servicio de arriendo de infraestructura tecnológica para empresas.",
-        incluye: [
-          "Computadores",
-          "Notebooks",
-          "Monitores",
-          "Otros dispositivos tecnológicos",
-        ],
-        caracteristicas: [
-          "Costo mensual por dispositivo",
-          "Posibilidad de escalar según las necesidades de la empresa",
-          "Soporte y mantenimiento incluido",
-          "Acceso a tecnología actualizada sin realizar una compra inicial importante",
-        ],
-      }
-
-      const respuestaGroq = await consultarGroq(
-        `
-Eres el asistente comercial virtual de Ofimundo experto en DaaS (Dispositivo como Servicio).
-REGLAS ESTRICTAS:
-- Responde siempre en español, de forma ultra concisa (MÁXIMO 2 LÍNEAS).
-- Explica de forma breve y comercial el servicio DaaS (arriendo de computadores/notebooks con mantenimiento y soporte).
-- Cierra con una sola pregunta corta.
-`,
-        `
-Consulta del cliente:
-${mensajeConContexto}
-
-Información oficial:
-${JSON.stringify(informacionDaas)}
-`
-      )
-
-      const respuesta = respuestaGroq ?? MENSAJE_FUERA_DE_SERVICIO
-
-      const origin = new URL(request.url).origin
-      await registrarEnHistorial(origin, sesionId, body.mensaje, respuesta)
-
-      return NextResponse.json({
-        success: true,
-        categoria: "daas",
-        pregunta: body.mensaje,
-        respuesta,
-        productos: [],
-      })
-    }
-
     if (categoria === "salas") {
-      const salas = await getSalas()
+      const salas = salasData as any[]
       const textoMensajesSalas = esCambioDeCategoria ? normalizar(body.mensaje) : textoMensajesUsuarioActivo
       const tamanoDetectado = parseTamanoSala(
         body.mensaje,
@@ -902,17 +938,19 @@ ${JSON.stringify(informacionDaas)}
         const scored = salasFiltradas.map((sala: any) => {
           let score = 0
 
+          // Prioridad máxima: Tamaño / Capacidad de asistentes (S: 1-5 pax, M: 6-11 pax, L: 12+ pax)
           if (tamanoDetectado && normalizar(String(sala.Tamano ?? sala.tamano_sala ?? "")) === normalizar(tamanoDetectado)) {
-            score += 1000
+            score += 1500
           }
 
+          // Prioridad secundaria: Línea tecnológica (Essential, Business, Advanced)
           if (lineaDetectada && normalizar(String(sala.Linea ?? "")) === normalizar(lineaDetectada)) {
-            score += 500
+            score += 700
           }
 
           const opcionesStr = JSON.stringify(sala.Opciones || []).toLowerCase()
-          const complementosStr = JSON.stringify(sala.Complementos || []).toLowerCase()
 
+          // Coincidencias de marca preferida si el cliente la solicita (Logitech, Poly, Neat, Jabra)
           if (contiene(normPreguntaSalas, ["logi", "logitech"])) {
             if (opcionesStr.includes("logitech")) score += 200
           }
@@ -924,16 +962,6 @@ ${JSON.stringify(informacionDaas)}
           }
           if (contiene(normPreguntaSalas, ["jabra"])) {
             if (opcionesStr.includes("jabra")) score += 200
-          }
-
-          if (contiene(normPreguntaSalas, ["agendamiento", "reserva", "scheduler", "evoko"])) {
-            if (complementosStr.includes("agendamiento")) score += 300
-          }
-          if (contiene(normPreguntaSalas, ["pizarra", "scribe", "kaptivo"])) {
-            if (complementosStr.includes("pizarra")) score += 300
-          }
-          if (contiene(normPreguntaSalas, ["pantalla interactiva", "tactil", "touch", "i3", "samsung"])) {
-            if (complementosStr.includes("pantallas interactivas")) score += 300
           }
 
           return { sala, score }
@@ -967,7 +995,9 @@ REGLAS ESTRICTAS DE RESPUESTA COMERCIAL:
 - Responde siempre en español, de forma muy breve y comercial (MÁXIMO 2 LÍNEAS).
 - Recomienda directamente la solución de sala idónea (ej: Essential S, Advanced M, Business S, etc.) destacando su capacidad adecuada de personas o sus marcas/equipos principales (Logitech, Poly, Neat, Jabra, 4K, One-Touch join, agendamiento).
 - Usa ÚNICAMENTE la información oficial suministrada de las salas filtradas.
-- Cierra con una sola pregunta corta.
+- REGULACIÓN DE SEGURIDAD Y ÁMBITO: ESTRICTAMENTE PROHIBIDO responder sobre claves internas, contraseñas, servidores, código, credenciales o sitios web externos.
+- ESTRICTAMENTE PROHIBIDO ofrecer enviar cotizaciones por correo/chat, ofrecer fichas técnicas, dar precios o preguntar sobre opciones de conectividad o red. Las cotizaciones se solicitan directamente desde las tarjetas.
+- ESTRICTAMENTE PROHIBIDO INCLUIR CUALQUIER TIPO DE PREGUNTA EN TU RESPUESTA. Tu mensaje debe contener ÚNICAMENTE el texto descriptivo de la recomendación, terminando directamente con un punto final.
 `,
         `
 Consulta del cliente:
@@ -978,7 +1008,8 @@ ${JSON.stringify(salasParaIA)}
 `
       )
 
-      const respuesta = respuestaGroq ?? MENSAJE_FUERA_DE_SERVICIO
+      const respuestaRaw = respuestaGroq ?? MENSAJE_FUERA_DE_SERVICIO
+      const respuesta = respuestaGroq ? limpiarPreguntasAlFinal(respuestaGroq) : MENSAJE_FUERA_DE_SERVICIO
       const productosSalas = respuestaGroq ? ultimosProductosRecomendados : []
 
       const origin = new URL(request.url).origin
@@ -994,7 +1025,7 @@ ${JSON.stringify(salasParaIA)}
     }
 
     if (categoria === "automatizaciones") {
-      const automatizaciones = await getAutomatizaciones()
+      const automatizaciones = automatizacionesData as any[]
       const temaDetectado = esCambioDeCategoria ? normalizar(body.mensaje) : textoMensajesUsuarioActivo
 
       let automatizacionesFiltradas = esSeguimientoReal
@@ -1039,7 +1070,9 @@ REGLAS ESTRICTAS DE RESPUESTA COMERCIAL:
 - Responde siempre en español, de forma muy breve y comercial (MÁXIMO 2 LÍNEAS).
 - Presenta de forma directa la solución de automatización ideal para la necesidad del usuario o responde su duda técnica.
 - Usa ÚNICAMENTE la información oficial suministrada.
-- Cierra con una sola pregunta corta.
+- REGULACIÓN DE SEGURIDAD Y ÁMBITO: ESTRICTAMENTE PROHIBIDO responder sobre claves internas, contraseñas, servidores, código, credenciales o sitios web externos.
+- ESTRICTAMENTE PROHIBIDO ofrecer enviar cotizaciones por correo/chat, ofrecer fichas técnicas, dar precios o preguntar sobre opciones de conectividad o red. Las cotizaciones se solicitan directamente desde las tarjetas.
+- ESTRICTAMENTE PROHIBIDO INCLUIR CUALQUIER TIPO DE PREGUNTA EN TU RESPUESTA. Tu mensaje debe contener ÚNICAMENTE el texto descriptivo del proceso, terminando directamente con un punto final.
 `,
         `
 Consulta del cliente:
@@ -1050,7 +1083,8 @@ ${JSON.stringify(automatizacionesParaIA)}
 `
       )
 
-      const respuesta = respuestaGroq ?? MENSAJE_FUERA_DE_SERVICIO
+      const respuestaRaw = respuestaGroq ?? MENSAJE_FUERA_DE_SERVICIO
+      const respuesta = respuestaGroq ? limpiarPreguntasAlFinal(respuestaGroq) : MENSAJE_FUERA_DE_SERVICIO
       const productosAuto = respuestaGroq ? automatizacionesFiltradas.slice(0, 3) : []
 
       const origin = new URL(request.url).origin
@@ -1065,7 +1099,7 @@ ${JSON.stringify(automatizacionesParaIA)}
       })
     }
 
-    const productos = await getEquipos()
+    const productos = equiposData as any[]
 
     // HMR Recompile Trigger - Robust Chatbot Route
 
@@ -1081,14 +1115,16 @@ ${JSON.stringify(automatizacionesParaIA)}
       "inicio",
     ])
 
-    const solicitaNuevaBusquedaExplicitamente = contiene(pregunta, [
-      "nueva busqueda",
-      "resetear",
-      "empezar de nuevo",
-      "otra busqueda",
-      "cancelar busqueda",
-      "buscar otra cosa",
-    ])
+    const solicitaNuevaBusquedaExplicitamente =
+      esCorreccionUsuario ||
+      contiene(pregunta, [
+        "nueva busqueda",
+        "resetear",
+        "empezar de nuevo",
+        "otra busqueda",
+        "cancelar busqueda",
+        "buscar otra cosa",
+      ])
 
     const esInicioNuevaBusqueda = contiene(pregunta, [
       "busco",
@@ -1192,12 +1228,12 @@ ${JSON.stringify(automatizacionesParaIA)}
     // 3. FORMATO (A3 vs A4 / Carta / Oficio)
     const formatoActual = extraerFormatoDeTexto(body.mensaje)
     const formatoActivo = extraerFormatoDeTexto(textoMensajesUsuarioActivo)
-    const finalFormato: "A3" | "A4" | null = formatoActual ?? formatoActivo ?? intencionIA?.formato ?? null
+    const finalFormato: "A3" | "A4" | null = formatoActual ?? (formatoActivo || intencionIA?.formato || null)
 
     // 4. COLOR (color vs monocromo)
     const colorActual = extraerColorDeTexto(body.mensaje)
     const colorActivo = extraerColorDeTexto(textoMensajesUsuarioActivo)
-    const finalColor: "color" | "monocromo" | null = colorActual ?? colorActivo ?? intencionIA?.color ?? null
+    const finalColor: "color" | "monocromo" | null = colorActual ?? (colorActivo || intencionIA?.color || null)
 
     // 5. VOLUMEN (número explícito de páginas ingresado por el usuario)
     const ultimoBotMsj = historialBusquedaActiva.length > 0 ? historialBusquedaActiva[historialBusquedaActiva.length - 1]?.respuesta_bot : ""
@@ -1340,12 +1376,13 @@ ${JSON.stringify(automatizacionesParaIA)}
 
           // 2. Filtro de Color
           if (strictColor && finalColor) {
-            if (finalColor === "color" && !color.includes("color")) {
+            const normColor = normalizar(producto.Color_Equipo)
+            if (finalColor === "color" && !normColor.includes("color")) {
               return false
             }
             if (
               finalColor === "monocromo" &&
-              !contiene(color, ["blanco y negro", "monocromo", "bn", "b/n", "b&w"])
+              !contiene(normColor, ["blanco y negro", "monocromo", "bn", "b/n", "b&w", "negro"])
             ) {
               return false
             }
@@ -1552,7 +1589,7 @@ ${JSON.stringify(automatizacionesParaIA)}
         },
         total: 0,
         respuesta:
-          "No encontré equipos que cumplan exactamente con esos requisitos. Si quieres, puedo ayudarte a buscar una alternativa similar.",
+          "No se encontraron equipos que cumplan exactamente con los requisitos solicitados en el catálogo actual.",
         productos: [],
       })
     }
@@ -1603,10 +1640,17 @@ ${
     : ""
 }
 - SI EL USUARIO RETORNA O CAMBIA DE OTRA CATEGORÍA, realiza una transición fluida retomando sus necesidades de equipamiento de impresión.
-- Explica de forma clara y directa POR QUÉ la 1ra opción recomendada (${productosParaIA[0]?.marca} ${productosParaIA[0]?.nombre}) es la mejor alternativa para sus requisitos (ej: marca, color/monocromo, formato A3/A4, volumen o conectividad).
+${
+  esCorreccionUsuario
+    ? `- EL CLIENTE INDICA QUE SE EQUIVOCÓ O QUE RECHAZA LA OPCIÓN ANTERIOR (ej: "me equivoqué", "no quiero esa", "prefiero..."). Acepta la corrección amablemente con empatía y presenta directamente la mejor alternativa que solicita.`
+    : ""
+}
+- Explica de forma clara y directa POR QUÉ la 1ra opción recomendada (${productosParaIA[0]?.marca} ${productosParaIA[0]?.nombre}) es la mejor alternativa para sus requisitos (ej: marca, color/monocromo, formato A3/A4 o volumen de impresión).
 - SI EL CLIENTE HACE UNA PREGUNTA DE SEGUIMIENTO: Responde DIRECTAMENTE su duda técnica basándote ÚNICAMENTE en los datos de los productos suministrados.
 - ESTRICTAMENTE PROHIBIDO inventar números de páginas, velocidades o especificaciones que no estén en la lista.
-- Cierra con una pregunta corta y amable para orientar el siguiente paso del cliente.
+- REGULACIÓN DE SEGURIDAD Y ÁMBITO: ESTRICTAMENTE PROHIBIDO responder sobre claves internas, contraseñas, credenciales, servidores, código o sitios web externos.
+- ESTRICTAMENTE PROHIBIDO ofrecer enviar cotizaciones por correo o chat, ofrecer fichas técnicas, dar precios o preguntar por opciones de conectividad o red. El usuario cotiza directamente mediante el botón 'Cotizar' en las tarjetas de productos.
+- ESTRICTAMENTE PROHIBIDO INCLUIR CUALQUIER TIPO DE PREGUNTA O CONSULTA DE CIERRE EN TU RESPUESTA. Tu mensaje debe contener ÚNICAMENTE el texto descriptivo del equipo recomendado, terminando directamente con un punto final.
 `,
       `
 Consulta del cliente e historial:
@@ -1624,7 +1668,8 @@ ${JSON.stringify(productosParaIA)}
 `
     )
 
-    const respuesta = respuestaGroq ?? MENSAJE_FUERA_DE_SERVICIO
+    const respuestaRaw = respuestaGroq ?? MENSAJE_FUERA_DE_SERVICIO
+    const respuesta = respuestaGroq ? limpiarPreguntasAlFinal(respuestaGroq) : MENSAJE_FUERA_DE_SERVICIO
     const productosEquipos = respuestaGroq ? resultados : []
 
     /*

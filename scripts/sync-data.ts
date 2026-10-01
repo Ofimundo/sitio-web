@@ -86,7 +86,44 @@ async function main() {
     console.log("3. Exporting automatizaciones from SQL Server...")
     const rowsAuto = await executeQuery<any>(`SELECT * FROM [THE_COOLER_SGCX].[MPR].[VT_SEL_AUTOMATIZACION]`)
     if (rowsAuto && rowsAuto.length > 0) {
-      console.log(`Retrieved ${rowsAuto.length} automatizaciones from DB`)
+      const { automatizacionesFallback } = await import("../lib/automatizaciones-data")
+      const seen = new Set<string>()
+      const listadoAuto: any[] = []
+      for (const row of rowsAuto) {
+        const id = String(row.id_Producto ?? row.id_producto ?? "").trim()
+        const slug = id.replace(/^auto_/i, "").replaceAll("_", "-").toLowerCase()
+        const canonical = automatizacionesFallback.find((f: any) => f.slug === slug) || {
+          ID_Producto: id,
+          slug,
+          nombre: row.nombre_producto?.trim() || row.modelo?.trim() || id,
+          nombreCorto: row.modelo?.trim() || id,
+          categoria: row.clasificacion?.trim() || "Finanzas",
+          modalidad: row.modalidad?.trim() || "Integración personalizada",
+          beneficio: row.beneficio?.trim() || "Alta precisión",
+          resumen: row.descripcion_corta?.trim() || "",
+          descripcion: row.descripcion_corta?.trim() || "",
+          imagen: row.link_imagen?.trim() || "/images/automatizaciones/aceptacion-facturas.png",
+          icono: "fa-robot",
+          destacada: ["SI", "SÍ", "TRUE", "1"].includes(String(row.producto_destacado ?? "").trim().toUpperCase()),
+          capacidades: [],
+          integraciones: [],
+          metricas: [],
+          planes: [],
+        }
+        if (!seen.has(canonical.slug)) {
+          seen.add(canonical.slug)
+          listadoAuto.push(canonical)
+        }
+      }
+
+      if (listadoAuto.length > 0) {
+        fs.writeFileSync(
+          path.join(dataDir, "automatizaciones.json"),
+          JSON.stringify(listadoAuto, null, 2),
+          "utf-8"
+        )
+        console.log(`SUCCESS: Saved ${listadoAuto.length} automatizaciones to data/automatizaciones.json`)
+      }
     }
 
     console.log("Export process finished successfully!")

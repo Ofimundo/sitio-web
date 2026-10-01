@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
+    "sync-data": "npx tsx scripts/sync-data.ts",
+    "prebuild": "npm run sync-data || echo 'Advertencia: No se pudo conectar a BD para sincronizar JSON, usando catálogos locales existentes.'",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "sync-data": "npx tsx scripts/sync-data.ts"
+    "lint": "next lint"
   },
   "dependencies": {
     "@azure/msal-node": "^5.4.3",

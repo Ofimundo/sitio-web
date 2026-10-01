@@ -96,7 +96,7 @@ export async function getAutomatizaciones(filtros: FiltrosAutomatizacion = {}): 
     let listado: Automatizacion[] = []
 
     if (automatizacionesJson && automatizacionesJson.length > 0) {
-      listado = automatizacionesJson as Automatizacion[]
+      listado = (automatizacionesJson as unknown) as Automatizacion[]
     } else {
       const rows = await executeQuery<AutomatizacionRow>(`SELECT * FROM ${VISTAS.automatizacion}`)
       if (rows && rows.length > 0) {

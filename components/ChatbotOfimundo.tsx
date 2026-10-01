@@ -18,6 +18,65 @@ function textoProducto(valor: unknown) {
   return typeof valor === "string" ? valor : ""
 }
 
+function limpiarPreguntasFrontend(texto: string): string {
+  if (!texto) return ""
+  let limpio = texto.trim()
+
+  // Si es el saludo inicial del bot, retornar sin filtrar
+  if (limpio.includes("asistente virtual de Ofimundo")) {
+    return limpio
+  }
+
+  // 1. Si el texto tiene '¿', cortar inmediatamente en '¿'
+  if (limpio.includes("¿")) {
+    limpio = limpio.split("¿")[0].trim()
+  }
+
+  // 2. Si el texto tiene '?', cortar antes de la pregunta
+  if (limpio.includes("?")) {
+    const primerInterrogacion = limpio.indexOf("?")
+    const partePrevia = limpio.substring(0, primerInterrogacion)
+    const ultimoPunto = partePrevia.lastIndexOf(".")
+    if (ultimoPunto !== -1) {
+      limpio = partePrevia.substring(0, ultimoPunto + 1).trim()
+    } else {
+      limpio = partePrevia.trim()
+    }
+  }
+
+  // 3. Eliminar frases de cierre o preguntas tipo "te gustaría...", "prefieres...", etc.
+  const patronesCierre = [
+    /\b(te gustaría|te gustaria|prefieres|deseas|quieres|te interesa)\b/i,
+    /\b(envíe|envie|enviarte|mandarte|hacerte llegar|compartirte)\s+(la\s+)?(cotización|cotizacion|ficha|información|informacion|detalles)\b/i,
+    /\b(opciones\s+de\s+(conectividad|red|consumo|entrega)|disponibilidad)\b/i,
+    /\b(dime\s+si|avísame|avisame|quedo\s+atento|quedo\s+a\s+tu\s+disposición|quedo\s+a\s+tu\s+disposicion)\b/i,
+    /\b(si\s+(quieres|deseas|necesitas|buscas)\s+(que\s+te|saber|conocer))\b/i,
+    /\b(hacer\s+una\s+pregunta|alguna\s+duda|otra\s+consulta|otra\s+pregunta)\b/i,
+  ]
+
+  let lineas = limpio.split("\n").map((l) => l.trim()).filter(Boolean)
+  lineas = lineas.filter((linea) => !patronesCierre.some((regex) => regex.test(linea)))
+  limpio = lineas.join(" ")
+
+  let oraciones = limpio.split(/(?<=\.)\s+/).map((o) => o.trim()).filter(Boolean)
+  while (oraciones.length > 0) {
+    const ultima = oraciones[oraciones.length - 1]
+    if (patronesCierre.some((regex) => regex.test(ultima))) {
+      oraciones.pop()
+    } else {
+      break
+    }
+  }
+
+  limpio = oraciones.join(" ").trim()
+
+  if (limpio && !/[.!]$/.test(limpio)) {
+    limpio += "."
+  }
+
+  return limpio
+}
+
 function obtenerTarjeta(producto: ProductoChat, categoria?: string) {
   // Autodetectar categoría si no viene o viene genérica
   let cat = categoria
@@ -331,7 +390,7 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
         {
           rol: "bot",
           texto:
-            data.respuesta ||
+            limpiarPreguntasFrontend(data.respuesta || "") ||
             "Encontré algunas opciones que podrían servirte.",
           categoria:
             typeof data.categoria === "string"
@@ -485,7 +544,7 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
                     : "rounded-bl-xs border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-slate-800 dark:text-gray-100 shadow-sm"
                 }`}
               >
-                {item.texto}
+                {item.rol === "bot" ? limpiarPreguntasFrontend(item.texto) : item.texto}
               </div>
             </div>
 
