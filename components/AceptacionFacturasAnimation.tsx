@@ -5,17 +5,24 @@ import { isAceptacionFacturasAnimation } from "@/lib/automatizaciones-helpers"
 
 export { isAceptacionFacturasAnimation }
 
+const statusTexts = [
+  "Procesando datos fiscales...",
+  "Verificando montos válidos...",
+  "Comprobando duplicados...",
+  "Validando formato DIAT/XML...",
+]
+
 export function AceptacionFacturasAnimation() {
   const containerRef = useRef<HTMLDivElement>(null)
   const [scale, setScale] = useState(1)
+  const [currentStatusIndex, setCurrentStatusIndex] = useState(0)
 
   useEffect(() => {
     const handleResize = () => {
       if (containerRef.current) {
         const { clientWidth, clientHeight } = containerRef.current
-        const scaleX = clientWidth / 920
-        const scaleY = clientHeight / 520
-        // Use fit scale so it never overflows
+        const scaleX = clientWidth / 360
+        const scaleY = clientHeight / 500
         const newScale = Math.min(scaleX, scaleY > 0 ? scaleY : scaleX)
         setScale(newScale > 0 ? newScale : 1)
       }
@@ -30,97 +37,155 @@ export function AceptacionFacturasAnimation() {
     return () => resizeObserver.disconnect()
   }, [])
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentStatusIndex((prev) => (prev + 1) % statusTexts.length)
+    }, 2500)
+    return () => clearInterval(interval)
+  }, [])
+
+  const progressPercentage = (currentStatusIndex + 1) * 25
+
   return (
     <div
       ref={containerRef}
-      className="factura-anim-container relative flex h-full w-full items-center justify-center overflow-hidden bg-linear-to-b from-[#f7f8fd] to-[#edf2fb]"
+      className="factura-anim-container relative flex h-full w-full items-center justify-center overflow-hidden bg-linear-to-b from-slate-50 via-slate-100/90 to-blue-50/50 p-2"
     >
       <style dangerouslySetInnerHTML={{ __html: animationCss }} />
       <div
-        className="scene-scale-wrapper flex items-center justify-center"
+        className="scene-scale-wrapper relative flex items-center justify-center overflow-hidden"
         style={{
-          width: 920,
-          height: 520,
+          width: 360,
+          height: 500,
           transform: `scale(${scale})`,
           transformOrigin: "center center",
           flexShrink: 0,
         }}
       >
-        <div className="scene">
-          <div className="card validation">
-            <div className="title">✔ Validación</div>
-            <div className="small">Automática de facturas</div>
-          </div>
+        <div className="relative w-full h-full flex flex-col items-center justify-between p-4">
+          
+          {/* Background Decor Blobs */}
+          <div className="absolute -top-10 -left-10 w-64 h-64 bg-blue-400/15 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-indigo-500/15 rounded-full blur-3xl pointer-events-none" />
 
-          <div className="card rules">
-            <div className="title">Reglas de negocio</div>
-            <ul>
-              <li>Datos fiscales</li>
-              <li>Montos válidos</li>
-              <li>Duplicados</li>
-              <li>Formato correcto</li>
-            </ul>
-          </div>
-
-          <div className="card alert">
-            <div style={{ fontSize: "32px" }}>🔔</div>
-            <div className="small">Alertas</div>
-          </div>
-
-          <div className="card approval">
-            <div className="title">👥 Flujo de aprobación</div>
-            <div className="small">Notificación y trazabilidad completa</div>
-          </div>
-
-          <div className="input">
-            <div className="stack">
-              <div className="sheet" />
-              <div className="sheet" />
-              <div className="sheet" />
-              <div className="sheet" />
+          {/* Top Header Status Bar */}
+          <div className="w-full flex items-center justify-between z-20 px-1 pt-1">
+            <div className="flex items-center space-x-2">
+              <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping" />
+              <span className="text-[10px] font-semibold tracking-wider uppercase text-slate-500 bg-slate-200/80 px-2.5 py-0.5 rounded-full">
+                Flujo Automatizado Activo
+              </span>
+            </div>
+            <div className="flex items-center space-x-1 text-[10px] font-medium text-slate-400">
+              <i className="fa-solid fa-bolt text-amber-500" />
+              <span>Tiempo real: 0.4s</span>
             </div>
           </div>
 
-          <div className="belt" />
+          {/* SVG Connection Lines (Vertical Flow Top to Bottom) */}
+          <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" viewBox="0 0 360 500" preserveAspectRatio="none">
+            {/* Path 1: Step 1 to Step 2 */}
+            <path d="M 180 150 L 180 205" fill="none" stroke="#94a3b8" strokeWidth="3" strokeLinecap="round" opacity="0.3" />
+            <path d="M 180 150 L 180 205" fill="none" stroke="#3b82f6" strokeWidth="3" strokeLinecap="round" className="flowing-path-vertical" />
 
-          <div className="machine">
-            <div className="screen">
-              <div className="icon">⚙️</div>
-              <h3>Validando</h3>
-              <span>Procesando documento</span>
-            </div>
-            <div className="side" />
-            <div className="light" />
-          </div>
-
-          <div className="doc move1">FACTURA</div>
-          <div className="doc move2">FACTURA</div>
-
-          <div className="output">
-            <div className="outDoc">
-              <h4>FACTURA</h4>
-              <div className="ok">✔ ACEPTADA</div>
-            </div>
-
-            <div className="dot d1" />
-            <div className="dot d2" />
-            <div className="dot d3" />
-            <div className="dot d4" />
-          </div>
-
-          <svg viewBox="0 0 920 520">
-            <path className="path" d="M150 255 C220 255,250 180,315 120" />
-            <path className="flow" d="M150 255 C220 255,250 180,315 120" />
-
-            <path className="path" d="M420 120 C560 90,650 90,760 140" />
-            <path className="flow" d="M420 120 C560 90,650 90,760 140" />
-
-            <path className="path" d="M420 300 C360 390,280 420,220 380" />
-            <path className="flow" d="M420 300 C360 390,280 420,220 380" />
-
-            <path className="path" d="M585 235 C620 235,640 235,700 235" />
-            <path className="flow" d="M585 235 C620 235,640 235,700 235" />
+            {/* Path 2: Step 2 to Step 3 */}
+            <path d="M 180 320 L 180 370" fill="none" stroke="#94a3b8" strokeWidth="3" strokeLinecap="round" opacity="0.3" />
+            <path d="M 180 320 L 180 370" fill="none" stroke="#10b981" strokeWidth="3" strokeLinecap="round" className="flowing-path-vertical" />
           </svg>
+
+          {/* Main Vertical Workflow Column */}
+          <div className="relative w-full flex-1 flex flex-col items-center justify-between z-10 py-3">
+
+            {/* STEP 1: Invoice Inbox */}
+            <div className="flex flex-col items-center relative w-full">
+              <div className="relative w-64 h-28 glass-card rounded-xl p-3 flex flex-row items-center justify-between shadow-lg animate-float border-blue-100">
+                <div className="flex flex-col justify-between h-full space-y-1">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-[9px] font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">FACTURA</span>
+                    <span className="text-[10px] font-semibold text-slate-700">DOC-2026-891</span>
+                  </div>
+                  <div className="space-y-1.5 w-32">
+                    <div className="h-1.5 w-full bg-slate-200 rounded-full" />
+                    <div className="h-1.5 w-3/4 bg-slate-200 rounded-full" />
+                    <div className="h-1.5 w-1/2 bg-slate-200 rounded-full" />
+                  </div>
+                </div>
+                <div className="flex flex-col items-center justify-center p-2.5 bg-blue-50/80 rounded-xl border border-blue-100/60">
+                  <i className="fa-solid fa-file-invoice text-blue-600 text-2xl" />
+                </div>
+              </div>
+
+              <div className="mt-1 bg-white/95 backdrop-blur px-2.5 py-0.5 rounded-md shadow-xs border border-slate-100 flex items-center space-x-1">
+                <i className="fa-solid fa-cloud-arrow-down text-blue-500 text-[9px]" />
+                <span className="text-[9px] font-semibold text-slate-700">Recepción XML</span>
+              </div>
+            </div>
+
+            {/* STEP 2: Central AI Validation Engine */}
+            <div className="flex flex-col items-center relative w-full my-2">
+              <div className="relative w-72 h-32 glass-dark rounded-xl p-3.5 flex flex-col justify-between shadow-xl animate-pulse-glow overflow-hidden border border-blue-500/30">
+                <div className="laser-scan" />
+
+                <div className="flex items-center justify-between z-10">
+                  <div className="flex items-center space-x-1.5">
+                    <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-ping" />
+                    <span className="text-[9px] font-bold text-blue-300 tracking-wider">VALIDANDO</span>
+                  </div>
+                  <i className="fa-solid fa-microchip text-blue-400 text-lg" />
+                </div>
+
+                <div className="my-auto z-10 flex items-center space-x-3 px-1">
+                  <div className="inline-flex shrink-0 items-center justify-center w-9 h-9 bg-blue-500/20 rounded-lg border border-blue-400/30 text-blue-300">
+                    <i className="fa-solid fa-wand-magic-sparkles text-sm animate-spin" style={{ animationDuration: "6s" }} />
+                  </div>
+                  <div className="text-[11px] font-medium text-slate-200 transition-opacity duration-200 text-left">
+                    {statusTexts[currentStatusIndex]}
+                  </div>
+                </div>
+
+                <div className="w-full bg-slate-800/80 rounded-full h-1.5 overflow-hidden z-10">
+                  <div
+                    className="bg-gradient-to-r from-blue-500 to-indigo-500 h-full rounded-full transition-all duration-300"
+                    style={{ width: `${progressPercentage}%` }}
+                  />
+                </div>
+              </div>
+
+              <div className="mt-1 bg-white/95 backdrop-blur px-2.5 py-0.5 rounded-md shadow-xs border border-slate-100 flex items-center space-x-1">
+                <i className="fa-solid fa-shield-check text-indigo-500 text-[9px]" />
+                <span className="text-[9px] font-semibold text-slate-700">Validación Automática</span>
+              </div>
+            </div>
+
+            {/* STEP 3: Business Rules & Successful Acceptance */}
+            <div className="flex flex-col items-center relative w-full">
+              <div className="relative w-64 h-28 glass-card rounded-xl p-3 flex flex-row items-center justify-between shadow-lg border border-emerald-200 bg-gradient-to-b from-white to-emerald-50/50">
+                <div className="flex flex-col justify-between h-full space-y-1">
+                  <span className="text-[8px] font-bold text-emerald-600 bg-emerald-100 px-1.5 py-0.5 rounded-full w-max">
+                    COMPLETADO
+                  </span>
+                  <div className="text-[11px] font-bold text-slate-800 tracking-tight">FACTURA ACEPTADA</div>
+                  <span className="text-[9px] text-slate-500">Montos y RUC válidos</span>
+                  <div className="text-[8px] font-semibold text-emerald-700 bg-emerald-100/70 px-1.5 py-0.5 rounded-xs w-max">
+                    ✔ Aprobado por AI
+                  </div>
+                </div>
+
+                <div className="flex flex-col items-center justify-center">
+                  <div className="w-12 h-12 bg-emerald-500 text-white rounded-xl flex items-center justify-center shadow-xs shadow-emerald-500/30">
+                    <i className="fa-solid fa-check text-xl" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-1 bg-white/95 backdrop-blur px-2.5 py-0.5 rounded-md shadow-xs border border-slate-100 flex items-center space-x-1">
+                <i className="fa-solid fa-list-check text-emerald-500 text-[9px]" />
+                <span className="text-[9px] font-semibold text-slate-700">Reglas OK</span>
+              </div>
+            </div>
+
+          </div>
+
         </div>
       </div>
     </div>
@@ -128,376 +193,63 @@ export function AceptacionFacturasAnimation() {
 }
 
 const animationCss = `
-.factura-anim-container .scene {
-    width: 920px;
-    height: 520px;
-    position: relative;
-    border-radius: 30px;
-    overflow: hidden;
-    background: linear-gradient(180deg, #f7f8fd, #edf2fb);
+.factura-anim-container .glass-card {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow: 0 10px 25px rgba(30, 41, 59, 0.07);
 }
 
-.factura-anim-container .card {
-    position: absolute;
-    background: rgba(255, 255, 255, 0.65);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    border-radius: 18px;
-    padding: 16px;
-    color: #445;
-    box-shadow: 0 10px 30px rgba(95, 103, 170, 0.12);
+.factura-anim-container .glass-dark {
+  background: rgba(15, 23, 42, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-.factura-anim-container .validation {
-    width: 170px;
-    top: 35px;
-    left: 285px;
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
 }
 
-.factura-anim-container .rules {
-    width: 190px;
-    top: 55px;
-    right: 65px;
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 12px rgba(59, 130, 246, 0.3); }
+  50% { box-shadow: 0 0 22px rgba(59, 130, 246, 0.6); }
 }
 
-.factura-anim-container .alert {
-    width: 110px;
-    top: 135px;
-    right: 20px;
-    text-align: center;
+@keyframes scanLaser {
+  0% { top: 0%; opacity: 0.8; }
+  50% { opacity: 1; }
+  100% { top: 100%; opacity: 0.8; }
 }
 
-.factura-anim-container .approval {
-    width: 210px;
-    bottom: 30px;
-    left: 200px;
+.factura-anim-container .animate-float {
+  animation: floatSlow 4s ease-in-out infinite;
 }
 
-.factura-anim-container .input {
-    position: absolute;
-    left: 40px;
-    top: 170px;
-    width: 120px;
-    height: 145px;
-    background: #4e5ac7;
-    border-radius: 18px;
-    box-shadow: 0 20px 35px rgba(74, 92, 220, 0.35);
+.factura-anim-container .animate-pulse-glow {
+  animation: pulseGlow 3s ease-in-out infinite;
 }
 
-.factura-anim-container .stack {
-    position: absolute;
-    left: 18px;
-    top: -10px;
+.factura-anim-container .laser-scan {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #3b82f6, transparent);
+  box-shadow: 0 0 8px #3b82f6;
+  animation: scanLaser 2s ease-in-out infinite;
 }
 
-.factura-anim-container .sheet {
-    position: absolute;
-    width: 78px;
-    height: 100px;
-    background: white;
-    border-radius: 8px;
-    border: 1px solid #dfe5f4;
-}
-
-.factura-anim-container .sheet:nth-child(1) { left: 0; top: 0; }
-.factura-anim-container .sheet:nth-child(2) { left: 6px; top: 6px; }
-.factura-anim-container .sheet:nth-child(3) { left: 12px; top: 12px; }
-.factura-anim-container .sheet:nth-child(4) { left: 18px; top: 18px; }
-
-.factura-anim-container .sheet:before {
-    content: "FACTURA";
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    font-size: 9px;
-    font-weight: 700;
-    color: #526;
-}
-
-.factura-anim-container .sheet:after {
-    content: "";
-    position: absolute;
-    left: 10px;
-    bottom: 12px;
-    width: 55px;
-    height: 3px;
-    background: #d8deef;
-    box-shadow: 0 -10px #d8deef, 0 -20px #d8deef;
-}
-
-.factura-anim-container .machine {
-    position: absolute;
-    left: 315px;
-    top: 120px;
-    width: 210px;
-    height: 190px;
-    background: linear-gradient(180deg, #ffffff, #dfe6fb);
-    border-radius: 22px;
-    box-shadow: 0 25px 50px rgba(120, 130, 220, 0.28);
-}
-
-.factura-anim-container .screen {
-    position: absolute;
-    left: 32px;
-    top: 28px;
-    width: 145px;
-    height: 95px;
-    border-radius: 14px;
-    background: #1d2258;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    color: white;
-    box-shadow: inset 0 0 20px rgba(125, 90, 255, 0.35);
-}
-
-.factura-anim-container .screen .icon {
-    font-size: 30px;
-    animation: pulse 1.8s infinite;
-}
-
-.factura-anim-container .screen h3 {
-    margin-top: 6px;
-    font-size: 18px;
-    font-weight: bold;
-}
-
-.factura-anim-container .screen span {
-    font-size: 11px;
-    color: #cfd6ff;
-}
-
-.factura-anim-container .side {
-    position: absolute;
-    right: 18px;
-    top: 45px;
-    width: 26px;
-    height: 55px;
-    background: linear-gradient(#6774ff, #a86cff);
-    border-radius: 8px;
-}
-
-.factura-anim-container .light {
-    position: absolute;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: #6f7cff;
-    bottom: 18px;
-    right: 28px;
-    box-shadow: 0 0 15px #6f7cff;
-    animation: pulse 1s infinite;
-}
-
-.factura-anim-container .belt {
-    position: absolute;
-    left: 165px;
-    top: 255px;
-    width: 420px;
-    height: 52px;
-    border-radius: 26px;
-    background: #222b63;
-    overflow: hidden;
-    box-shadow: 0 12px 25px rgba(32, 42, 120, 0.25);
-}
-
-.factura-anim-container .belt:before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(
-      90deg,
-      #3340a0 0 18px,
-      #293480 18px 36px
-    );
-    animation: belt 1.2s linear infinite;
-}
-
-.factura-anim-container .doc {
-    position: absolute;
-    width: 78px;
-    height: 92px;
-    background: white;
-    border-radius: 8px;
-    border: 1px solid #d9dff0;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding-top: 8px;
-    font-size: 9px;
-    font-weight: 700;
-    color: #556;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.18);
-}
-
-.factura-anim-container .doc:after {
-    content: "";
-    position: absolute;
-    bottom: 12px;
-    width: 50px;
-    height: 3px;
-    background: #d7dcef;
-    box-shadow: 0 -10px #d7dcef, 0 -20px #d7dcef;
-}
-
-.factura-anim-container .move1 {
-    animation: travel 6s linear infinite;
-}
-
-.factura-anim-container .move2 {
-    animation: travel 6s linear infinite 3s;
-}
-
-.factura-anim-container .output {
-    position: absolute;
-    right: 95px;
-    top: 215px;
-    width: 175px;
-    height: 118px;
-    background: linear-gradient(180deg, #5b66df, #4d5cc9);
-    border-radius: 20px;
-    box-shadow: 0 18px 35px rgba(76, 88, 200, 0.35);
-}
-
-.factura-anim-container .outDoc {
-    position: absolute;
-    left: 20px;
-    top: -30px;
-    width: 135px;
-    height: 150px;
-    background: white;
-    border-radius: 10px;
-    transform: rotate(-8deg);
-    box-shadow: 0 18px 30px rgba(0, 0, 0, 0.18);
-}
-
-.factura-anim-container .outDoc h4 {
-    text-align: center;
-    margin-top: 12px;
-    color: #425;
-    font-weight: bold;
-}
-
-.factura-anim-container .ok {
-    position: absolute;
-    bottom: 18px;
-    left: 18px;
-    right: 18px;
-    background: #42c87b;
-    color: white;
-    text-align: center;
-    padding: 8px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: 700;
-}
-
-.factura-anim-container .dot {
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: #69b7ff;
-    box-shadow: 0 0 12px #69b7ff;
-    animation: pulse 1.2s infinite;
-}
-
-.factura-anim-container .d1 { bottom: 18px; left: 18px; }
-.factura-anim-container .d2 { bottom: 18px; left: 48px; animation-delay: .3s; }
-.factura-anim-container .d3 { bottom: 18px; left: 78px; animation-delay: .6s; }
-.factura-anim-container .d4 { bottom: 18px; left: 108px; animation-delay: .9s; }
-
-.factura-anim-container svg {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-}
-
-.factura-anim-container .path {
-    fill: none;
-    stroke: #8ec8ff;
-    stroke-width: 3;
-    stroke-dasharray: 8 8;
-    opacity: .35;
-}
-
-.factura-anim-container .flow {
-    fill: none;
-    stroke: #58a6ff;
-    stroke-width: 4;
-    stroke-linecap: round;
-    stroke-dasharray: 18 180;
-    animation: dash 3s linear infinite;
-}
-
-@keyframes dash {
-  to { stroke-dashoffset: -198; }
-}
-
-@keyframes pulse {
-  50% {
-    opacity: .4;
-    transform: scale(.9);
-  }
-}
-
-@keyframes belt {
+@keyframes dashMoveVertical {
   to {
-    background-position: 36px 0;
+    stroke-dashoffset: -24;
   }
 }
 
-@keyframes travel {
-  0% {
-    left: 175px;
-    top: 232px;
-    opacity: 0;
-    transform: scale(.8) rotate(-10deg);
-  }
-  10% {
-    opacity: 1;
-  }
-  35% {
-    left: 255px;
-    top: 232px;
-  }
-  55% {
-    left: 360px;
-    top: 232px;
-  }
-  75% {
-    left: 475px;
-    top: 232px;
-  }
-  100% {
-    left: 620px;
-    top: 195px;
-    opacity: 0;
-    transform: scale(.95) rotate(-8deg);
-  }
-}
-
-.factura-anim-container .small {
-    font-size: 12px;
-    color: #667;
-    margin-top: 8px;
-    line-height: 1.4;
-}
-
-.factura-anim-container .rules ul {
-    margin-top: 8px;
-    padding-left: 18px;
-    font-size: 12px;
-    line-height: 1.6;
-}
-
-.factura-anim-container .title {
-    font-weight: 700;
-    color: #334;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+.factura-anim-container .flowing-path-vertical {
+  stroke-dasharray: 8, 8;
+  animation: dashMoveVertical 1.5s linear infinite;
 }
 `

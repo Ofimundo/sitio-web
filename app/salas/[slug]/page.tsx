@@ -51,23 +51,45 @@ export default async function SalaDetallePage({ params }: { params: Promise<{ sl
 
             <section className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm" aria-labelledby="configuraciones">
               <div className="mb-8 text-center">
-                <p className="text-sm font-bold uppercase tracking-[0.2em] text-ofimundo-magenta">Elige tu ecosistema</p>
-                <h2 id="configuraciones" className="mt-2 text-3xl font-bold text-ofimundo-navy">Dos configuraciones, una misma experiencia</h2>
-                <p className="mt-2 text-gray-600">Cada alternativa incluye configuración profesional y acompañamiento inicial.</p>
+                <p className="text-sm font-bold uppercase tracking-[0.2em] text-ofimundo-magenta">Tu ecosistema</p>
+                <h2 id="configuraciones" className="mt-2 text-2xl font-bold text-ofimundo-navy">Configuración profesional y acompañamiento inicial.</h2>
               </div>
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">{sala.Opciones.map((opcion) => <article key={opcion.ID_Opcion} className="overflow-hidden rounded-xl border border-gray-200">
-                <header className="flex items-center justify-between bg-linear-to-r from-(--ofimundo-purple) to-(--ofimundo-magenta) px-5 py-4 text-white">
-                  <h3 className="text-xl font-bold">{opcion.Nombre}</h3>
-                  <span className="flex size-9 items-center justify-center rounded-full bg-white font-bold text-ofimundo-purple">{opcion.Codigo}</span>
-                </header>
-                <div className="divide-y divide-gray-100">{opcion.Equipos.map((equipo) => <div key={equipo.ID_Producto} className="flex gap-3 p-5">
-                  <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-purple-50 font-bold text-ofimundo-purple">{equipo.Orden}</span>
-                  <div>
-                    <p className="text-xs font-bold uppercase tracking-wider text-ofimundo-magenta">{equipo.Nombre_Marca}</p>
-                    <h4 className="font-bold text-ofimundo-navy">{equipo.Nombre_Equipo}</h4>
-                    <p className="mt-1 text-sm text-gray-600">{equipo.Descripcion}</p>
-                  </div></div>)}
-                </div></article>)}
+              <div className={`grid grid-cols-1 gap-6 ${sala.Opciones.length > 1 ? "md:grid-cols-2" : "w-full"}`}>
+                {sala.Opciones.map((opcion) => (
+                  <article key={opcion.ID_Opcion} className="overflow-hidden rounded-xl border border-gray-200">
+                    <header className="flex items-center justify-between bg-linear-to-r from-(--ofimundo-purple) to-(--ofimundo-magenta) px-5 py-4 text-white">
+                      <h3 className="text-xl font-bold">{sala.Opciones.length === 1 ? "Componentes sala colaborativa" : opcion.Nombre}</h3>
+                      {sala.Opciones.length > 1 && (
+                        <span className="flex size-9 items-center justify-center rounded-full bg-white font-bold text-ofimundo-purple">{opcion.Codigo}</span>
+                      )}
+                    </header>
+                    <div className="divide-y divide-gray-100">
+                      {opcion.Equipos.map((equipo) => (
+                        <div key={equipo.ID_Producto} className="flex items-center justify-between gap-4 p-5">
+                          <div className="flex items-start gap-3">
+                            <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-purple-50 font-bold text-ofimundo-purple">{equipo.Orden}</span>
+                            <div>
+                              <p className="text-xs font-bold uppercase tracking-wider text-ofimundo-magenta">{equipo.Nombre_Marca}</p>
+                              <h4 className="font-bold text-ofimundo-navy">{equipo.Nombre_Equipo}</h4>
+                              <p className="mt-1 text-sm text-gray-600">{equipo.Descripcion}</p>
+                            </div>
+                          </div>
+                          {equipo.Imagen_Equipo && (
+                            <div className="relative h-16 w-28 shrink-0 overflow-hidden rounded-lg border border-gray-100 bg-gray-50 sm:w-32">
+                              <Image
+                                src={equipo.Imagen_Equipo}
+                                alt={equipo.Nombre_Equipo}
+                                fill
+                                unoptimized
+                                className="object-contain p-0.5"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </article>
+                ))}
               </div>
             </section>
 

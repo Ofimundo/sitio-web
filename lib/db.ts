@@ -4,6 +4,11 @@ import sql from "mssql"
 const [server, instanceName] = (process.env.DB_SERVER || "localhost").split("\\")
 const configuredPort = process.env.DB_PORT ? Number(process.env.DB_PORT) : undefined
 
+const isIpAddress = net.isIP(server) !== 0
+const shouldEncrypt = process.env.DB_ENCRYPT !== undefined
+  ? process.env.DB_ENCRYPT === "true" && !isIpAddress
+  : false
+
 // Conexión compartida por las APIs de equipos y salas.
 const sqlConfig: sql.config = {
   user: process.env.DB_USER,
@@ -17,8 +22,8 @@ const sqlConfig: sql.config = {
     idleTimeoutMillis: 30000,
   },
   options: {
-    encrypt: true,
-    trustServerCertificate: true,
+    encrypt: shouldEncrypt,
+    trustServerCertificate: process.env.DB_TRUST_CERT !== "false",
     ...(instanceName && !configuredPort ? { instanceName } : {}),
   },
 }

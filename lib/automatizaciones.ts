@@ -95,19 +95,23 @@ export async function getAutomatizaciones(filtros: FiltrosAutomatizacion = {}): 
   try {
     let listado: Automatizacion[] = []
 
+    let rawList: Automatizacion[] = []
     if (automatizacionesJson && automatizacionesJson.length > 0) {
-      listado = (automatizacionesJson as unknown) as Automatizacion[]
+      rawList = (automatizacionesJson as unknown) as Automatizacion[]
     } else {
       const rows = await executeQuery<AutomatizacionRow>(`SELECT * FROM ${VISTAS.automatizacion}`)
       if (rows && rows.length > 0) {
-        const mapped = rows.map(mapResumen)
-        const seen = new Set<string>()
-        for (const item of mapped) {
-          const canonical = obtenerAutomatizacionPorSlug(item.slug)
-          if (!seen.has(canonical.slug)) {
-            seen.add(canonical.slug)
-            listado.push(canonical)
-          }
+        rawList = rows.map(mapResumen)
+      }
+    }
+
+    if (rawList.length > 0) {
+      const seen = new Set<string>()
+      for (const item of rawList) {
+        const canonical = obtenerAutomatizacionPorSlug(item.slug)
+        if (!seen.has(canonical.slug)) {
+          seen.add(canonical.slug)
+          listado.push(canonical)
         }
       }
     }

@@ -51,6 +51,7 @@ type OpcionRow = {
   marca?: string
   modelo?: string
   descripcion?: string
+  imagen?: string
   imagen_Equipo?: string
   imagen_equipo?: string
 }
@@ -109,18 +110,90 @@ function mapResumen(row: SalaRow, index: number): Sala {
   }
 }
 
+/**
+ * Mapeo de imágenes de equipos a los archivos locales en /images/Salas configuracion/
+ */
+function getLocalImagenEquipo(row: OpcionRow): string | null {
+  const modelo = (row.modelo || "").toLowerCase()
+  const idProductoOpcion = String(row.id_producto_opcion || "").toLowerCase()
+  const descripcion = (row.descripcion || "").toLowerCase()
+  const rawImg = (row.imagen || row.imagen_Equipo || row.imagen_equipo || "").toLowerCase()
+
+  const matchText = `${modelo} ${idProductoOpcion} ${descripcion} ${rawImg}`
+
+  if (matchText.includes("c-pro infinity") || matchText.includes("cpi-420") || matchText.includes("20x")) {
+    return "/images/Salas configuracion/C-Pro Infinity_20X.png"
+  }
+  if (matchText.includes("maxhub") || matchText.includes("u50")) {
+    return "/images/Salas configuracion/MAXHUB UC U50 _Barra USB.jpg"
+  }
+  if (matchText.includes("meetup")) {
+    return "/images/Salas configuracion/MeetUp _2.webp"
+  }
+  if (matchText.includes("huddle") || matchText.includes("960-001509")) {
+    return "/images/Salas configuracion/Rally Bar Huddle_Graphite.png"
+  }
+  if (matchText.includes("rally bar mini") || matchText.includes("960-001338")) {
+    return "/images/Salas configuracion/Rally Bar_Mini.jpg"
+  }
+  if (matchText.includes("rally bar") || matchText.includes("960-001310")) {
+    return "/images/Salas configuracion/Rally Bar_Graphite.webp"
+  }
+  if (matchText.includes("t-pod") || matchText.includes("tpapb") || matchText.includes("beamforming")) {
+    return "/images/Salas configuracion/T-Pod AIR Pro _Beamforming.png"
+  }
+  if (matchText.includes("aspen 4 65") || matchText.includes("aspen 4_65") || matchText.includes("10010821")) {
+    return "/images/Salas configuracion/i3CONNECT ASPEN 4_65.webp"
+  }
+  if (matchText.includes("aspen 4 75") || matchText.includes("aspen 4_75") || matchText.includes("10010822")) {
+    return "/images/Salas configuracion/i3CONNECT ASPEN 4_75.webp"
+  }
+  if (matchText.includes("aspen 4 86") || matchText.includes("aspen 4_86") || matchText.includes("10010823")) {
+    return "/images/Salas configuracion/i3CONNECT ASPEN 4_86.webp"
+  }
+  if (matchText.includes("elm 2 75") || matchText.includes("elm 2_75") || matchText.includes("10010731")) {
+    return "/images/Salas configuracion/i3CONNECT ELM 2 _75.webp"
+  }
+  if (matchText.includes("elm 2 86") || matchText.includes("elm 2_86") || matchText.includes("elm 2_85") || matchText.includes("10010732")) {
+    return "/images/Salas configuracion/i3CONNECT ELM 2 _86.webp"
+  }
+  if (matchText.includes("elm 2 65") || matchText.includes("elm 2_65") || matchText.includes("10010730")) {
+    return "/images/Salas configuracion/i3CONNECT ELM 2_ 65.webp"
+  }
+  if (matchText.includes("mount 2") || matchText.includes("mount2") || matchText.includes("10010756") || matchText.includes("960-001693")) {
+    return "/images/Salas configuracion/i3CONNECT _Mount 2.webp"
+  }
+
+  return null
+}
+
 function groupOpciones(rows: OpcionRow[]): SalaOpcion[] {
   const groups = new Map<string, SalaEquipo[]>()
   for (const row of rows) {
     const code = String(row.codigo_opcion ?? "").trim().toUpperCase()
     if (!code) continue
     const equipos = groups.get(code) ?? []
+
+    // Obtención de la imagen desde la base de datos (desactivada por solicitud)
+    // const rawImg = row.imagen ?? row.imagen_Equipo ?? row.imagen_equipo ?? null
+    // let cleanImg: string | null = null
+    // if (rawImg && rawImg.trim()) {
+    //   try {
+    //     cleanImg = encodeURI(rawImg.trim())
+    //   } catch {
+    //     cleanImg = rawImg.trim()
+    //   }
+    // }
+
+    // Usar imagen local fijada desde /public/images/Salas configuracion
+    const cleanImg = getLocalImagenEquipo(row)
+
     equipos.push({
       ID_Producto: String(row.id_producto_opcion ?? ""),
       Nombre_Equipo: row.modelo?.trim() || String(row.id_producto_opcion ?? "Equipo"),
       Nombre_Marca: row.marca?.trim() || "",
       Descripcion: row.descripcion?.trim() || "",
-      Imagen_Equipo: row.imagen_Equipo ?? row.imagen_equipo ?? null,
+      Imagen_Equipo: cleanImg,
       Orden: equipos.length + 1,
     })
     groups.set(code, equipos)
@@ -191,7 +264,7 @@ export async function getSalasDestacadas(): Promise<Sala[]> {
             if (optionRows && optionRows.length > 0) {
               sala.Opciones = groupOpciones(optionRows)
             }
-          } catch {}
+          } catch { }
           if (sala.Opciones.length === 0 && salasFallback) {
             const fb = (salasFallback as Sala[]).find(
               (f) =>
@@ -234,7 +307,7 @@ export async function getSalas(filtros: FiltrosSala = {}): Promise<Sala[]> {
             if (optionRows && optionRows.length > 0) {
               sala.Opciones = groupOpciones(optionRows)
             }
-          } catch {}
+          } catch { }
           if (sala.Opciones.length === 0 && salasFallback) {
             const fb = (salasFallback as Sala[]).find(
               (f) =>
