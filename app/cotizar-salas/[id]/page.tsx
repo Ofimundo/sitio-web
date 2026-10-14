@@ -67,7 +67,6 @@ export default function CotizarSalasPage() {
   const [submitError, setSubmitError] = useState("")
 
   // Paso 1 - configuración de la sala
-  const [opcion, setOpcion] = useState("")
   const [cantidadSalas, setCantidadSalas] = useState(1)
   const [plazo, setPlazo] = useState(PLAZOS[1])
   const [uso, setUso] = useState(USOS[0])
@@ -107,14 +106,12 @@ export default function CotizarSalasPage() {
   const imagenSala = sala?.Imagen_Principal || null
 
   const listaComplementos: SalaComplemento[] = useMemo(() => sala?.Complementos ?? [], [sala])
-  const opciones = useMemo(() => sala?.Opciones ?? [], [sala])
 
   const toggleComplemento = (nombre: string) => {
     setComplementos((prev) => (prev.includes(nombre) ? prev.filter((item) => item !== nombre) : [...prev, nombre]))
   }
 
   const resetPaso1 = () => {
-    setOpcion("")
     setCantidadSalas(1)
     setPlazo(PLAZOS[1])
     setUso(USOS[0])
@@ -131,7 +128,6 @@ export default function CotizarSalasPage() {
         tipo: "sala",
         sala_id: params.id,
         sala_nombre: nombreSala,
-        opcion_configuracion: opcion || "Necesito asesoría",
         cantidad_salas: cantidadSalas,
         plazo,
         uso_principal: uso,
@@ -152,13 +148,11 @@ export default function CotizarSalasPage() {
     return <SuccessMessage itemName={nombreSala} backHref="/catalogo?tipo=Salas+colaborativas" backLabel="Ver más salas" />
   }
 
-  const opcionSeleccionada = opciones.find((item) => opcion.startsWith(item.Codigo))
   const complementosSeleccionados = listaComplementos.filter((item) => complementos.includes(item.Nombre_Equipo))
-  const contextualAside = (opcionSeleccionada || complementosSeleccionados.length > 0) ? (
+  const contextualAside = complementosSeleccionados.length > 0 ? (
     <div className="rounded-2xl border-2 border-ofimundo-purple bg-white p-6 shadow-sm">
       <h2 className="text-xl font-bold text-ofimundo-navy">Tu selección</h2>
-      {opcionSeleccionada && <div className="mt-4"><p className="font-semibold text-ofimundo-purple">Opción {opcionSeleccionada.Codigo}</p><ul className="mt-2 flex flex-col gap-2 text-sm text-gray-600">{opcionSeleccionada.Equipos.map((equipo) => <li key={equipo.ID_Producto}><strong>{equipo.Nombre_Marca} {equipo.Nombre_Equipo}</strong><span className="block">{equipo.Descripcion}</span></li>)}</ul></div>}
-      {complementosSeleccionados.length > 0 && <div className="mt-5"><p className="font-semibold text-ofimundo-purple">Complementos</p><ul className="mt-2 flex flex-col gap-2 text-sm text-gray-600">{complementosSeleccionados.map((item) => <li key={item.ID_Producto}><strong>{item.Nombre_Equipo}</strong>{item.Categoria && <span className="block">{item.Categoria}</span>}</li>)}</ul></div>}
+      <div className="mt-5"><p className="font-semibold text-ofimundo-purple">Complementos</p><ul className="mt-2 flex flex-col gap-2 text-sm text-gray-600">{complementosSeleccionados.map((item) => <li key={item.ID_Producto}><strong>{item.Nombre_Equipo}</strong>{item.Categoria && <span className="block">{item.Categoria}</span>}</li>)}</ul></div>
     </div>
   ) : undefined
 
@@ -188,32 +182,6 @@ export default function CotizarSalasPage() {
           <div className="rounded-2xl border-2 border-ofimundo-purple bg-white p-6 shadow-sm md:p-8">
             <h2 className="mb-6 text-2xl font-bold text-ofimundo-navy md:text-3xl">Configura tu solución</h2>
             <div className="grid gap-6">
-              {/* Opción de configuración */}
-              <Field
-                id="opcion-help"
-                label="Opción de configuración a cotizar"
-                help="Cada sala ofrece configuraciones predefinidas (A y B) según equipamiento. Si no estás seguro, elige asesoría y un especialista te recomendará la más adecuada."
-              >
-                <select
-                  id="opcion"
-                  value={opcion}
-                  onChange={(event) => setOpcion(event.target.value)}
-                  className={fieldClass}
-                  aria-describedby="opcion-help"
-                >
-                  <option value="">Necesito asesoría para elegir</option>
-                  {opciones.map((op) => (
-                    <option key={op.ID_Opcion} value={`${op.Codigo} - ${op.Nombre}`}>{`Opción ${op.Codigo}`}</option>
-                  ))}
-                  {opciones.length === 0 && (
-                    <>
-                      <option value="A">Opción A</option>
-                      <option value="B">Opción B</option>
-                    </>
-                  )}
-                </select>
-              </Field>
-
               {/* Cantidad y plazo */}
               <div className="grid gap-6 md:grid-cols-2">
                 <Field

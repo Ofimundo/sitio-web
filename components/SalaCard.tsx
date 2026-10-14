@@ -47,7 +47,6 @@ export function SalaCard({ sala, showBadge = false }: SalaCardProps) {
         </p>
 
         <div className="mb-4 flex flex-wrap gap-2">
-          <span className="rounded bg-gray-100 px-2 py-1 text-xs">2 configuraciones</span>
           <span className="rounded bg-gray-100 px-2 py-1 text-xs">Tamaño {sala.Tamano}</span>
         </div>
 
