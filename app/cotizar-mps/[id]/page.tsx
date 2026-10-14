@@ -365,9 +365,9 @@ export default function CotizarMpsPage() {
             </div>
           </div>
 
-          <div className="flex justify-end gap-4">
-            <button type="button" onClick={resetPaso1} className="rounded-lg border-2 border-gray-300 px-6 py-3 font-semibold text-gray-700 transition hover:border-gray-400 md:px-8 md:py-4">Limpiar</button>
-            <button type="button" onClick={() => setStep(2)} className="rounded-lg bg-ofimundo-navy px-8 py-3 font-semibold text-white shadow-lg transition hover:opacity-90 md:px-12 md:py-4">Siguiente</button>
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 sm:gap-4">
+            <button type="button" onClick={resetPaso1} className="w-full sm:w-auto rounded-lg border-2 border-gray-300 px-6 py-3 text-center font-semibold text-gray-700 transition hover:border-gray-400 md:px-8 md:py-4">Limpiar</button>
+            <button type="button" onClick={() => setStep(2)} className="w-full sm:w-auto rounded-lg bg-ofimundo-navy px-8 py-3 text-center font-semibold text-white shadow-lg transition hover:opacity-90 md:px-12 md:py-4">Siguiente</button>
           </div>
         </>
       )}
@@ -376,9 +376,9 @@ export default function CotizarMpsPage() {
         <>
           <ContactStep data={contacto} onChange={(field, value) => setContacto((prev) => ({ ...prev, [field]: value }))} />
           {submitError && <SubmissionError message={submitError} />}
-          <div className="flex justify-end gap-4">
-            <button type="button" onClick={() => setStep(1)} className="rounded-lg border-2 border-gray-300 px-6 py-3 font-semibold text-gray-700 transition hover:border-gray-400 md:px-8 md:py-4">Volver</button>
-            <button type="button" onClick={handleSubmit} disabled={submitting || !contacto.nombreCompleto || !contacto.telefono || !contacto.email || !contacto.empresa || !contacto.rutEmpresa} className="flex items-center gap-2 rounded-lg bg-ofimundo-navy px-8 py-3 font-semibold text-white shadow-lg transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 md:px-12 md:py-4">
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 sm:gap-4">
+            <button type="button" onClick={() => setStep(1)} className="w-full sm:w-auto rounded-lg border-2 border-gray-300 px-6 py-3 text-center font-semibold text-gray-700 transition hover:border-gray-400 md:px-8 md:py-4">Volver</button>
+            <button type="button" onClick={handleSubmit} disabled={submitting || !contacto.nombreCompleto || !contacto.telefono || !contacto.email || !contacto.empresa || !contacto.rutEmpresa} className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-lg bg-ofimundo-navy px-8 py-3 text-center font-semibold text-white shadow-lg transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 md:px-12 md:py-4">
               {submitting ? (
                 <>
                   <svg className="h-5 w-5 animate-spin" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8V0C5.4 0 0 5.4 0 12h4Z" /></svg>

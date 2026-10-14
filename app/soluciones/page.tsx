@@ -109,25 +109,25 @@ export default function SolucionesPage() {
       <Header />
 
       {/* Hero Header */}
-      <section className="relative pt-32 pb-20 px-4 overflow-hidden bg-linear-to-b from-purple-900/10 via-pink-900/5 to-transparent dark:from-purple-950/40 dark:via-pink-950/20">
+      <section className="relative pt-28 sm:pt-32 pb-12 sm:pb-20 px-4 overflow-hidden bg-linear-to-b from-purple-900/10 via-pink-900/5 to-transparent dark:from-purple-950/40 dark:via-pink-950/20">
         <div className="max-w-7xl mx-auto text-center relative z-10">
           <span className="inline-block px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 mb-4 border border-purple-200 dark:border-purple-800">
             Catálogo de Soluciones Tecnológicas
           </span>
-          <h1 className="text-4xl md:text-6xl font-extrabold text-gradient mb-6 leading-tight">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold text-gradient mb-4 sm:mb-6 leading-tight">
             Nuestras Soluciones y Servicios Integrales
           </h1>
-          <p className="text-lg md:text-xl text-slate-600 dark:text-gray-300 max-w-3xl mx-auto mb-10 leading-relaxed">
+          <p className="text-sm sm:text-lg md:text-xl text-slate-600 dark:text-gray-300 max-w-3xl mx-auto mb-8 sm:mb-10 leading-relaxed">
             Impulsa la productividad y la transformación digital de tu empresa. Explora en detalle nuestro ecosistema de servicios: <strong>MPS</strong>, <strong>Automatizaciones</strong> y <strong>Salas Colaborativas</strong>.
           </p>
 
           {/* Quick Jump Buttons */}
-          <div className="flex flex-wrap items-center justify-center gap-3 max-w-4xl mx-auto">
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 max-w-4xl mx-auto">
             {solucionesData.map((s) => (
               <a
                 key={s.id}
                 href={`#${s.id}`}
-                className="px-5 py-2.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl font-medium text-sm text-slate-700 dark:text-gray-200 hover:border-purple-500 hover:text-purple-600 dark:hover:text-purple-400 shadow-xs hover:shadow-md transition-all flex items-center gap-2"
+                className="px-3.5 sm:px-5 py-2 sm:py-2.5 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl font-medium text-xs sm:text-sm text-slate-700 dark:text-gray-200 hover:border-purple-500 hover:text-purple-600 dark:hover:text-purple-400 shadow-xs hover:shadow-md transition-all flex items-center gap-2"
               >
                 <i className={`${s.iconClass} text-purple-600 dark:text-purple-400`}></i>
                 {s.title.split("(")[0].trim()}
@@ -138,14 +138,14 @@ export default function SolucionesPage() {
       </section>
 
       {/* Solutions Details Sections */}
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-24">
+      <main className="flex-1 max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-12 sm:space-y-24">
         {solucionesData.map((sol, index) => {
           const isEven = index % 2 === 0
           return (
             <section
               key={sol.id}
               id={sol.id}
-              className="scroll-mt-28 p-8 md:p-12 bg-white dark:bg-gray-900 rounded-3xl border border-gray-200/80 dark:border-gray-800 shadow-xl relative overflow-hidden transition-all duration-300 hover:shadow-2xl"
+              className="scroll-mt-28 p-5 sm:p-8 md:p-12 bg-white dark:bg-gray-900 rounded-3xl border border-gray-200/80 dark:border-gray-800 shadow-xl relative overflow-hidden transition-all duration-300 hover:shadow-2xl"
             >
               {/* Subtle background gradient glow */}
               <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500/5 dark:bg-purple-500/10 rounded-full blur-3xl -z-10 pointer-events-none" />
@@ -218,24 +218,24 @@ export default function SolucionesPage() {
         })}
 
         {/* Global CTA Banner at bottom */}
-        <section className="bg-linear-to-r from-purple-900 via-slate-900 to-pink-950 text-white rounded-3xl p-8 sm:p-12 text-center shadow-2xl relative overflow-hidden">
-          <div className="relative z-10 max-w-3xl mx-auto space-y-6">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-white">
+        <section className="bg-linear-to-r from-purple-900 via-slate-900 to-pink-950 text-white rounded-3xl p-6 sm:p-8 md:p-12 text-center shadow-2xl relative overflow-hidden">
+          <div className="relative z-10 max-w-3xl mx-auto space-y-4 sm:space-y-6">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white">
               ¿Listo para transformar la tecnología de tu empresa?
             </h2>
-            <p className="text-white/80 text-base md:text-lg">
+            <p className="text-white/80 text-sm sm:text-base md:text-lg">
               Cotiza con nuestros especialistas y descubre la mejor modalidad (MPS, Automatización o Salas) adaptada a tu presupuesto.
             </p>
-            <div className="flex flex-wrap justify-center gap-4 pt-4">
+            <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 pt-2 sm:pt-4">
               <Link
                 href="/catalogo"
-                className="px-8 py-3.5 bg-linear-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold text-sm rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5"
+                className="w-full sm:w-auto px-6 sm:px-8 py-3.5 bg-linear-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold text-sm rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5"
               >
                 Ver Catálogo Completo
               </Link>
               <Link
                 href="/contacto"
-                className="px-8 py-3.5 bg-white/10 hover:bg-white/20 text-white font-bold text-sm rounded-xl backdrop-blur-xs border border-white/20 transition-all"
+                className="w-full sm:w-auto px-6 sm:px-8 py-3.5 bg-white/10 hover:bg-white/20 text-white font-bold text-sm rounded-xl backdrop-blur-xs border border-white/20 transition-all"
               >
                 Contactar Asesor
               </Link>

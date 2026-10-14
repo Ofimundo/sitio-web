@@ -26,19 +26,19 @@ const soluciones = [
 
 export function SolucionesSection() {
   return (
-    <section className="py-8 px-4 bg-white dark:bg-gray-900 transition-colors">
+    <section className="py-8 sm:py-12 px-3 sm:px-4 bg-white dark:bg-gray-900 transition-colors">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-6">
-          <h2 className="text-3xl md:text-4xl text-gradient title-xl mb-1">Nuestras Soluciones</h2>
-          <p className="text-base text-gray-600 dark:text-gray-300">Impulsa tu empresa con la mejor tecnología</p>
+        <div className="text-center mb-6 px-2">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl text-gradient title-xl mb-1">Nuestras Soluciones</h2>
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">Impulsa tu empresa con la mejor tecnología</p>
         </div>
 
         {/* Tarjetas centradas */}
-        <div className="flex flex-wrap justify-center items-stretch gap-6 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 max-w-4xl mx-auto">
           {soluciones.map((solucion, index) => (
             <div
               key={index}
-              className="w-full sm:w-64 p-5 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 text-center hover:shadow-lg transition-all transform hover:-translate-y-1 flex flex-col justify-between"
+              className="w-full p-5 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 text-center hover:shadow-lg transition-all transform hover:-translate-y-1 flex flex-col justify-between"
             >
               <Link
                 href={solucion.link}
@@ -65,13 +65,13 @@ export function SolucionesSection() {
         </div>
 
         {/* Botón destacado a la nueva página de Soluciones */}
-        <div className="mt-8 text-center">
+        <div className="mt-8 text-center px-2">
           <Link
             href="/soluciones"
-            className="inline-flex items-center gap-2.5 px-6 py-3 bg-linear-to-r from-purple-700 via-purple-900 to-pink-700 hover:from-purple-800 hover:to-pink-800 text-white font-bold text-sm md:text-base rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 border border-purple-400/30 group"
+            className="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-3 bg-linear-to-r from-purple-700 via-purple-900 to-pink-700 hover:from-purple-800 hover:to-pink-800 text-white font-bold text-xs sm:text-sm md:text-base rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 border border-purple-400/30 group max-w-full text-center"
           >
             <span>¿Quieres saber qué es MPS, Automatizaciones y Salas Colaborativas?</span>
-            <i className="fas fa-arrow-right group-hover:translate-x-1 transition-transform text-xs"></i>
+            <i className="fas fa-arrow-right group-hover:translate-x-1 transition-transform text-xs shrink-0"></i>
           </Link>
         </div>
       </div>

@@ -538,7 +538,7 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
               )}
 
               <div
-                className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                className={`max-w-[92%] sm:max-w-[85%] whitespace-pre-wrap rounded-2xl px-3.5 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm leading-relaxed ${
                   item.rol === "usuario"
                     ? "rounded-br-xs bg-slate-900 dark:bg-purple-700 text-white shadow-xs"
                     : "rounded-bl-xs border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-slate-800 dark:text-gray-100 shadow-sm"
@@ -551,7 +551,7 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
             {item.rol === "bot" &&
               item.productos &&
               item.productos.length > 0 && (
-                <div className="mt-3 ml-10 w-[88%] space-y-2.5">
+                <div className="mt-3 ml-0 sm:ml-10 w-full sm:w-[90%] space-y-2.5">
                   <div className="px-1 text-[11px] font-bold text-[#2D1B4B] dark:text-purple-300 uppercase tracking-wider flex items-center gap-1">
                     <Sparkles size={12} /> Productos recomendados
                   </div>
@@ -678,8 +678,8 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
   if (embedded) {
     return (
       <div
-        className={`w-full max-w-5xl mx-auto rounded-3xl border border-purple-200/80 dark:border-purple-900/40 bg-white dark:bg-gray-900 shadow-xl overflow-hidden my-2 transition-all duration-300 ease-in-out ${
-          minimizado ? "h-[76px]" : "h-[580px]"
+        className={`w-full max-w-5xl mx-auto rounded-2xl sm:rounded-3xl border border-purple-200/80 dark:border-purple-900/40 bg-white dark:bg-gray-900 shadow-xl overflow-hidden my-2 transition-all duration-300 ease-in-out ${
+          minimizado ? "h-[76px]" : "h-[540px] sm:h-[580px]"
         }`}
       >
         {contenidoChatJSX}
@@ -691,8 +691,8 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
     <>
       {abierto && (
         <div
-          className={`fixed bottom-24 right-5 z-50 flex w-[460px] max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-2xl transition-all duration-300 ease-in-out ${
-            minimizado ? "h-[76px]" : "h-[640px]"
+          className={`fixed bottom-20 sm:bottom-24 right-3 sm:right-5 left-3 sm:left-auto z-50 flex w-auto sm:w-[460px] max-w-[calc(100vw-1.5rem)] sm:max-w-[460px] flex-col overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-2xl transition-all duration-300 ease-in-out ${
+            minimizado ? "h-[76px]" : "h-[80vh] max-h-[640px]"
           }`}
         >
           {contenidoChatJSX}
@@ -701,13 +701,13 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
 
       <button
         onClick={() => setAbierto((valor) => !valor)}
-        className="fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full text-white shadow-xl transition hover:scale-105"
+        className="fixed bottom-4 sm:bottom-5 right-4 sm:right-5 z-50 flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full text-white shadow-xl transition hover:scale-105"
         style={{
           background: "linear-gradient(90deg, #552B7E 0%, #A33A5E 100%)",
         }}
         aria-label="Abrir asistente Ofimundo"
       >
-        {abierto ? <X size={24} /> : <MessageCircle size={26} />}
+        {abierto ? <X size={22} /> : <MessageCircle size={24} />}
       </button>
     </>
   )

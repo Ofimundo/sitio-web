@@ -16,7 +16,7 @@ if (fs.existsSync(envPath)) {
   })
 }
 
-process.on("warning", (warning) => {
+process.on("warning", (warning: Error & { code?: string }) => {
   if (warning.name === "DeprecationWarning" && (warning.code === "DEP0123" || warning.message.includes("DEP0123"))) {
     return
   }

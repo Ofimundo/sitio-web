@@ -17,7 +17,7 @@ export const AGENDA_URL = "https://outlook.office.com/bookwithme/user/5d9fcae158
 export function AutomatizacionCard({ automatizacion }: { automatizacion: Automatizacion }) {
   return (
     <article className="flex h-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-background shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-      <Link href={`/automatizaciones/${automatizacion.slug}`} className="relative block h-[275px] bg-[linear-gradient(135deg,#f4dff0_0%,#c9b6e4_100%)] cursor-pointer overflow-hidden">
+      <Link href={`/automatizaciones/${automatizacion.slug}`} className="relative block h-[220px] sm:h-[260px] md:h-[275px] bg-[linear-gradient(135deg,#f4dff0_0%,#c9b6e4_100%)] cursor-pointer overflow-hidden">
         {isAceptacionFacturasAnimation(automatizacion) ? (
           <AceptacionFacturasAnimation />
         ) : isFiniquitosDtAnimation(automatizacion) ? (
@@ -32,30 +32,30 @@ export function AutomatizacionCard({ automatizacion }: { automatizacion: Automat
         <span className="absolute left-4 top-4 z-10 rounded-full bg-background/95 px-3 py-1 text-xs font-semibold text-ofimundo-purple shadow-sm">Automatización</span>
       </Link>
 
-      <div className="flex flex-1 flex-col p-6">
+      <div className="flex flex-1 flex-col p-4 sm:p-6">
         <div>
           <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-ofimundo-magenta">{automatizacion.categoria}</p>
           <Link href={`/automatizaciones/${automatizacion.slug}`}>
-            <h3 className="mb-3 text-xl font-bold text-ofimundo-navy hover:text-ofimundo-purple transition-colors cursor-pointer">{automatizacion.nombre}</h3>
+            <h3 className="mb-2 sm:mb-3 text-lg sm:text-xl font-bold text-ofimundo-navy hover:text-ofimundo-purple transition-colors cursor-pointer">{automatizacion.nombre}</h3>
           </Link>
-          <p className="mb-4 line-clamp-2 text-sm leading-relaxed text-gray-600">{automatizacion.resumen}</p>
-          <dl className="mb-6 grid grid-cols-2 gap-3 border-y border-gray-100 py-4 text-sm">
+          <p className="mb-4 line-clamp-2 text-xs sm:text-sm leading-relaxed text-gray-600">{automatizacion.resumen}</p>
+          <dl className="mb-5 sm:mb-6 grid grid-cols-2 gap-2 sm:gap-3 border-y border-gray-100 py-3 sm:py-4 text-xs sm:text-sm">
             <div>
               <dt className="text-xs text-gray-500">Beneficio</dt>
-              <dd className="font-semibold text-ofimundo-purple">{automatizacion.beneficio}</dd>
+              <dd className="font-semibold text-ofimundo-purple text-xs sm:text-sm">{automatizacion.beneficio}</dd>
             </div>
             <div>
               <dt className="text-xs text-gray-500">Modalidad</dt>
-              <dd className="font-semibold text-gray-800">{automatizacion.modalidad}</dd>
+              <dd className="font-semibold text-gray-800 text-xs sm:text-sm">{automatizacion.modalidad}</dd>
             </div>
           </dl>
         </div>
 
-        <div className="mt-auto flex gap-3">
-          <Link href={`/cotizar-automatizaciones/${automatizacion.slug}`} className="flex flex-1 items-center justify-center rounded-lg bg-linear-to-r from-(--ofimundo-magenta) to-(--ofimundo-purple) px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90">
+        <div className="mt-auto flex items-center gap-2 sm:gap-3">
+          <Link href={`/cotizar-automatizaciones/${automatizacion.slug}`} className="flex flex-1 items-center justify-center rounded-lg bg-linear-to-r from-(--ofimundo-magenta) to-(--ofimundo-purple) px-2 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-white transition hover:opacity-90">
             Cotizar
           </Link>
-          <Link href={`/automatizaciones/${automatizacion.slug}`} className="flex flex-1 items-center justify-center gap-2 rounded-lg border-2 border-ofimundo-purple px-4 py-3 text-sm font-semibold text-ofimundo-purple transition hover:bg-purple-50">
+          <Link href={`/automatizaciones/${automatizacion.slug}`} className="flex flex-1 items-center justify-center gap-1 sm:gap-2 rounded-lg border-2 border-ofimundo-purple px-2 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-ofimundo-purple transition hover:bg-purple-50">
             Ver más <span aria-hidden="true">→</span>
           </Link>
         </div>

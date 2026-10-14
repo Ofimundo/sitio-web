@@ -51,11 +51,11 @@ export function PartnersSection() {
   }, [])
 
   return (
-    <section className="py-16 px-4 bg-white">
+    <section className="py-12 sm:py-16 px-3 sm:px-4 bg-white dark:bg-background">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-8">
-          <h2 className="text-5xl text-gradient title-xl mb-2">Nuestros Partners</h2>
-          <p className="text-xl text-gray-600">Trabajamos con las mejores marcas de tecnología.</p>
+        <div className="text-center mb-6 sm:mb-8 px-2">
+          <h2 className="text-2xl sm:text-4xl md:text-5xl text-gradient title-xl mb-2">Nuestros Partners</h2>
+          <p className="text-sm sm:text-lg md:text-xl text-gray-600 dark:text-gray-300">Trabajamos con las mejores marcas de tecnología.</p>
         </div>
 
         <div ref={swiperRef} className="swiper swiper-partners mt-5">

@@ -47,7 +47,7 @@ export function FieldHelp({ id, children }: { id: string; children: ReactNode })
           <path d="M12 11v5m0-8h.01" strokeWidth="2" strokeLinecap="round" />
         </svg>
       </summary>
-      <div id={id} role="note" className="quotation-help-popover absolute left-0 z-30 mt-2 w-72 rounded-lg border border-gray-200 bg-white p-4 text-sm font-normal leading-relaxed text-gray-600 shadow-xl">
+      <div id={id} role="note" className="quotation-help-popover absolute left-0 z-30 mt-2 w-72 max-w-[calc(100vw-3rem)] rounded-lg border border-gray-200 bg-white p-4 text-xs sm:text-sm font-normal leading-relaxed text-gray-600 shadow-xl">
         {children}
       </div>
     </details>
@@ -101,15 +101,15 @@ export function ContactStep({ data, onChange }: { data: ContactData; onChange: (
   }
 
   return (
-    <div className="rounded-2xl border-2 border-ofimundo-purple bg-white p-6 shadow-sm md:p-8">
-      <h2 className="mb-2 text-2xl font-bold text-ofimundo-navy md:text-3xl">Datos de contacto</h2>
-      <p className="mb-6 text-sm leading-relaxed text-gray-600">Usaremos estos datos únicamente para preparar la propuesta y registrar la cotización en nuestro sistema.</p>
-      <div className="flex flex-col gap-6">
+    <div className="rounded-2xl border-2 border-ofimundo-purple bg-white p-5 sm:p-6 md:p-8 shadow-sm">
+      <h2 className="mb-2 text-xl sm:text-2xl md:text-3xl font-bold text-ofimundo-navy">Datos de contacto</h2>
+      <p className="mb-6 text-xs sm:text-sm leading-relaxed text-gray-600">Usaremos estos datos únicamente para preparar la propuesta y registrar la cotización en nuestro sistema.</p>
+      <div className="flex flex-col gap-5 sm:gap-6">
         <div>
           <label htmlFor="nombreCompleto" className="mb-2 block text-sm font-semibold text-gray-700">Nombre completo <span className="text-red-500">*</span></label>
           <input id="nombreCompleto" type="text" autoComplete="name" required value={data.nombreCompleto} onChange={(event) => handleChange("nombreCompleto", event.target.value)} placeholder="Juan Pérez" className={fieldClass} />
         </div>
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-5 sm:gap-6 md:grid-cols-2">
           <div>
             <label htmlFor="telefono" className="mb-2 block text-sm font-semibold text-gray-700">Teléfono <span className="text-red-500">*</span></label>
             <input id="telefono" type="tel" autoComplete="tel" required value={data.telefono} onChange={(event) => handleChange("telefono", event.target.value)} placeholder="+56 9 1234 5678" className={fieldClass} />
@@ -119,7 +119,7 @@ export function ContactStep({ data, onChange }: { data: ContactData; onChange: (
             <input id="email" type="email" autoComplete="email" required value={data.email} onChange={(event) => handleChange("email", event.target.value)} placeholder="nombre@empresa.cl" className={fieldClass} />
           </div>
         </div>
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-5 sm:gap-6 md:grid-cols-2">
           <div>
             <label htmlFor="rutEmpresa" className="mb-2 block text-sm font-semibold text-gray-700">RUT Empresa <span className="text-red-500">*</span></label>
             <input id="rutEmpresa" type="text" required value={data.rutEmpresa} onChange={(event) => handleChange("rutEmpresa", event.target.value)} placeholder="76.123.456-7" className={fieldClass} />
@@ -138,11 +138,11 @@ export function QuotationPage({ title, description, step, detailHref, contextual
   return (
     <>
       <Header />
-      <main className="mx-auto max-w-7xl px-4 pb-16 pt-36 sm:px-6 md:pt-40 lg:px-8 lg:pb-24">
-        <div className="mb-10 text-center">
-          <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-ofimundo-purple">Solicitud personalizada</p>
-          <h1 className="text-balance text-4xl font-bold text-ofimundo-navy md:text-5xl">{title}</h1>
-          <p className="mx-auto mt-4 max-w-2xl text-pretty text-lg leading-relaxed text-gray-600">{description}</p>
+      <main className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 pb-12 sm:pb-16 pt-28 sm:pt-36 md:pt-40 lg:pb-24">
+        <div className="mb-8 sm:mb-10 text-center px-2">
+          <p className="mb-2 sm:mb-3 text-xs sm:text-sm font-semibold uppercase tracking-widest text-ofimundo-purple">Solicitud personalizada</p>
+          <h1 className="text-balance text-2xl sm:text-4xl md:text-5xl font-bold text-ofimundo-navy">{title}</h1>
+          <p className="mx-auto mt-3 sm:mt-4 max-w-2xl text-pretty text-sm sm:text-base md:text-lg leading-relaxed text-gray-600">{description}</p>
         </div>
         <Link href={detailHref} className="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-ofimundo-purple transition hover:text-ofimundo-magenta"><span aria-hidden="true">←</span> Volver al detalle del producto</Link>
         <div className="mb-8" aria-label={`Paso ${step} de 2`}>

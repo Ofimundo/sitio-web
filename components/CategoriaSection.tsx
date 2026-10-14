@@ -18,15 +18,15 @@ export function CategoriaSection({ titulo, subtitulo, equipos, verMasLink }: Cat
   }
 
   return (
-    <section className="py-2 px-8 bg-white">
+    <section className="py-6 sm:py-10 px-3 sm:px-6 lg:px-8 bg-white dark:bg-background">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-8">
-          <h2 className="text-5xl leading-snug text-gradient title-xl mb-2">{titulo}</h2>
-          <p className="text-xl text-gray-600">{subtitulo}</p>
+        <div className="text-center mb-6 sm:mb-8 px-2">
+          <h2 className="text-2xl sm:text-4xl md:text-5xl leading-snug text-gradient title-xl mb-2">{titulo}</h2>
+          <p className="text-sm sm:text-lg md:text-xl text-gray-600 dark:text-gray-300">{subtitulo}</p>
         </div>
 
         {/* Primera fila - 3 productos */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {equipos.slice(0, 3).map((equipo, index) => (
             <ProductCard
               key={equipo.ID_Producto || index}
@@ -39,7 +39,7 @@ export function CategoriaSection({ titulo, subtitulo, equipos, verMasLink }: Cat
 
         {/* Segunda fila - 3 productos más */}
         {equipos.length > 3 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mt-4 sm:mt-6">
             {equipos.slice(3, 6).map((equipo, index) => (
               <ProductCard
                 key={equipo.ID_Producto || index + 3}
@@ -51,10 +51,10 @@ export function CategoriaSection({ titulo, subtitulo, equipos, verMasLink }: Cat
 
         {/* Botón Ver más */}
         {verMasLink && (
-          <div className="text-center mt-10">
+          <div className="text-center mt-8 sm:mt-10 px-4">
             <Link
               href={verMasLink}
-              className="inline-block px-8 py-3 bg-linear-to-br from-(--ofimundo-purple) to-(--ofimundo-magenta) text-white rounded-lg font-semibold hover:from-[#241a78] hover:to-[#c62842] transition"
+              className="inline-block px-6 sm:px-8 py-3 bg-linear-to-br from-(--ofimundo-purple) to-(--ofimundo-magenta) text-white rounded-lg text-sm sm:text-base font-semibold hover:from-[#241a78] hover:to-[#c62842] transition shadow-md"
             >
               Ver todos los productos
             </Link>

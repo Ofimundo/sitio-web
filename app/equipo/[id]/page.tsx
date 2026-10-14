@@ -46,19 +46,19 @@ export default async function EquipoDetallePage({ params }: PageProps) {
     <main className="min-h-screen bg-gray-50">
       <Header />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 pt-36 md:pt-40">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pb-8 pt-28 sm:pt-36 md:pt-40">
         <Link href={`/catalogo?tipo=${encodeURIComponent(equipo.Tipo_Equipo)}`} className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-ofimundo-purple transition hover:text-ofimundo-magenta">
           <i className="fas fa-arrow-left" aria-hidden="true" /> Volver al catálogo
         </Link>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
           {/* Contenido principal */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="lg:col-span-2 space-y-6 sm:space-y-8">
             {/* Sección de producto - cabecera */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-              <div className="grid md:grid-cols-2 gap-8 p-8">
+              <div className="grid md:grid-cols-2 gap-6 sm:gap-8 p-4 sm:p-8">
                 {/* Imagen del producto */}
-                <div className="h-[450px] bg-linear-to-br from-purple-50 to-pink-50 rounded-xl flex items-center justify-center p-6">
+                <div className="h-[260px] sm:h-[350px] md:h-[450px] bg-linear-to-br from-purple-50 to-pink-50 rounded-xl flex items-center justify-center p-4 sm:p-6">
                   <Image
                     src={imagenUrl}
                     alt={equipo.Nombre_Equipo}
@@ -74,16 +74,16 @@ export default async function EquipoDetallePage({ params }: PageProps) {
                     <span className="inline-block px-3 py-1 bg-ofimundo-purple text-white text-xs font-semibold rounded-full mb-3">
                       {equipo.Tipo_Equipo?.toUpperCase()}
                     </span>
-                    <h1 className="text-3xl font-bold text-ofimundo-navy mb-3 leading-tight">
+                    <h1 className="text-2xl sm:text-3xl font-bold text-ofimundo-navy mb-2 sm:mb-3 leading-tight">
                       {equipo.Nombre_Equipo}
                     </h1>
-                    <p className="text-gray-600 leading-relaxed">
+                    <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
                       {equipo.Descripcion_Equipo}
                     </p>
                   </div>
 
                   {/* Quick Specs */}
-                  <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-6">
                     {equipo.Velocidad_BN_Equipo && (
                       <SpecCard
                         icon="bolt"
@@ -115,10 +115,10 @@ export default async function EquipoDetallePage({ params }: PageProps) {
                   </div>
 
                   {/* CTA Buttons */}
-                  <div className="flex flex-wrap items-center gap-3 mt-auto">
+                  <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 mt-auto">
                     <Link
                       href={`/cotizar-mps/${equipo.ID_Producto}`}
-                      className="flex-1 rounded-lg bg-linear-to-r from-(--ofimundo-magenta) to-(--ofimundo-purple) px-4 py-3 text-center text-sm font-semibold text-white transition hover:opacity-90 text-center"
+                      className="w-full sm:flex-1 rounded-lg bg-linear-to-r from-(--ofimundo-magenta) to-(--ofimundo-purple) px-4 py-3 text-center text-xs sm:text-sm font-semibold text-white transition hover:opacity-90"
                     >
                       Cotizar solución
                     </Link>
@@ -127,7 +127,7 @@ export default async function EquipoDetallePage({ params }: PageProps) {
                       href="https://outlook.office.com/bookwithme/user/5d9fcae1581e49e8be2b6a163ed07576%40ofimundo.cl/meetingtype/x2Au6VY8SU-gJ1Uq4PePCw2?anonymous&ismsaljsauthenabled"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 rounded-lg border-2 border-ofimundo-purple px-4 py-3 text-center text-sm font-semibold text-ofimundo-purple transition hover:bg-white-50 text-center"
+                      className="w-full sm:flex-1 rounded-lg border-2 border-ofimundo-purple px-4 py-3 text-center text-xs sm:text-sm font-semibold text-ofimundo-purple transition hover:bg-white-50"
                     >
                       Agendar Reunión
                     </a>
@@ -137,7 +137,7 @@ export default async function EquipoDetallePage({ params }: PageProps) {
                         href={equipo.Archivo_PDF_Equipo}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-full rounded-lg border-2 border-gray-300 px-4 py-3 text-center text-sm font-semibold text-gray-700 transition hover:border-ofimundo-purple hover:text-ofimundo-purple flex items-center justify-center gap-2"
+                        className="w-full rounded-lg border-2 border-gray-300 px-4 py-3 text-center text-xs sm:text-sm font-semibold text-gray-700 transition hover:border-ofimundo-purple hover:text-ofimundo-purple flex items-center justify-center gap-2"
                       >
                         <i className="fas fa-file-pdf text-red-500" aria-hidden="true" />
                         Descargar Ficha Técnica
@@ -149,16 +149,16 @@ export default async function EquipoDetallePage({ params }: PageProps) {
             </div>
 
             {/* Sección de Servicios */}
-            <div className="bg-linear-to-br from-gray-50 to-gray-100 rounded-2xl p-8 border border-gray-200">
+            <div className="bg-linear-to-br from-gray-50 to-gray-100 rounded-2xl p-4 sm:p-8 border border-gray-200">
               <Image
                 src="https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/06-servicio/banner-titulo.png"
                 alt="banner-servicio"
                 width={1920}
                 height={1080}
-                className="logo logo-color"
+                className="logo logo-color w-full h-auto mb-4"
               />
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                 <ServiceCard
                   image="https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/06-servicio/01.servicio.jpg"
                   title="Gestión de Equipos"

@@ -14,7 +14,7 @@ export function SalaCard({ sala, showBadge = false }: SalaCardProps) {
     <article className="card-hover relative flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white">
       <Link 
         href={`/salas/${sala.Slug}`} 
-        className="relative flex h-[275px] overflow-hidden rounded-t-xl bg-linear-to-br from-purple-100 to-pink-50"
+        className="relative flex h-[220px] sm:h-[260px] md:h-[275px] overflow-hidden rounded-t-xl bg-linear-to-br from-purple-100 to-pink-50"
       >
         <Image
           src={sala.Imagen_Principal}
@@ -33,16 +33,16 @@ export function SalaCard({ sala, showBadge = false }: SalaCardProps) {
         </div>
       )}
 
-      <div className="flex flex-1 flex-col p-6">
+      <div className="flex flex-1 flex-col p-4 sm:p-6">
         <span className="mb-1 text-xs uppercase tracking-wider text-gray-500">
           Solución {sala.Linea} · {etiquetasTamano[sala.Tamano]}
         </span>
         <Link href={`/salas/${sala.Slug}`}>
-          <h3 className="nombre-producto mb-2 text-lg font-bold text-ofimundo-navy hover:text-ofimundo-purple transition-colors cursor-pointer">
+          <h3 className="nombre-producto mb-2 text-base sm:text-lg font-bold text-ofimundo-navy hover:text-ofimundo-purple transition-colors cursor-pointer">
             {sala.Nombre}
           </h3>
         </Link>
-        <p className="mb-4 line-clamp-2 text-sm text-gray-600">
+        <p className="mb-4 line-clamp-2 text-xs sm:text-sm text-gray-600">
           {sala.Descripcion}
         </p>
 
@@ -51,16 +51,16 @@ export function SalaCard({ sala, showBadge = false }: SalaCardProps) {
           <span className="rounded bg-gray-100 px-2 py-1 text-xs">Tamaño {sala.Tamano}</span>
         </div>
 
-        <div className="mt-auto flex items-center gap-3">
+        <div className="mt-auto flex items-center gap-2 sm:gap-3">
           <Link
             href={`/cotizar-salas/${sala.Slug}`}
-            className="flex-1 rounded-lg bg-linear-to-r from-(--ofimundo-purple) to-(--ofimundo-magenta) px-4 py-3 text-center text-sm font-semibold text-white transition hover:opacity-90"
+            className="flex-1 rounded-lg bg-linear-to-r from-(--ofimundo-purple) to-(--ofimundo-magenta) px-2 sm:px-4 py-2.5 sm:py-3 text-center text-xs sm:text-sm font-semibold text-white transition hover:opacity-90"
           >
             Cotizar
           </Link>
           <Link
             href={`/salas/${sala.Slug}`}
-            className="flex flex-1 items-center justify-center gap-2 rounded-lg border-2 border-ofimundo-purple px-4 py-3 text-center text-sm font-semibold text-ofimundo-purple transition hover:bg-purple-50"
+            className="flex flex-1 items-center justify-center gap-1 sm:gap-2 rounded-lg border-2 border-ofimundo-purple px-2 sm:px-4 py-2.5 sm:py-3 text-center text-xs sm:text-sm font-semibold text-ofimundo-purple transition hover:bg-purple-50"
           >
             Ver más <span aria-hidden="true">→</span>
           </Link>

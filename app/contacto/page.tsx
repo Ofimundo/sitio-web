@@ -37,37 +37,37 @@ export default function ContactoPage() {
       <Header />
 
       {/* Hero Header */}
-      <section className="relative pt-32 pb-16 px-4 overflow-hidden bg-linear-to-b from-purple-900/10 via-pink-900/5 to-transparent dark:from-purple-950/40 dark:via-pink-950/20">
+      <section className="relative pt-28 sm:pt-32 pb-12 sm:pb-16 px-4 overflow-hidden bg-linear-to-b from-purple-900/10 via-pink-900/5 to-transparent dark:from-purple-950/40 dark:via-pink-950/20">
         <div className="max-w-7xl mx-auto text-center relative z-10">
           <span className="inline-block px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 mb-4 border border-purple-200 dark:border-purple-800">
             Estamos para ayudarte
           </span>
-          <h1 className="text-4xl md:text-6xl font-extrabold text-gradient mb-4 leading-tight">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold text-gradient mb-4 leading-tight">
             Contáctate con Ofimundo
           </h1>
-          <p className="text-lg md:text-xl text-slate-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-sm sm:text-lg md:text-xl text-slate-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
             Conoce nuestros canales oficiales de contacto, dirección y horario de atención.
           </p>
         </div>
       </section>
 
       {/* Main Content Section */}
-      <main className="flex-1 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full space-y-16">
+      <main className="flex-1 max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 py-8 sm:py-12 w-full space-y-10 sm:space-y-16">
         
         {/* Grid de Tarjetas Oficiales de Contacto */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {contactCards.map((card, index) => (
             <div
               key={index}
-              className="p-8 bg-white dark:bg-gray-900 rounded-3xl border border-gray-200/80 dark:border-gray-800 shadow-xl hover:shadow-2xl transition-all duration-300 flex flex-col items-center text-center group"
+              className="p-6 sm:p-8 bg-white dark:bg-gray-900 rounded-3xl border border-gray-200/80 dark:border-gray-800 shadow-xl hover:shadow-2xl transition-all duration-300 flex flex-col items-center text-center group"
             >
               {/* Icono circular gradiente */}
-              <div className="w-16 h-16 mb-6 rounded-full bg-linear-to-br from-pink-500 via-purple-600 to-purple-800 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                <i className={`${card.icon} text-2xl`}></i>
+              <div className="w-14 h-14 sm:w-16 sm:h-16 mb-5 sm:mb-6 rounded-full bg-linear-to-br from-pink-500 via-purple-600 to-purple-800 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                <i className={`${card.icon} text-xl sm:text-2xl`}></i>
               </div>
 
               {/* Título */}
-              <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-3">
+              <h3 className="text-lg sm:text-xl font-bold text-slate-800 dark:text-white mb-2 sm:mb-3">
                 {card.title}
               </h3>
 
@@ -76,7 +76,7 @@ export default function ContactoPage() {
                 {card.lines.map((line, lIdx) => (
                   <p
                     key={lIdx}
-                    className="text-pink-600 dark:text-pink-400 font-medium text-base leading-relaxed"
+                    className="text-pink-600 dark:text-pink-400 font-medium text-sm sm:text-base leading-relaxed"
                   >
                     {line}
                   </p>
@@ -87,13 +87,13 @@ export default function ContactoPage() {
         </div>
 
         {/* Mapa embebido de la ubicación real */}
-        <div className="bg-white dark:bg-gray-900 p-6 md:p-8 rounded-3xl border border-gray-200 dark:border-gray-800 shadow-xl space-y-4">
+        <div className="bg-white dark:bg-gray-900 p-4 sm:p-6 md:p-8 rounded-3xl border border-gray-200 dark:border-gray-800 shadow-xl space-y-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-purple-600/10 dark:bg-purple-500/20 text-purple-600 dark:text-purple-300 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-purple-600/10 dark:bg-purple-500/20 text-purple-600 dark:text-purple-300 flex items-center justify-center shrink-0">
               <i className="fas fa-map-marked-alt text-lg"></i>
             </div>
             <div>
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+              <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
                 Nuestra Ubicación
               </h2>
               <p className="text-xs text-slate-500 dark:text-gray-400">
@@ -102,7 +102,7 @@ export default function ContactoPage() {
             </div>
           </div>
 
-          <div className="rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 h-96 shadow-md">
+          <div className="rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 h-64 sm:h-80 md:h-96 shadow-md">
             <iframe
               title="Ubicación Ofimundo en Lota 2305, Providencia"
               src="https://maps.google.com/maps?q=Lota+2305,+Providencia,+Santiago,+Chile&t=&z=16&ie=UTF8&iwloc=&output=embed"
