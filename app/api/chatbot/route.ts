@@ -28,7 +28,8 @@ function normalizar(value: string | null | undefined) {
 }
 
 function contiene(texto: string, palabras: string[]) {
-  return palabras.some((palabra) => texto.includes(normalizar(palabra)))
+  const normTexto = normalizar(texto)
+  return palabras.some((palabra) => normTexto.includes(normalizar(palabra)))
 }
 
 function parseCicloRecomendado(cicloStr: string | null | undefined): { min: number; max: number } {
@@ -78,9 +79,149 @@ function extraerColorDeTexto(texto: string): "color" | "monocromo" | null {
   return null
 }
 
+function resolverNombreEquipo(equipo: any): string {
+  if (equipo?.Nombre_Equipo && equipo.Nombre_Equipo.trim()) {
+    return equipo.Nombre_Equipo.trim()
+  }
+  const img = equipo?.Imagen_Equipo || ""
+  const match = img.match(/\/(\d+-[^/]+)\.(webp|png|jpe?g)$/i)
+  if (match) {
+    let clean = match[1].replace(/^\d+-/, "")
+    if (clean.startsWith("DCPL")) clean = clean.replace("DCPL", "DCP-L")
+    if (clean.startsWith("MFCL")) clean = clean.replace("MFCL", "MFC-L")
+    return clean.replace(/[-_]/g, " ")
+  }
+  return `${equipo?.Nombre_Marca || ""} ${equipo?.Tipo_Equipo || ""}`.trim()
+}
+
+function extraerPPMObjetivo(texto: string): number | null {
+  if (!texto) return null
+  const norm = normalizar(texto)
+  const m = norm.match(/\b(\d{2,3})\s*(ppm|paginas?\s*(por\s*minuto|\/min))\b/i)
+  if (m) {
+    const val = parseInt(m[1], 10)
+    if (val >= 15 && val <= 150) return val
+  }
+  const mContext = norm.match(/\b(ninguna\s+de|tienen\s+de|alguna\s+de|una\s+de|al\s+menos\s+de|de)\s+(\d{2,3})\b/i)
+  if (mContext) {
+    const val = parseInt(mContext[2], 10)
+    if (val >= 15 && val <= 150) return val
+  }
+  return null
+}
+
+function detectarConsultaMasRapida(texto: string): boolean {
+  const norm = normalizar(texto)
+  if (/\b(mas|más)\s+(rapida|rápida|veloz|rapido|rápido|ppm|rspida|rapda)\b/i.test(norm)) return true
+  if (/\b(mayor|maxima|máxima)\s+(velocidad|rapidez|ppm)\b/i.test(norm)) return true
+  if (/\b(cual|cuál)\s+es\s+la\s+m[aá]s\s+r/i.test(norm)) return true
+  return contiene(norm, [
+    "mas rapida",
+    "más rápida",
+    "mas veloz",
+    "más veloz",
+    "mayor velocidad",
+    "maxima velocidad",
+    "máxima velocidad",
+    "mas rapido",
+    "más rápido",
+    "mayor ppm",
+    "mas ppm",
+    "más ppm",
+    "cual es la mas rapida",
+    "cuál es la más rápida",
+    "cual es mas rapida",
+    "cuál es más rápida",
+    "de mayor velocidad",
+  ])
+}
+
+function detectarConsultaEconomica(texto: string): boolean {
+  const norm = normalizar(texto)
+  if (/\b(mas|más)\s+(economica|económica|barata|conveniente)\b/i.test(norm)) return true
+  if (/\b(menor\s+costo|costo\s+por\s+pagina|ahorro|ahorrar|gasta\s+menos)\b/i.test(norm)) return true
+  return contiene(norm, [
+    "economica",
+    "económica",
+    "mas barata",
+    "más barata",
+    "menor costo",
+    "ahorro",
+    "gasta menos",
+    "costo por pagina",
+  ])
+}
+
+function detectarConsultaCatalogoCompleto(texto: string): boolean {
+  const norm = normalizar(texto)
+  if (/\b(catalogo|catálogo)\b/.test(norm)) return true
+  if (/\b(disponibles?|que\s+tienen?|que\s+tienes?)\b/.test(norm)) return true
+  if (/\b(de\s+tod[ao]s?|tod[ao]s?\s+l[ao]s?)\b/.test(norm)) return true
+  return contiene(norm, [
+    "todo el catalogo",
+    "de todo el catalogo",
+    "en todo el catalogo",
+    "del catalogo",
+    "que tienes",
+    "que tienen",
+    "todas las impresoras",
+    "todas la impresoras",
+    "todos los equipos",
+    "de todas",
+    "de todos",
+  ])
+}
+
+function normalizarEspacios(str: string | null | undefined): string {
+  return (str || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[-_]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+}
+
+function detectarModelosEspecificosEnTexto(texto: string, catalogo: any[]): any[] {
+  if (!texto) return []
+  const normTexto = normalizarEspacios(texto)
+  const matches: any[] = []
+
+  for (const p of catalogo) {
+    const nomNorm = normalizarEspacios(p.Nombre_Equipo || "")
+    if (nomNorm.length >= 4 && normTexto.includes(nomNorm)) {
+      if (!matches.some((m) => m.ID_Producto === p.ID_Producto)) {
+        matches.push(p)
+      }
+      continue
+    }
+
+    const partes = nomNorm.split(" ").filter((part: string) => /[0-9]/.test(part) && part.length >= 4)
+    for (const parte of partes) {
+      const regex = new RegExp(`\\b${parte}\\b`, "i")
+      if (regex.test(normTexto)) {
+        if (!matches.some((m) => m.ID_Producto === p.ID_Producto)) {
+          matches.push(p)
+        }
+        break
+      }
+    }
+  }
+
+  return matches
+}
+
+function detectarModeloEspecificoEnTexto(texto: string, catalogo: any[]): any | null {
+  const lista = detectarModelosEspecificosEnTexto(texto, catalogo)
+  return lista.length > 0 ? lista[0] : null
+}
+
 function extraerVolumenDeTexto(texto: string, ultimoMensajeBot?: string): number | null {
   if (!texto) return null
-  const norm = limpiarTextoTokens(texto)
+  let norm = limpiarTextoTokens(texto)
+
+  // Ignorar menciones explícitas de velocidad en ppm (ej: "35 ppm", "65 ppm") para no confundir con volumen mensual
+  norm = norm.replace(/\b\d{1,3}\s*(ppm|paginas?\s*(por\s*minuto|\/min))\b/gi, "")
 
   const matchK = norm.match(/\b(\d+)\s*k\b/i)
   if (matchK) {
@@ -107,12 +248,12 @@ function extraerVolumenDeTexto(texto: string, ultimoMensajeBot?: string): number
     if (val >= 20 && val <= 500000) return val
   }
 
-  // Aceptar un número entero suelto entre 20 y 500.000 directamente (ej. "10000", "5000", "500")
-  const matchesNumero = textoLimpio.match(/\b(\d{2,6})\b/g)
+  // Aceptar un número entero suelto entre 100 y 500.000 directamente (ej. "10000", "5000", "1000")
+  const matchesNumero = textoLimpio.match(/\b(\d{3,6})\b/g)
   if (matchesNumero) {
     for (const numStr of matchesNumero) {
       const val = parseInt(numStr, 10)
-      if (val >= 20 && val <= 500000) {
+      if (val >= 100 && val <= 500000) {
         return val
       }
     }
@@ -871,11 +1012,22 @@ ${body.mensaje}`
       "perdón",
     ])
 
+    const esConsultaMasRapida = detectarConsultaMasRapida(pregunta)
+    const esConsultaEconomica = detectarConsultaEconomica(pregunta)
+    const esConsultaCatalogoCompleto = detectarConsultaCatalogoCompleto(pregunta)
+    const ppmObjetivo = extraerPPMObjetivo(body.mensaje)
+    const modelosDetectados = detectarModelosEspecificosEnTexto(body.mensaje, equiposData as any[])
+    const modeloEspecificoDetectado = modelosDetectados.length > 0 ? modelosDetectados[0] : null
+    const esComparacionModelos = modelosDetectados.length >= 2
+
     const tieneCambioDeFiltroExplicito = Boolean(
       colorActualDirecto !== null ||
       formatoActualDirecto !== null ||
       marcaActualDirecta !== null ||
       tipoActualDirecto !== null ||
+      ppmObjetivo !== null ||
+      modelosDetectados.length > 0 ||
+      esConsultaCatalogoCompleto ||
       esCorreccionUsuario
     )
 
@@ -883,6 +1035,7 @@ ${body.mensaje}`
       (intencionIA?.es_pregunta_seguimiento || mensajeEsContinuacion) &&
       !esCambioDeCategoria &&
       !tieneCambioDeFiltroExplicito &&
+      !esComparacionModelos &&
       !esCorreccionUsuario &&
       productosAnteriores.length > 0
     )
@@ -1099,7 +1252,10 @@ ${JSON.stringify(automatizacionesParaIA)}
       })
     }
 
-    const productos = equiposData as any[]
+    const productos = (equiposData as any[]).map((p) => ({
+      ...p,
+      Nombre_Equipo: resolverNombreEquipo(p),
+    }))
 
     // HMR Recompile Trigger - Robust Chatbot Route
 
@@ -1142,6 +1298,8 @@ ${JSON.stringify(automatizacionesParaIA)}
     const esNuevaBusqueda =
       solicitaNuevaBusquedaExplicitamente ||
       esCambioDeCategoria ||
+      esConsultaCatalogoCompleto ||
+      (esConsultaMasRapida && !contiene(pregunta, ["de esas", "de estos", "entre esas", "entre estos"])) ||
       historialBusquedaActiva.length === 0
 
     if (esNuevaBusqueda) {
@@ -1188,9 +1346,11 @@ ${JSON.stringify(automatizacionesParaIA)}
       "canon",
     ]
     const marcaEnTexto = marcasDisponibles.find((marca) => contiene(textoParametros, [marca])) ?? null
-    const finalMarca = esNuevaBusqueda
-      ? (marcaEnTexto || (intencionIA?.marca ? normalizar(intencionIA.marca) : null))
-      : (marcaEnTexto ?? (intencionIA?.marca ? normalizar(intencionIA.marca) : null) ?? marcaEnHistorial)
+    const finalMarca = esComparacionModelos
+      ? null
+      : esNuevaBusqueda
+        ? (marcaEnTexto || (intencionIA?.marca ? normalizar(intencionIA.marca) : null))
+        : (marcaEnTexto ?? (intencionIA?.marca ? normalizar(intencionIA.marca) : null) ?? marcaEnHistorial)
 
     // 2. TIPO (Multifuncional vs Impresora)
     let tipoEnTexto: "Multifuncional" | "Impresora" | null = null
@@ -1254,6 +1414,7 @@ ${JSON.stringify(automatizacionesParaIA)}
     if (!finalVolumen) {
       if (contieneUsoHogar || intencionIA?.uso === "hogar") finalVolumen = 500
       else if (contieneUsoCorp || intencionIA?.uso === "corporativo") finalVolumen = 15000
+      else if (esConsultaMasRapida || ppmObjetivo || modeloEspecificoDetectado) finalVolumen = null
       else finalVolumen = 3000 // Valor por defecto PYME para recomendación inmediata
     }
 
@@ -1410,7 +1571,7 @@ ${JSON.stringify(automatizacionesParaIA)}
           }
 
           // 5. Filtro de Volumen y Tipo de Uso
-          if (strictVolume && finalVolumen) {
+          if (strictVolume && finalVolumen && !esConsultaMasRapida && !ppmObjetivo && !modeloEspecificoDetectado) {
             if (finalVolumen > cicloInfo.max * 2.0) {
               return false
             }
@@ -1461,7 +1622,7 @@ ${JSON.stringify(automatizacionesParaIA)}
             }
           }
 
-          if (finalVolumen) {
+          if (finalVolumen && !esConsultaMasRapida) {
             const { max } = parseCicloRecomendado(producto.Ciclo_Recomendado_Equipo)
             const ppm = producto.Velocidad_BN_Equipo ?? producto.Velocidad_Color_Equipo ?? 25
 
@@ -1527,6 +1688,28 @@ ${JSON.stringify(automatizacionesParaIA)}
             rankingScore += 300
           }
 
+          // Prioridad especial si se detectó un modelo específico
+          if (modeloEspecificoDetectado && producto.ID_Producto === modeloEspecificoDetectado.ID_Producto) {
+            rankingScore += 25000
+          }
+
+          // Prioridad si el usuario consulta por la más rápida
+          if (esConsultaMasRapida) {
+            rankingScore += (producto.Velocidad_BN_Equipo ?? producto.Velocidad_Color_Equipo ?? 0) * 200
+          }
+
+          // Prioridad si el usuario solicitó un PPM objetivo
+          if (ppmObjetivo) {
+            const ppm = producto.Velocidad_BN_Equipo ?? producto.Velocidad_Color_Equipo ?? 0
+            if (ppm === ppmObjetivo) {
+              rankingScore += 8000
+            } else if (ppm > ppmObjetivo) {
+              rankingScore += Math.max(0, 4000 - (ppm - ppmObjetivo) * 40)
+            } else {
+              rankingScore -= (ppmObjetivo - ppm) * 100
+            }
+          }
+
           return {
             ...producto,
             coincidencias,
@@ -1534,6 +1717,23 @@ ${JSON.stringify(automatizacionesParaIA)}
           }
         })
         .sort((a, b) => {
+          if (modeloEspecificoDetectado) {
+            const isModelB = b.ID_Producto === modeloEspecificoDetectado.ID_Producto ? 1 : 0
+            const isModelA = a.ID_Producto === modeloEspecificoDetectado.ID_Producto ? 1 : 0
+            if (isModelB !== isModelA) return isModelB - isModelA
+          }
+          if (esConsultaMasRapida && !modeloEspecificoDetectado) {
+            const velB = b.Velocidad_BN_Equipo ?? b.Velocidad_Color_Equipo ?? 0
+            const velA = a.Velocidad_BN_Equipo ?? a.Velocidad_Color_Equipo ?? 0
+            if (velB !== velA) return velB - velA
+          }
+          if (ppmObjetivo && !modeloEspecificoDetectado) {
+            const ppmB = b.Velocidad_BN_Equipo ?? b.Velocidad_Color_Equipo ?? 0
+            const ppmA = a.Velocidad_BN_Equipo ?? a.Velocidad_Color_Equipo ?? 0
+            const exactB = ppmB === ppmObjetivo ? 1 : 0
+            const exactA = ppmA === ppmObjetivo ? 1 : 0
+            if (exactB !== exactA) return exactB - exactA
+          }
           if (Math.abs(b.rankingScore - a.rankingScore) > 10) {
             return b.rankingScore - a.rankingScore
           }
@@ -1545,11 +1745,30 @@ ${JSON.stringify(automatizacionesParaIA)}
     }
 
     let resultados: any[] = []
-    if (esSeguimientoReal) {
-      resultados = productosAnteriores.slice(0, 3)
+    if (esComparacionModelos) {
+      if (esConsultaMasRapida) {
+        modelosDetectados.sort(
+          (a, b) => (b.Velocidad_BN_Equipo ?? b.Velocidad_Color_Equipo ?? 0) - (a.Velocidad_BN_Equipo ?? a.Velocidad_Color_Equipo ?? 0)
+        )
+      } else if (esConsultaEconomica) {
+        modelosDetectados.sort((a, b) => {
+          const isInkA = (a.Tecnologia_Equipo || "").toUpperCase().includes("TINTA") || (a.Nombre_Equipo || "").includes("EcoTank") ? 1 : 0
+          const isInkB = (b.Tecnologia_Equipo || "").toUpperCase().includes("TINTA") || (b.Nombre_Equipo || "").includes("EcoTank") ? 1 : 0
+          return isInkB - isInkA
+        })
+      }
+      resultados = [...modelosDetectados].slice(0, 3)
+    } else if (esSeguimientoReal) {
+      if (esConsultaMasRapida) {
+        resultados = [...productosAnteriores]
+          .sort((a, b) => (b.Velocidad_BN_Equipo ?? b.Velocidad_Color_Equipo ?? 0) - (a.Velocidad_BN_Equipo ?? a.Velocidad_Color_Equipo ?? 0))
+          .slice(0, 3)
+      } else {
+        resultados = productosAnteriores.slice(0, 3)
+      }
     } else {
       // 1. Strict all: Brand, Color, Format, Type, Volume
-      let candidatos = filtrarYRankearEquipos(productos, true, true, true, true, true)
+      let candidatos = filtrarYRankearEquipos(productos, !esConsultaMasRapida, true, true, true, true)
 
       // 2. Relax Volume: Brand, Color, Format, Type
       if (candidatos.length === 0) {
@@ -1602,7 +1821,8 @@ ${JSON.stringify(automatizacionesParaIA)}
       tecnologia: producto.Tecnologia_Equipo,
       color: producto.Color_Equipo,
       formato: producto.Tamano_Papel_Equipo,
-      velocidad_ppm: producto.Velocidad_BN_Equipo,
+      velocidad_ppm: producto.Velocidad_BN_Equipo ?? producto.Velocidad_Color_Equipo,
+      velocidad_exacta: `${producto.Velocidad_BN_Equipo ?? producto.Velocidad_Color_Equipo ?? "N/D"} ppm (páginas por minuto)`,
       capacidad_bandeja: producto.Capacidad_Bandeja1_Equipo,
       ciclo_recomendado: producto.Ciclo_Recomendado_Equipo,
       funciones: producto.Funciones_Equipo,
@@ -1645,8 +1865,20 @@ ${
     ? `- EL CLIENTE INDICA QUE SE EQUIVOCÓ O QUE RECHAZA LA OPCIÓN ANTERIOR (ej: "me equivoqué", "no quiero esa", "prefiero..."). Acepta la corrección amablemente con empatía y presenta directamente la mejor alternativa que solicita.`
     : ""
 }
-- Explica de forma clara y directa POR QUÉ la 1ra opción recomendada (${productosParaIA[0]?.marca} ${productosParaIA[0]?.nombre}) es la mejor alternativa para sus requisitos (ej: marca, color/monocromo, formato A3/A4 o volumen de impresión).
+${
+  esComparacionModelos
+    ? `- REGLA DE COMPARACIÓN DIRECTA:
+  * El cliente está comparando directamente estos modelos: ${modelosDetectados.map((m) => `${m.Nombre_Marca} ${m.Nombre_Equipo}`).join(" versus ")}.
+  * Tienes la información técnica de ambos en la lista de productos suministrada. Compara ambos modelos de forma precisa:
+    - Velocidad: Cita la velocidad exacta de ambos equipos (${modelosDetectados.map((m) => `${m.Nombre_Marca} ${m.Nombre_Equipo} con ${m.Velocidad_BN_Equipo} ppm`).join(", frente a ")}). Indica claramente cuál es más rápida.
+    - Economía / Costo: Si el cliente pregunta por la más económica o el costo, indica que los modelos EcoTank o de tinta continua son los más económicos en costo por página e insumos, mientras que los equipos láser ofrecen mayor velocidad para alto volumen.`
+    : `- Explica de forma clara y directa POR QUÉ la 1ra opción recomendada (${productosParaIA[0]?.marca} ${productosParaIA[0]?.nombre}) es la mejor alternativa para sus requisitos (ej: marca, color/monocromo, formato A3/A4 o volumen de impresión).`
+}
 - SI EL CLIENTE HACE UNA PREGUNTA DE SEGUIMIENTO: Responde DIRECTAMENTE su duda técnica basándote ÚNICAMENTE en los datos de los productos suministrados.
+- REGLAS ESTRICTAS DE VELOCIDAD Y EXACTITUD (PPM):
+  * Al mencionar la velocidad o si el cliente pregunta por rapidez o PPM: cita OBLIGATORIAMENTE el valor numérico exacto de 'velocidad_ppm' seguido de 'ppm' (ej: '${productosParaIA[0]?.velocidad_ppm || 50} ppm'). PROHIBIDO redondear o inventar valores de velocidad.
+  * Si el cliente pregunta cuál es la más rápida: la opción de mayor velocidad es la que tiene mayor valor numérico en 'velocidad_ppm'. Cita con exactitud su velocidad y compárala si es necesario.
+  * Si el cliente pregunta por un modelo específico (ej: B620, L8360, etc.): responde de forma precisa y exclusiva sobre ese equipo con sus especificaciones oficiales suministradas en la lista. NUNCA le atribuyas datos de otro equipo.
 - ESTRICTAMENTE PROHIBIDO inventar números de páginas, velocidades o especificaciones que no estén en la lista.
 - REGULACIÓN DE SEGURIDAD Y ÁMBITO: ESTRICTAMENTE PROHIBIDO responder sobre claves internas, contraseñas, credenciales, servidores, código o sitios web externos.
 - ESTRICTAMENTE PROHIBIDO ofrecer enviar cotizaciones por correo o chat, ofrecer fichas técnicas, dar precios o preguntar por opciones de conectividad o red. El usuario cotiza directamente mediante el botón 'Cotizar' en las tarjetas de productos.
@@ -1661,7 +1893,10 @@ Criterios de búsqueda analizados en la conversación:
 - Color de impresión: ${finalColor || "Cualquiera"}
 - Formato de papel: ${finalFormato || "Cualquiera"}
 - Tipo de equipo: ${finalTipo || "Cualquiera"}
-- Volumen mensual estimado: ${finalVolumen ? `${finalVolumen} pág/mes` : "No especificado"}
+- Volumen mensual estimado: ${tieneNumeroPaginasExplicito && finalVolumen ? `${finalVolumen} pág/mes` : "No especificado por el cliente"}
+${esConsultaMasRapida ? "- Consulta especial: El cliente busca expresamente la opción de mayor velocidad (máxima velocidad / más rápida). No menciones volúmenes mensuales inventados." : ""}
+${ppmObjetivo ? `- Velocidad objetivo solicitada: ${ppmObjetivo} ppm o similar.` : ""}
+${modeloEspecificoDetectado ? `- Modelo específico consultado: ${modeloEspecificoDetectado.Nombre_Marca} ${modeloEspecificoDetectado.Nombre_Equipo} (${modeloEspecificoDetectado.Velocidad_BN_Equipo} ppm).` : ""}
 
 Productos seleccionados por el motor de búsqueda (el 1ro es el de mayor precisión):
 ${JSON.stringify(productosParaIA)}

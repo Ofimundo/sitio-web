@@ -2,7 +2,7 @@
   {
     "ID_Producto": "0049e5af",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "VersaLink B620",
     "Tipo_Equipo": "Impresora",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Blanco y Negro",
@@ -34,7 +34,7 @@
   {
     "ID_Producto": "14a6110c",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "MS632dwe",
     "Tipo_Equipo": "Impresora",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Blanco y Negro",
@@ -66,7 +66,7 @@
   {
     "ID_Producto": "240699a5",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "PA4500x",
     "Tipo_Equipo": "Impresora",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Blanco y Negro",
@@ -98,7 +98,7 @@
   {
     "ID_Producto": "cffdf81a",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "WF M5399",
     "Tipo_Equipo": "Impresora",
     "Tecnologia_Equipo": "TINTA",
     "Color_Equipo": "Blanco y Negro",
@@ -130,7 +130,7 @@
   {
     "ID_Producto": "dbf5a498",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "WF M5399",
     "Tipo_Equipo": "Impresora",
     "Tecnologia_Equipo": "TINTA",
     "Color_Equipo": "Blanco y Negro",
@@ -162,7 +162,7 @@
   {
     "ID_Producto": "f82bf8e2",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "HL L5210DN",
     "Tipo_Equipo": "Impresora",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Blanco y Negro",
@@ -194,7 +194,7 @@
   {
     "ID_Producto": "9c646146",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "VersaLink C620",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Color",
@@ -226,7 +226,7 @@
   {
     "ID_Producto": "c5130c43",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "PA4000cx",
     "Tipo_Equipo": "Impresora",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Color",
@@ -258,7 +258,7 @@
   {
     "ID_Producto": "65c054f4",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "C410",
     "Tipo_Equipo": "Impresora",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Color",
@@ -290,7 +290,7 @@
   {
     "ID_Producto": "671ed228",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "HL L3280CDW",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Color",
@@ -322,7 +322,7 @@
   {
     "ID_Producto": "34e86ca6",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "HL L8360CDW",
     "Tipo_Equipo": "Impresora",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Color",
@@ -354,7 +354,7 @@
   {
     "ID_Producto": "8af29795",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "B410",
     "Tipo_Equipo": "Impresora",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Blanco y Negro",
@@ -386,7 +386,7 @@
   {
     "ID_Producto": "8b6335bf",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "EcoTank M1180",
     "Tipo_Equipo": "Impresora",
     "Tecnologia_Equipo": "TINTA",
     "Color_Equipo": "Blanco y Negro",
@@ -418,7 +418,7 @@
   {
     "ID_Producto": "462e221c",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "PA5500x",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Blanco y Negro",
@@ -450,7 +450,7 @@
   {
     "ID_Producto": "47d83359",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "HL L6415DW",
     "Tipo_Equipo": "Impresora",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Blanco y Negro",
@@ -482,7 +482,7 @@
   {
     "ID_Producto": "4daa3d1b",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "CX532adwe",
     "Tipo_Equipo": "Impresora",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Blanco y Negro",
@@ -514,7 +514,7 @@
   {
     "ID_Producto": "0044ec04",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "WF C5390",
     "Tipo_Equipo": "Impresora",
     "Tecnologia_Equipo": "TINTA",
     "Color_Equipo": "Color",
@@ -546,7 +546,7 @@
   {
     "ID_Producto": "147edd68",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "MA5500ifx",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Blanco y Negro",
@@ -578,7 +578,7 @@
   {
     "ID_Producto": "3022a497",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "EcoTank M3180",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "TINTA",
     "Color_Equipo": "Blanco y Negro",
@@ -610,7 +610,7 @@
   {
     "ID_Producto": "399ecbe3",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "MX432adwe",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Blanco y Negro",
@@ -642,7 +642,7 @@
   {
     "ID_Producto": "d761010c",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "WF M21000",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "TINTA",
     "Color_Equipo": "Blanco y Negro",
@@ -674,7 +674,7 @@
   {
     "ID_Producto": "e7c41c4f",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "MX632adwe",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Blanco y Negro",
@@ -706,7 +706,7 @@
   {
     "ID_Producto": "f2e6ca74",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "MFC L5915DW",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Blanco y Negro",
@@ -738,7 +738,7 @@
   {
     "ID_Producto": "2492ad78",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "WF C5890",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "TINTA",
     "Color_Equipo": "Color",
@@ -770,7 +770,7 @@
   {
     "ID_Producto": "25740c47",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "AM C400",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "TINTA",
     "Color_Equipo": "Color",
@@ -802,7 +802,7 @@
   {
     "ID_Producto": "446afb47",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "TASKalfa 408ci",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Color",
@@ -834,7 +834,7 @@
   {
     "ID_Producto": "4cc558c4",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "WF C5891",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "TINTA",
     "Color_Equipo": "Color",
@@ -866,7 +866,7 @@
   {
     "ID_Producto": "60f100fc",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "VersaLink C7120",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Color",
@@ -898,7 +898,7 @@
   {
     "ID_Producto": "9b06d713_3",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "AltaLink C8255",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Color",
@@ -930,7 +930,7 @@
   {
     "ID_Producto": "9b06d713_4",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "AltaLink C8270",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Color",
@@ -962,7 +962,7 @@
   {
     "ID_Producto": "60f100fc_1",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "VersaLink C7125",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Color",
@@ -994,7 +994,7 @@
   {
     "ID_Producto": "60f100fc_2",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "VersaLink C7130",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Color",
@@ -1026,7 +1026,7 @@
   {
     "ID_Producto": "7608b27c",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "DCP L3560cdw",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Color",
@@ -1058,7 +1058,7 @@
   {
     "ID_Producto": "95bf4595",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "AM C550",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "TINTA",
     "Color_Equipo": "Color",
@@ -1090,7 +1090,7 @@
   {
     "ID_Producto": "c3c2f960",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "MA4500ci",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Color",
@@ -1122,7 +1122,7 @@
   {
     "ID_Producto": "c5d5cfb9",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "MFC L8900CDW",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Color",
@@ -1154,7 +1154,7 @@
   {
     "ID_Producto": "99aa06b4",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "TASKalfa 5054ci",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Color",
@@ -1186,7 +1186,7 @@
   {
     "ID_Producto": "9b06d713",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "AltaLink C8230",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Color",
@@ -1218,7 +1218,7 @@
   {
     "ID_Producto": "9b06d713_1",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "AltaLink C8235",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Color",
@@ -1250,7 +1250,7 @@
   {
     "ID_Producto": "9b06d713_2",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "AltaLink C8245",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Color",
@@ -1282,7 +1282,7 @@
   {
     "ID_Producto": "f0617c06",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "AM C4000",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "TINTA",
     "Color_Equipo": "Color",
@@ -1314,7 +1314,7 @@
   {
     "ID_Producto": "f0b2ace0",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "AM C5000",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "TINTA",
     "Color_Equipo": "Color",
@@ -1346,7 +1346,7 @@
   {
     "ID_Producto": "f25c4556",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "WF ProEM C800",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "TINTA",
     "Color_Equipo": "Color",
@@ -1378,7 +1378,7 @@
   {
     "ID_Producto": "f315e1c1",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "EcoTank L6490",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "TINTA",
     "Color_Equipo": "Color",
@@ -1410,7 +1410,7 @@
   {
     "ID_Producto": "ad546d7c",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "CX735adse",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Color",
@@ -1442,7 +1442,7 @@
   {
     "ID_Producto": "b6b29c7a",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "CX532adwe",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Color",
@@ -1474,7 +1474,7 @@
   {
     "ID_Producto": "84c7f6bb",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "MX532adwe",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Blanco y Negro",
@@ -1506,7 +1506,7 @@
   {
     "ID_Producto": "040b698d",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "MS431dn",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Color",
@@ -1538,7 +1538,7 @@
   {
     "ID_Producto": "05007bef",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "EM C8100",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "TINTA",
     "Color_Equipo": "Color",
@@ -1570,7 +1570,7 @@
   {
     "ID_Producto": "0670af38",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "WF C21000",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "TINTA",
     "Color_Equipo": "Color",
@@ -1602,7 +1602,7 @@
   {
     "ID_Producto": "091294dc",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "VersaLink C415",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Color",
@@ -1634,7 +1634,7 @@
   {
     "ID_Producto": "15acc0c4",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "CX635adwe",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Color",
@@ -1666,7 +1666,7 @@
   {
     "ID_Producto": "901eb98f",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "WF M5899",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "TINTA",
     "Color_Equipo": "Blanco y Negro",
@@ -1698,7 +1698,7 @@
   {
     "ID_Producto": "9e29fc8e",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "MA4500ix",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Blanco y Negro",
@@ -1730,7 +1730,7 @@
   {
     "ID_Producto": "a7025d95",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "MX722adhe",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Blanco y Negro",
@@ -1762,7 +1762,7 @@
   {
     "ID_Producto": "a9ae2675",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "MFC L6915DW",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Blanco y Negro",
@@ -1794,7 +1794,7 @@
   {
     "ID_Producto": "523270fa",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "MFC L5915DW",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Blanco y Negro",
@@ -1826,7 +1826,7 @@
   {
     "ID_Producto": "5fd46e90",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "VersaLink B415",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Blanco y Negro",
@@ -1858,7 +1858,7 @@
   {
     "ID_Producto": "b54c693d",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "VersaLink B7125",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Blanco y Negro",
@@ -1890,7 +1890,7 @@
   {
     "ID_Producto": "b54c693d_1",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "VersaLink B7130",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Blanco y Negro",
@@ -1922,7 +1922,7 @@
   {
     "ID_Producto": "b54c693d_2",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "VersaLink B7135",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Blanco y Negro",
@@ -1954,7 +1954,7 @@
   {
     "ID_Producto": "baf2ebf3",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "VersaLink B625",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Blanco y Negro",
@@ -1986,7 +1986,7 @@
   {
     "ID_Producto": "c0c93646",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "AM M5500",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "TINTA",
     "Color_Equipo": "Blanco y Negro",
@@ -2018,7 +2018,7 @@
   {
     "ID_Producto": "c62cedfc",
     "ID_Marca": 0,
-    "Nombre_Equipo": "",
+    "Nombre_Equipo": "MFC L2880dw",
     "Tipo_Equipo": "Multifuncional",
     "Tecnologia_Equipo": "LASER",
     "Color_Equipo": "Blanco y Negro",
