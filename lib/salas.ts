@@ -167,6 +167,161 @@ function getLocalImagenEquipo(row: OpcionRow): string | null {
   return null
 }
 
+const AWS_SALAS_BASE = "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas"
+
+/**
+ * Obtiene la galería completa de imágenes en AWS CloudFront para cada equipo de sala.
+ */
+export function getGaleriaImagenesEquipo(row: {
+  modelo?: string
+  id_producto_opcion?: string | number
+  descripcion?: string
+  imagen?: string
+}): string[] {
+  const modelo = (row.modelo || "").toLowerCase()
+  const idProductoOpcion = String(row.id_producto_opcion || "").toLowerCase()
+  const descripcion = (row.descripcion || "").toLowerCase()
+  const rawImg = (row.imagen || "").toLowerCase()
+
+  const matchText = `${modelo} ${idProductoOpcion} ${descripcion} ${rawImg}`
+
+  // C-Pro Infinity 20X
+  if (matchText.includes("c-pro infinity") || matchText.includes("cpi-420") || matchText.includes("20x")) {
+    return [
+      `${AWS_SALAS_BASE}/C-Pro%20Infinity_20X.png`,
+      `${AWS_SALAS_BASE}/C-Pro%20Infinity%2020X_02.png`,
+      `${AWS_SALAS_BASE}/C-Pro%20Infinity%2020X_03.jpg`,
+      `${AWS_SALAS_BASE}/C-Pro%20Infinity%2020X_04.png`,
+    ]
+  }
+
+  // MAXHUB UC U50
+  if (matchText.includes("maxhub") || matchText.includes("u50")) {
+    return [
+      `${AWS_SALAS_BASE}/MAXHUB%20UC%20U50%20_Barra%20USB.jpg`,
+      `${AWS_SALAS_BASE}/MAXHUB%20UC%20U50%20_Barra%20USB_02.jpg`,
+      `${AWS_SALAS_BASE}/MAXHUB%20UC%20U50%20_Barra%20USB_03.webp`,
+    ]
+  }
+
+  // MeetUp 2
+  if (matchText.includes("meetup")) {
+    return [
+      `${AWS_SALAS_BASE}/MeetUp%20_2.webp`,
+      `${AWS_SALAS_BASE}/MeetUp_2_02.jpg`,
+      `${AWS_SALAS_BASE}/MeetUp_2_03.jpg`,
+    ]
+  }
+
+  // Rally Bar Huddle Graphite
+  if (matchText.includes("huddle") || matchText.includes("960-001509")) {
+    return [
+      `${AWS_SALAS_BASE}/Rally%20Bar%20Huddle_Graphite.png`,
+      `${AWS_SALAS_BASE}/Rally%20Bar%20Huddle_%20Graphite_02.webp`,
+      `${AWS_SALAS_BASE}/Rally%20Bar%20Huddle_%20Graphite_03.webp`,
+      `${AWS_SALAS_BASE}/Rally%20Bar%20Huddle_%20Graphite_04.webp`,
+    ]
+  }
+
+  // Rally Bar Mini
+  if (matchText.includes("rally bar mini") || matchText.includes("960-001338")) {
+    return [
+      `${AWS_SALAS_BASE}/Rally%20Bar_Mini.jpg`,
+      `${AWS_SALAS_BASE}/Rally%20Bar_Mini_02.jpg`,
+      `${AWS_SALAS_BASE}/Rally%20Bar_Mini_03.webp`,
+      `${AWS_SALAS_BASE}/Rally%20Bar_Mini_04.webp`,
+    ]
+  }
+
+  // Rally Bar Graphite
+  if (matchText.includes("rally bar") || matchText.includes("960-001310")) {
+    return [
+      `${AWS_SALAS_BASE}/Rally%20Bar_Graphite.webp`,
+      `${AWS_SALAS_BASE}/Rally%20Bar_Graphite_02.webp`,
+      `${AWS_SALAS_BASE}/Rally%20Bar_Graphite_03.webp`,
+      `${AWS_SALAS_BASE}/Rally%20Bar_Graphite_04.jpg`,
+    ]
+  }
+
+  // T-Pod AIR Pro Beamforming
+  if (matchText.includes("t-pod") || matchText.includes("tpapb") || matchText.includes("beamforming")) {
+    return [
+      `${AWS_SALAS_BASE}/T-Pod%20AIR%20Pro%20_Beamforming.png`,
+      `${AWS_SALAS_BASE}/T-Pod%20AIR%20Pro%20Beamforming_02.png`,
+      `${AWS_SALAS_BASE}/T-Pod%20AIR%20Pro%20Beamforming_03.jpg`,
+    ]
+  }
+
+  // i3CONNECT ASPEN 4 65
+  if (matchText.includes("aspen 4 65") || matchText.includes("aspen 4_65") || matchText.includes("10010821")) {
+    return [
+      `${AWS_SALAS_BASE}/i3CONNECT%20ASPEN%204_65.webp`,
+      `${AWS_SALAS_BASE}/i3CONNECT%20ASPEN%204%2065_02.png`,
+      `${AWS_SALAS_BASE}/i3CONNECT%20ASPEN%204%2065_03.png`,
+      `${AWS_SALAS_BASE}/i3CONNECT%20ASPEN%204%2065_04.webp`,
+    ]
+  }
+
+  // i3CONNECT ASPEN 4 75
+  if (matchText.includes("aspen 4 75") || matchText.includes("aspen 4_75") || matchText.includes("10010822")) {
+    return [
+      `${AWS_SALAS_BASE}/i3CONNECT%20ASPEN%204_75.webp`,
+      `${AWS_SALAS_BASE}/i3CONNECT%20ASPEN%204%2075_02.jpg`,
+      `${AWS_SALAS_BASE}/i3CONNECT%20ASPEN%204%2075_03.png`,
+    ]
+  }
+
+  // i3CONNECT ASPEN 4 86
+  if (matchText.includes("aspen 4 86") || matchText.includes("aspen 4_86") || matchText.includes("10010823")) {
+    return [
+      `${AWS_SALAS_BASE}/i3CONNECT%20ASPEN%204_86.webp`,
+      `${AWS_SALAS_BASE}/i3CONNECT%20ASPEN%204%2086_02.png`,
+      `${AWS_SALAS_BASE}/i3CONNECT%20ASPEN%204%2086_03.webp`,
+    ]
+  }
+
+  // i3CONNECT ELM 2 75
+  if (matchText.includes("elm 2 75") || matchText.includes("elm 2_75") || matchText.includes("10010731")) {
+    return [
+      `${AWS_SALAS_BASE}/i3CONNECT%20ELM%202%20_75.webp`,
+      `${AWS_SALAS_BASE}/i3CONNECT%20ELM%202%2075_02.png`,
+      `${AWS_SALAS_BASE}/i3CONNECT%20ELM%202%2075_03.webp`,
+    ]
+  }
+
+  // i3CONNECT ELM 2 86
+  if (matchText.includes("elm 2 86") || matchText.includes("elm 2_86") || matchText.includes("elm 2_85") || matchText.includes("10010732")) {
+    return [
+      `${AWS_SALAS_BASE}/i3CONNECT%20ELM%202%20_86.webp`,
+      `${AWS_SALAS_BASE}/i3CONNECT%20ELM%202%2086_02.png`,
+      `${AWS_SALAS_BASE}/i3CONNECT%20ELM%202%2086_03.webp`,
+      `${AWS_SALAS_BASE}/i3CONNECT%20ELM%202%2086_04.png`,
+    ]
+  }
+
+  // i3CONNECT ELM 2 65
+  if (matchText.includes("elm 2 65") || matchText.includes("elm 2_65") || matchText.includes("10010730")) {
+    return [
+      `${AWS_SALAS_BASE}/i3CONNECT%20ELM%202_%2065.webp`,
+      `${AWS_SALAS_BASE}/i3CONNECT%20ELM%202%2065_02.webp`,
+      `${AWS_SALAS_BASE}/i3CONNECT%20ELM%202%2065_03.jpg`,
+      `${AWS_SALAS_BASE}/i3CONNECT%20ELM%202%2065_04.jpg`,
+    ]
+  }
+
+  // i3CONNECT Mount 2
+  if (matchText.includes("mount 2") || matchText.includes("mount2") || matchText.includes("10010756") || matchText.includes("960-001693")) {
+    return [
+      `${AWS_SALAS_BASE}/i3CONNECT%20_Mount%202.webp`,
+      `${AWS_SALAS_BASE}/i3CONNECT_Mount%202_02.png`,
+      `${AWS_SALAS_BASE}/i3CONNECT%20Mount%202_03.png`,
+      `${AWS_SALAS_BASE}/i3CONNECT%20Mount%202_04.webp`,
+    ]
+  }
+
+  return []
+}
+
 function groupOpciones(rows: OpcionRow[]): SalaOpcion[] {
   const groups = new Map<string, SalaEquipo[]>()
   for (const row of rows) {
@@ -174,26 +329,17 @@ function groupOpciones(rows: OpcionRow[]): SalaOpcion[] {
     if (!code) continue
     const equipos = groups.get(code) ?? []
 
-    // Obtención de la imagen desde la base de datos (desactivada por solicitud)
-    // const rawImg = row.imagen ?? row.imagen_Equipo ?? row.imagen_equipo ?? null
-    // let cleanImg: string | null = null
-    // if (rawImg && rawImg.trim()) {
-    //   try {
-    //     cleanImg = encodeURI(rawImg.trim())
-    //   } catch {
-    //     cleanImg = rawImg.trim()
-    //   }
-    // }
-
-    // Usar imagen local fijada desde /public/images/Salas configuracion
     const cleanImg = getLocalImagenEquipo(row)
+    const galeria = getGaleriaImagenesEquipo(row)
+    const primaryImg = cleanImg || (galeria.length > 0 ? galeria[0] : null)
 
     equipos.push({
       ID_Producto: String(row.id_producto_opcion ?? ""),
       Nombre_Equipo: row.modelo?.trim() || String(row.id_producto_opcion ?? "Equipo"),
       Nombre_Marca: row.marca?.trim() || "",
       Descripcion: row.descripcion?.trim() || "",
-      Imagen_Equipo: cleanImg,
+      Imagen_Equipo: primaryImg,
+      Imagenes_Equipo: galeria.length > 0 ? galeria : (primaryImg ? [primaryImg] : []),
       Orden: equipos.length + 1,
     })
     groups.set(code, equipos)

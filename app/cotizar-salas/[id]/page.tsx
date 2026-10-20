@@ -1,9 +1,9 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 import Image from "next/image"
-import type { Sala, SalaComplemento } from "@/lib/types"
+import type { Sala } from "@/lib/types"
 import {
   ContactData,
   ContactStep,
@@ -70,8 +70,6 @@ export default function CotizarSalasPage() {
   const [cantidadSalas, setCantidadSalas] = useState(1)
   const [plazo, setPlazo] = useState(PLAZOS[1])
   const [uso, setUso] = useState(USOS[0])
-  const [tieneComplementos, setTieneComplementos] = useState(false)
-  const [complementos, setComplementos] = useState<string[]>([])
   const [observaciones, setObservaciones] = useState("")
 
   // Paso 2 - contacto
@@ -105,18 +103,10 @@ export default function CotizarSalasPage() {
   const tamanoSala = sala?.Tamano || ""
   const imagenSala = sala?.Imagen_Principal || null
 
-  const listaComplementos: SalaComplemento[] = useMemo(() => sala?.Complementos ?? [], [sala])
-
-  const toggleComplemento = (nombre: string) => {
-    setComplementos((prev) => (prev.includes(nombre) ? prev.filter((item) => item !== nombre) : [...prev, nombre]))
-  }
-
   const resetPaso1 = () => {
     setCantidadSalas(1)
     setPlazo(PLAZOS[1])
     setUso(USOS[0])
-    setTieneComplementos(false)
-    setComplementos([])
     setObservaciones("")
   }
 
@@ -131,7 +121,6 @@ export default function CotizarSalasPage() {
         cantidad_salas: cantidadSalas,
         plazo,
         uso_principal: uso,
-        complementos: tieneComplementos ? complementos : [],
         observaciones,
         ...contacto,
         fecha_solicitud: new Date().toISOString(),
@@ -148,16 +137,8 @@ export default function CotizarSalasPage() {
     return <SuccessMessage itemName={nombreSala} backHref="/catalogo?tipo=Salas+colaborativas" backLabel="Ver más salas" />
   }
 
-  const complementosSeleccionados = listaComplementos.filter((item) => complementos.includes(item.Nombre_Equipo))
-  const contextualAside = complementosSeleccionados.length > 0 ? (
-    <div className="rounded-2xl border-2 border-ofimundo-purple bg-white p-6 shadow-sm">
-      <h2 className="text-xl font-bold text-ofimundo-navy">Tu selección</h2>
-      <div className="mt-5"><p className="font-semibold text-ofimundo-purple">Complementos</p><ul className="mt-2 flex flex-col gap-2 text-sm text-gray-600">{complementosSeleccionados.map((item) => <li key={item.ID_Producto}><strong>{item.Nombre_Equipo}</strong>{item.Categoria && <span className="block">{item.Categoria}</span>}</li>)}</ul></div>
-    </div>
-  ) : undefined
-
   return (
-    <QuotationPage title="Cotiza tu Sala Colaborativa" description="Cuéntanos cómo usarás el espacio y qué necesitas integrar. Con esa información preparamos una propuesta a tu medida." step={step} detailHref={`/salas/${sala?.Slug || params.id}`} contextualAside={contextualAside}>
+    <QuotationPage title="Cotiza tu Sala Colaborativa" description="Cuéntanos cómo usarás el espacio y qué necesitas integrar. Con esa información preparamos una propuesta a tu medida." step={step} detailHref={`/salas/${sala?.Slug || params.id}`}>
       {/* Resumen de la sala seleccionada */}
       <div className="flex items-start gap-4 rounded-2xl border-2 border-ofimundo-purple bg-white p-5 shadow-sm">
         <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gray-50">
@@ -235,49 +216,6 @@ export default function CotizarSalasPage() {
                 </select>
               </Field>
 
-              {/* Complementos */}
-              <div className="rounded-xl border-2 border-gray-100 bg-gray-50/60 p-5">
-                <label className="flex cursor-pointer items-start gap-3">
-                  <input
-                    type="checkbox"
-                    checked={tieneComplementos}
-                    onChange={(event) => setTieneComplementos(event.target.checked)}
-                    className="mt-0.5 h-5 w-5 shrink-0 accent-[#2e2096]"
-                  />
-                  <span>
-                    <span className="block text-sm font-semibold text-gray-800">Quiero agregar equipos complementarios</span>
-                    <span className="mt-1 block text-sm leading-relaxed text-gray-500">Selecciona accesorios o equipos adicionales para incluirlos en la conversación de tu cotización.</span>
-                  </span>
-                </label>
-
-                {tieneComplementos && (
-                  <fieldset className="mt-4 border-0 p-0">
-                    <legend className="mb-3 flex items-center gap-1.5 text-sm font-semibold text-gray-700">
-                      Complementos disponibles
-                      <FieldHelp id="complementos-help">Los complementos seleccionados se revisarán técnica y comercialmente; podrían ajustarse según la configuración final de la sala.</FieldHelp>
-                    </legend>
-                    {listaComplementos.length > 0 ? (
-                      <div className="grid gap-2 sm:grid-cols-2">
-                        {listaComplementos.map((comp) => {
-                          const nombre = comp.Nombre_Equipo
-                          const activo = complementos.includes(nombre)
-                          return (
-                            <label key={comp.ID_Producto} className={`flex cursor-pointer items-start gap-3 rounded-lg border-2 bg-white p-3 transition ${activo ? "border-ofimundo-purple" : "border-gray-200 hover:border-gray-300"}`}>
-                              <input type="checkbox" checked={activo} onChange={() => toggleComplemento(nombre)} className="mt-0.5 h-4 w-4 shrink-0 accent-[#2e2096]" />
-                              <span>
-                                <span className="block text-sm font-medium text-gray-800">{nombre}</span>
-                                {comp.Categoria && <span className="mt-0.5 block text-xs text-gray-500">{comp.Categoria}</span>}
-                              </span>
-                            </label>
-                          )
-                        })}
-                      </div>
-                    ) : (
-                      <p className="rounded-lg border-2 border-dashed border-gray-200 bg-white p-4 text-sm leading-relaxed text-gray-500">Aún no hay complementos cargados para esta sala. Descríbelos en observaciones y un asesor los cotizará contigo.</p>
-                    )}
-                  </fieldset>
-                )}
-              </div>
 
               {/* Observaciones */}
               <Field

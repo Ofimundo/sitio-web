@@ -13,7 +13,56 @@
     "Compatibilidad": [],
     "Destacada": true,
     "Orden": 1,
-    "Opciones": [],
+    "Opciones": [
+      {
+        "ID_Opcion": 1,
+        "Codigo": "A",
+        "Nombre": "Componentes sala colaborativa",
+        "Equipos": [
+          {
+            "ID_Producto": "10010756",
+            "Nombre_Equipo": "i3CONNECT Mount 2",
+            "Nombre_Marca": "i3Connect",
+            "Descripcion": "i3CONNECT Mount 2 Soporte de Pared",
+            "Orden": 1,
+            "Imagen_Equipo": "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20_Mount%202.webp",
+            "Imagenes_Equipo": [
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20_Mount%202.webp",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT_Mount%202_02.png",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20Mount%202_03.png",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20Mount%202_04.webp"
+            ]
+          },
+          {
+            "ID_Producto": "10010823",
+            "Nombre_Equipo": "i3CONNECT ASPEN 4 86",
+            "Nombre_Marca": "i3Connect",
+            "Descripcion": "i3CONNECT ASPEN 4 86",
+            "Orden": 2,
+            "Imagen_Equipo": "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20ASPEN%204_86.webp",
+            "Imagenes_Equipo": [
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20ASPEN%204_86.webp",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20ASPEN%204%2086_02.png",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20ASPEN%204%2086_03.webp"
+            ]
+          },
+          {
+            "ID_Producto": "960-001310",
+            "Nombre_Equipo": "Rally Bar, Graphite",
+            "Nombre_Marca": "LOGITECH",
+            "Descripcion": "Logitech Rally Bar - Dispositivo de vídeoconferencia - Certi",
+            "Orden": 3,
+            "Imagen_Equipo": "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/Rally%20Bar_Graphite.webp",
+            "Imagenes_Equipo": [
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/Rally%20Bar_Graphite.webp",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/Rally%20Bar_Graphite_02.webp",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/Rally%20Bar_Graphite_03.webp",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/Rally%20Bar_Graphite_04.jpg"
+            ]
+          }
+        ]
+      }
+    ],
     "Complementos": [
       {
         "ID_Producto": "I3-ELM2",
@@ -79,7 +128,56 @@
     "Compatibilidad": [],
     "Destacada": false,
     "Orden": 2,
-    "Opciones": [],
+    "Opciones": [
+      {
+        "ID_Opcion": 1,
+        "Codigo": "A",
+        "Nombre": "Componentes sala colaborativa",
+        "Equipos": [
+          {
+            "ID_Producto": "10010756",
+            "Nombre_Equipo": "i3CONNECT Mount 2",
+            "Nombre_Marca": "i3Connect",
+            "Descripcion": "i3CONNECT Mount 2 Soporte de Pared",
+            "Orden": 1,
+            "Imagen_Equipo": "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20_Mount%202.webp",
+            "Imagenes_Equipo": [
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20_Mount%202.webp",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT_Mount%202_02.png",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20Mount%202_03.png",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20Mount%202_04.webp"
+            ]
+          },
+          {
+            "ID_Producto": "10010822",
+            "Nombre_Equipo": "i3CONNECT ASPEN 4 75",
+            "Nombre_Marca": "i3Connect",
+            "Descripcion": "i3CONNECT ASPEN 4 75",
+            "Orden": 2,
+            "Imagen_Equipo": "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20ASPEN%204_75.webp",
+            "Imagenes_Equipo": [
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20ASPEN%204_75.webp",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20ASPEN%204%2075_02.jpg",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20ASPEN%204%2075_03.png"
+            ]
+          },
+          {
+            "ID_Producto": "960-001338",
+            "Nombre_Equipo": "Rally Bar Mini",
+            "Nombre_Marca": "LOGITECH",
+            "Descripcion": "Logitech - Video Ultra HD",
+            "Orden": 3,
+            "Imagen_Equipo": "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/Rally%20Bar_Mini.jpg",
+            "Imagenes_Equipo": [
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/Rally%20Bar_Mini.jpg",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/Rally%20Bar_Mini_02.jpg",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/Rally%20Bar_Mini_03.webp",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/Rally%20Bar_Mini_04.webp"
+            ]
+          }
+        ]
+      }
+    ],
     "Complementos": [
       {
         "ID_Producto": "I3-ELM2",
@@ -145,7 +243,57 @@
     "Compatibilidad": [],
     "Destacada": false,
     "Orden": 3,
-    "Opciones": [],
+    "Opciones": [
+      {
+        "ID_Opcion": 1,
+        "Codigo": "A",
+        "Nombre": "Componentes sala colaborativa",
+        "Equipos": [
+          {
+            "ID_Producto": "10010756",
+            "Nombre_Equipo": "i3CONNECT Mount 2",
+            "Nombre_Marca": "i3Connect",
+            "Descripcion": "i3CONNECT Mount 2 Soporte de Pared",
+            "Orden": 1,
+            "Imagen_Equipo": "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20_Mount%202.webp",
+            "Imagenes_Equipo": [
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20_Mount%202.webp",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT_Mount%202_02.png",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20Mount%202_03.png",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20Mount%202_04.webp"
+            ]
+          },
+          {
+            "ID_Producto": "10010821",
+            "Nombre_Equipo": "i3CONNECT ASPEN 4 65",
+            "Nombre_Marca": "i3Connect",
+            "Descripcion": "Pantalla Interactiva i3CONNECT ASPEN 4 65\" 4K",
+            "Orden": 2,
+            "Imagen_Equipo": "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20ASPEN%204_65.webp",
+            "Imagenes_Equipo": [
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20ASPEN%204_65.webp",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20ASPEN%204%2065_02.png",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20ASPEN%204%2065_03.png",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20ASPEN%204%2065_04.webp"
+            ]
+          },
+          {
+            "ID_Producto": "960-001509",
+            "Nombre_Equipo": "Rally Bar Huddle, Graphite",
+            "Nombre_Marca": "LOGITECH",
+            "Descripcion": "Logitech - Sistema CollabOS",
+            "Orden": 3,
+            "Imagen_Equipo": "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/Rally%20Bar%20Huddle_Graphite.png",
+            "Imagenes_Equipo": [
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/Rally%20Bar%20Huddle_Graphite.png",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/Rally%20Bar%20Huddle_%20Graphite_02.webp",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/Rally%20Bar%20Huddle_%20Graphite_03.webp",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/Rally%20Bar%20Huddle_%20Graphite_04.webp"
+            ]
+          }
+        ]
+      }
+    ],
     "Complementos": [
       {
         "ID_Producto": "I3-ELM2",
@@ -211,7 +359,70 @@
     "Compatibilidad": [],
     "Destacada": false,
     "Orden": 4,
-    "Opciones": [],
+    "Opciones": [
+      {
+        "ID_Opcion": 1,
+        "Codigo": "A",
+        "Nombre": "Componentes sala colaborativa",
+        "Equipos": [
+          {
+            "ID_Producto": "10010732",
+            "Nombre_Equipo": "i3CONNECT ELM 2 86",
+            "Nombre_Marca": "i3Connect",
+            "Descripcion": "i3CONNECT ELM 2 86",
+            "Orden": 1,
+            "Imagen_Equipo": "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20ELM%202%20_86.webp",
+            "Imagenes_Equipo": [
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20ELM%202%20_86.webp",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20ELM%202%2086_02.png",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20ELM%202%2086_03.webp",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20ELM%202%2086_04.png"
+            ]
+          },
+          {
+            "ID_Producto": "10010756",
+            "Nombre_Equipo": "i3CONNECT Mount 2",
+            "Nombre_Marca": "i3Connect",
+            "Descripcion": "i3CONNECT Mount 2 Soporte de Pared",
+            "Orden": 2,
+            "Imagen_Equipo": "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20_Mount%202.webp",
+            "Imagenes_Equipo": [
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20_Mount%202.webp",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT_Mount%202_02.png",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20Mount%202_03.png",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20Mount%202_04.webp"
+            ]
+          },
+          {
+            "ID_Producto": "CPI-420/60",
+            "Nombre_Equipo": "C-Pro Infinity 20X",
+            "Nombre_Marca": "LAIA",
+            "Descripcion": "C-Pro Infinity 20X",
+            "Orden": 3,
+            "Imagen_Equipo": "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/C-Pro%20Infinity_20X.png",
+            "Imagenes_Equipo": [
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/C-Pro%20Infinity_20X.png",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/C-Pro%20Infinity%2020X_02.png",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/C-Pro%20Infinity%2020X_03.jpg",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/C-Pro%20Infinity%2020X_04.png"
+            ]
+          },
+          {
+            "ID_Producto": "TPAPB",
+            "Nombre_Equipo": "T-Pod AIR Pro Beamforming",
+            "Nombre_Marca": "LAIA",
+            "Descripcion": "T-Pod AIR Pro Beamforming",
+            "Orden": 4,
+            "Imagen_Equipo": "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/T-Pod%20AIR%20Pro%20_Beamforming.png",
+            "Imagenes_Equipo": [
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/T-Pod%20AIR%20Pro%20_Beamforming.png",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/T-Pod%20AIR%20Pro%20Beamforming_02.png",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/T-Pod%20AIR%20Pro%20Beamforming_03.jpg"
+            ]
+          }
+        ]
+      }
+    ],
     "Complementos": [
       {
         "ID_Producto": "I3-ELM2",
@@ -277,7 +488,55 @@
     "Compatibilidad": [],
     "Destacada": false,
     "Orden": 5,
-    "Opciones": [],
+    "Opciones": [
+      {
+        "ID_Opcion": 1,
+        "Codigo": "A",
+        "Nombre": "Componentes sala colaborativa",
+        "Equipos": [
+          {
+            "ID_Producto": "10010731",
+            "Nombre_Equipo": "i3CONNECT ELM 2 75",
+            "Nombre_Marca": "i3Connect",
+            "Descripcion": "i3CONNECT ELM 2 75",
+            "Orden": 1,
+            "Imagen_Equipo": "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20ELM%202%20_75.webp",
+            "Imagenes_Equipo": [
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20ELM%202%20_75.webp",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20ELM%202%2075_02.png",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20ELM%202%2075_03.webp"
+            ]
+          },
+          {
+            "ID_Producto": "10010756",
+            "Nombre_Equipo": "i3CONNECT Mount 2",
+            "Nombre_Marca": "i3Connect",
+            "Descripcion": "i3CONNECT Mount 2 Soporte de Pared",
+            "Orden": 2,
+            "Imagen_Equipo": "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20_Mount%202.webp",
+            "Imagenes_Equipo": [
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20_Mount%202.webp",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT_Mount%202_02.png",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20Mount%202_03.png",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20Mount%202_04.webp"
+            ]
+          },
+          {
+            "ID_Producto": "U50",
+            "Nombre_Equipo": "MAXHUB UC U50 Barra USB",
+            "Nombre_Marca": "MAXHUB",
+            "Descripcion": "MAXHUB UC U50 Barra USB",
+            "Orden": 3,
+            "Imagen_Equipo": "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/MAXHUB%20UC%20U50%20_Barra%20USB.jpg",
+            "Imagenes_Equipo": [
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/MAXHUB%20UC%20U50%20_Barra%20USB.jpg",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/MAXHUB%20UC%20U50%20_Barra%20USB_02.jpg",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/MAXHUB%20UC%20U50%20_Barra%20USB_03.webp"
+            ]
+          }
+        ]
+      }
+    ],
     "Complementos": [
       {
         "ID_Producto": "I3-ELM2",
@@ -343,7 +602,43 @@
     "Compatibilidad": [],
     "Destacada": true,
     "Orden": 6,
-    "Opciones": [],
+    "Opciones": [
+      {
+        "ID_Opcion": 1,
+        "Codigo": "A",
+        "Nombre": "Componentes sala colaborativa",
+        "Equipos": [
+          {
+            "ID_Producto": "10010730",
+            "Nombre_Equipo": "i3CONNECT ELM 2 65",
+            "Nombre_Marca": "i3Connect",
+            "Descripcion": "i3CONNECT ELM 2 65",
+            "Orden": 1,
+            "Imagen_Equipo": "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20ELM%202_%2065.webp",
+            "Imagenes_Equipo": [
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20ELM%202_%2065.webp",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20ELM%202%2065_02.webp",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20ELM%202%2065_03.jpg",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20ELM%202%2065_04.jpg"
+            ]
+          },
+          {
+            "ID_Producto": "10010756",
+            "Nombre_Equipo": "i3CONNECT Mount 2",
+            "Nombre_Marca": "i3Connect",
+            "Descripcion": "i3CONNECT Mount 2 Soporte de Pared",
+            "Orden": 2,
+            "Imagen_Equipo": "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20_Mount%202.webp",
+            "Imagenes_Equipo": [
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20_Mount%202.webp",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT_Mount%202_02.png",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20Mount%202_03.png",
+              "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-salas/i3CONNECT%20Mount%202_04.webp"
+            ]
+          }
+        ]
+      }
+    ],
     "Complementos": [
       {
         "ID_Producto": "I3-ELM2",

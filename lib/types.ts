@@ -50,6 +50,7 @@ export interface SalaEquipo {
   Nombre_Marca: string
   Descripcion: string
   Imagen_Equipo?: string | null
+  Imagenes_Equipo?: string[]
   Orden: number
 }
 

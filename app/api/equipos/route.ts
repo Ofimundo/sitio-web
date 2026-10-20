@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { executeQuery } from "@/lib/db"
-import { mapProducto, type ProductoRow, VISTA_PRODUCTO_DETALLE } from "@/lib/productos"
+import { mapProducto, type ProductoRow, QUERY_PRODUCTOS_CON_DETALLE, VISTA_PRODUCTO_DETALLE } from "@/lib/productos"
 import type { ApiResponse, Equipo } from "@/lib/types"
 
 function valores(searchParams: URLSearchParams, key: string) {
@@ -22,7 +22,12 @@ export async function GET(request: NextRequest) {
     const limit = Math.min(Math.max(Number(searchParams.get("limit")) || 9999, 1), 9999)
     const offset = Math.max(Number(searchParams.get("offset")) || 0, 0)
 
-    const rows = await executeQuery<ProductoRow>(`SELECT * FROM ${VISTA_PRODUCTO_DETALLE}`)
+    let rows: ProductoRow[] = []
+    try {
+      rows = await executeQuery<ProductoRow>(QUERY_PRODUCTOS_CON_DETALLE)
+    } catch {
+      rows = await executeQuery<ProductoRow>(`SELECT * FROM ${VISTA_PRODUCTO_DETALLE}`)
+    }
     const filtrados = rows.map(mapProducto).filter((equipo) => {
       const matchesType = tipos.length === 0 || tipos.some((tipo) => {
         const normTipo = normalize(tipo)

@@ -1,15 +1,23 @@
 import { NextResponse } from "next/server"
 import { executeQuery } from "@/lib/db"
-import { mapProducto, type ProductoRow, VISTA_PRODUCTO_DETALLE } from "@/lib/productos"
+import { mapProducto, type ProductoRow, QUERY_PRODUCTOS_CON_DETALLE, VISTA_PRODUCTO_DETALLE } from "@/lib/productos"
 import type { ApiResponse, Equipo } from "@/lib/types"
 
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params
-    const rows = await executeQuery<ProductoRow>(
-      `SELECT * FROM ${VISTA_PRODUCTO_DETALLE} WHERE id_producto = @id`,
-      { id },
-    )
+    let rows: ProductoRow[] = []
+    try {
+      rows = await executeQuery<ProductoRow>(
+        `${QUERY_PRODUCTOS_CON_DETALLE} WHERE v.id_producto = @id`,
+        { id }
+      )
+    } catch {
+      rows = await executeQuery<ProductoRow>(
+        `SELECT * FROM ${VISTA_PRODUCTO_DETALLE} WHERE id_producto = @id`,
+        { id }
+      )
+    }
 
     if (rows.length === 0) {
       return NextResponse.json({ success: false, error: "Equipo no encontrado" }, { status: 404 })
