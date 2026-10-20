@@ -69,13 +69,36 @@ function extraerFormatoDeTexto(texto: string): "A3" | "A4" | null {
 }
 
 function extraerColorDeTexto(texto: string): "color" | "monocromo" | null {
+  if (!texto) return null
   const norm = limpiarTextoTokens(texto)
-  if (/\b(color|colores|full\s+color|a\s+color)\b/i.test(norm)) {
-    return "color"
-  }
-  if (/\b(blanco\s+y\s+negro|blanco\s+negro|monocromo|monocramatica|monocromatico|mono|b\/n|bn|b\s*y\s*n|negro|solo\s+negro)\b/i.test(norm)) {
+  if (!norm) return null
+
+  // 1. Detección de cambio explícito de un modo a otro
+  if (
+    /(?:cambi(?:o|ar)?|pasar|migrar|en\s+vez\s+de|en\s+lugar\s+de|de)\s+color\s+a\s+(?:monocromo|monocromatico|monocromatica|blanco\s+y\s+negro|b\/n|bn|negro)/i.test(norm) ||
+    /\b(sin\s+color|no\s+a\s+color|no\s+en\s+color|no\s+color|cero\s+color)\b/i.test(norm)
+  ) {
     return "monocromo"
   }
+
+  if (
+    /(?:cambi(?:o|ar)?|pasar|migrar|en\s+vez\s+de|en\s+lugar\s+de|de)\s+(?:monocromo|monocromatico|monocromatica|blanco\s+y\s+negro|b\/n|bn|negro)\s+a\s+color/i.test(norm)
+  ) {
+    return "color"
+  }
+
+  // 2. Si menciona monocromo / blanco y negro explícitamente en el texto
+  const tieneMono = /\b(blanco\s+y\s+negro|blanco\s+negro|monocromo|monocramatica|monocromatica|monocromatico|mono|b\/n|b\s*y\s*n|solo\s+negro)\b/i.test(norm)
+  const tieneColor = /\b(full\s+color|a\s+color|en\s+color|colores)\b/i.test(norm) || (/\bcolor\b/i.test(norm) && !/(?:cambi(?:o|ar)?|de)\s+color/i.test(norm))
+
+  if (tieneMono && !tieneColor) return "monocromo"
+  if (tieneColor && !tieneMono) return "color"
+  if (tieneMono && tieneColor) {
+    if (/\b(?:a|hacia|prefiero|mejor)\s+(?:monocromo|monocromatico|monocromatica|blanco\s+y\s+negro|b\/n|bn|negro)\b/i.test(norm)) return "monocromo"
+    if (/\b(?:a|hacia|prefiero|mejor)\s+color\b/i.test(norm)) return "color"
+    return "monocromo"
+  }
+
   return null
 }
 
@@ -170,6 +193,131 @@ function detectarConsultaCatalogoCompleto(texto: string): boolean {
     "de todas",
     "de todos",
   ])
+}
+
+function detectarSolicitudAlternativas(texto: string): boolean {
+  const norm = normalizar(texto)
+  if (!norm) return false
+  if (
+    /\b(otra|otras|otro|otros|demas|demás|adicional|adicionales|diferente|diferentes)\s+(alternativa|alternativas|opcion|opción|opciones|modelo|modelos|equipo|equipos|recomendacion|recomendaciones|solucion|soluciones|proceso|procesos|automatizacion|automatizaciones)\b/i.test(
+      norm
+    )
+  ) {
+    return true
+  }
+  if (/\b(que\s+otra|que\s+otras|que\s+otro|que\s+otros|tienes\s+otra|tienes\s+otras|hay\s+otra|hay\s+otras|alguna\s+otra|algunas\s+otras)\b/i.test(norm)) return true
+  if (
+    /\b(que\s+mas\s+tienes|que\s+mas\s+hay|muestrame\s+mas|ver\s+mas\s+opciones|mostrar\s+otras|muestrame\s+otras|otras\s+soluciones|otra\s+solucion|otras\s+automatizaciones|otra\s+automatizacion|otros\s+procesos|otro\s+proceso)\b/i.test(
+      norm
+    )
+  ) {
+    return true
+  }
+  return contiene(norm, [
+    "otras alternativas",
+    "otra alternativa",
+    "otras opciones",
+    "otra opcion",
+    "otra opción",
+    "otras recomendaciones",
+    "otra recomendacion",
+    "otra recomendación",
+    "otras soluciones",
+    "otra solucion",
+    "otra solución",
+    "otros procesos",
+    "otro proceso",
+    "otras automatizaciones",
+    "otra automatizacion",
+    "otra automatización",
+    "mas alternativas",
+    "más alternativas",
+    "mas opciones",
+    "más opciones",
+    "mas soluciones",
+    "más soluciones",
+    "que mas tienes",
+    "qué más tienes",
+    "que mas hay",
+    "qué más hay",
+  ])
+}
+
+function detectarSolicitudOtraMarca(texto: string): boolean {
+  const norm = normalizar(texto)
+  if (!norm) return false
+  if (
+    /\b(otra|otras|diferente|diferentes|cambiar\s+de)\s+marcas?\b/i.test(norm) ||
+    /\b(de|en)\s+otra\s+marca\b/i.test(norm) ||
+    /\b(de|en)\s+otras\s+marcas\b/i.test(norm) ||
+    /\bopciones\s+(?:de\s+|en\s+)?otras\s+marcas\b/i.test(norm) ||
+    /\btienes\s+(?:de\s+|en\s+)?otras?\s+marcas?\b/i.test(norm)
+  ) {
+    return true
+  }
+  return contiene(norm, [
+    "otras marcas",
+    "otra marca",
+    "de otra marca",
+    "en otra marca",
+    "de otras marcas",
+    "en otras marcas",
+    "cambiar marca",
+    "cambio de marca",
+    "cambiar de marca",
+    "no de esa marca",
+    "no de esta marca",
+  ])
+}
+
+function obtenerFamiliaAutomatizacion(item: any): "facturas" | "saldos" | "finiquitos" | "cuentas" | "otras" {
+  if (!item) return "otras"
+  const texto = normalizar(
+    `${item.ID_Producto ?? ""} ${item.slug ?? ""} ${item.nombre ?? ""} ${item.nombreCorto ?? ""} ${item.categoria ?? ""} ${item.resumen ?? ""} ${item.descripcion ?? ""}`
+  )
+  if (texto.includes("aprrch") || texto.includes("factura") || texto.includes("dte") || texto.includes("sii")) {
+    return "facturas"
+  }
+  if (texto.includes("sldbnc") || texto.includes("saldo") || texto.includes("bancari") || texto.includes("banco")) {
+    return "saldos"
+  }
+  if (texto.includes("fnqt") || texto.includes("finiquito") || texto.includes("rrhh") || texto.includes("laboral") || texto.includes(" dt") || texto.includes("dt ")) {
+    return "finiquitos"
+  }
+  if (texto.includes("gsct") || texto.includes("gesdoc") || texto.includes("cuenta") || texto.includes("contabil") || texto.includes("asiento")) {
+    return "cuentas"
+  }
+  return "otras"
+}
+
+function extraerMarcaDeTexto(texto: string | null | undefined): string | null {
+  if (!texto) return null
+  const norm = normalizar(texto)
+  if (!norm) return null
+
+  if (/\b(kyocera|kyosera|kiosera|kiocera|quiosera|quiocera|kiyocera|kyocers|kyosela)\b/i.test(norm)) {
+    return "kyocera"
+  }
+  if (/\b(brother|broder|broter|brotel|brodher|broders|brothers)\b/i.test(norm)) {
+    return "brother"
+  }
+  if (/\b(xerox|serox|zerox|xeros|xeroxs)\b/i.test(norm)) {
+    return "xerox"
+  }
+  if (/\b(epson|epzon|hepson|epsom|epsonn)\b/i.test(norm)) {
+    return "epson"
+  }
+  if (/\b(lexmark|lesmark|lexmar|lexmart|lemark|lexmarkk)\b/i.test(norm)) {
+    return "lexmark"
+  }
+  if (/\b(hp|hewlett\s+packard|hewlett)\b/i.test(norm)) {
+    return "hp"
+  }
+  if (/\b(canon|kannon|kanon)\b/i.test(norm)) {
+    return "canon"
+  }
+
+  return null
 }
 
 function normalizarEspacios(str: string | null | undefined): string {
@@ -957,20 +1105,51 @@ ${body.mensaje}`
     }
 
     let productosAnteriores: any[] = []
+    const todosProductosPrevios: any[] = []
+    const idsProductosPrevios = new Set<string | number>()
+    const marcasPrevias = new Set<string>()
+
     if (Array.isArray(historial) && historial.length > 0) {
       for (let i = historial.length - 1; i >= 0; i--) {
         const item = historial[i]
         const prods = (item as any)?.productos_recomendados ?? (item as any)?.productos
         if (Array.isArray(prods) && prods.length > 0) {
-          productosAnteriores = prods
-          break
+          if (productosAnteriores.length === 0) {
+            productosAnteriores = prods
+          }
+          for (const p of prods) {
+            const id = p.ID_Producto ?? p.id_producto ?? p.id
+            if (id && !idsProductosPrevios.has(id)) {
+              idsProductosPrevios.add(id)
+              todosProductosPrevios.push(p)
+            }
+            if (p.Nombre_Marca) {
+              marcasPrevias.add(normalizar(p.Nombre_Marca))
+            }
+          }
         }
       }
     }
 
+    const ultimoProductoPrevio = productosAnteriores.length > 0 ? productosAnteriores[0] : null
+    const marcaPrevia = ultimoProductoPrevio?.Nombre_Marca ? normalizar(ultimoProductoPrevio.Nombre_Marca) : null
+    const colorPrevio: "color" | "monocromo" | null = ultimoProductoPrevio?.Color_Equipo
+      ? (contiene(normalizar(ultimoProductoPrevio.Color_Equipo), ["blanco y negro", "monocromo", "bn", "b/n", "b&w", "negro"]) ? "monocromo" : "color")
+      : null
+    const formatoPrevio: "A3" | "A4" | null = ultimoProductoPrevio?.Tamano_Papel_Equipo
+      ? (normalizar(ultimoProductoPrevio.Tamano_Papel_Equipo).includes("a3") ? "A3" : "A4")
+      : null
+    const tipoPrevio: "Multifuncional" | "Impresora" | null = ultimoProductoPrevio?.Tipo_Equipo
+      ? (normalizar(ultimoProductoPrevio.Tipo_Equipo).includes("multifuncional") || normalizar(ultimoProductoPrevio.Tipo_Equipo).includes("copiad") ? "Multifuncional" : "Impresora")
+      : null
+
     const colorActualDirecto = extraerColorDeTexto(body.mensaje)
     const formatoActualDirecto = extraerFormatoDeTexto(body.mensaje)
-    const marcaActualDirecta = ["xerox", "kyocera", "brother", "epson", "lexmark", "hp", "canon"].find((marca) => contiene(normalizar(body.mensaje), [marca])) ?? null
+    const marcaActualDirecta = extraerMarcaDeTexto(body.mensaje) ?? (intencionIA?.marca ? extraerMarcaDeTexto(intencionIA.marca) : null)
+
+    const solicitaAlternativas = detectarSolicitudAlternativas(body.mensaje)
+    const solicitaOtraMarca = detectarSolicitudOtraMarca(body.mensaje)
+
     let tipoActualDirecto: "Multifuncional" | "Impresora" | null = null
     if (contiene(normalizar(body.mensaje), ["multifuncional", "multifuncionales", "multifuncion", "copiadora", "fotocopiadora", "copiar", "escanear", "scanner", "escaner", "fax"])) {
       tipoActualDirecto = "Multifuncional"
@@ -1004,8 +1183,6 @@ ${body.mensaje}`
       "error mío",
       "cambie de opinion",
       "cambié de opinión",
-      "otra opcion",
-      "otra opción",
       "cambiar por",
       "disculpa",
       "perdon",
@@ -1028,7 +1205,9 @@ ${body.mensaje}`
       ppmObjetivo !== null ||
       modelosDetectados.length > 0 ||
       esConsultaCatalogoCompleto ||
-      esCorreccionUsuario
+      esCorreccionUsuario ||
+      solicitaAlternativas ||
+      solicitaOtraMarca
     )
 
     const esSeguimientoReal = Boolean(
@@ -1179,32 +1358,111 @@ ${JSON.stringify(salasParaIA)}
 
     if (categoria === "automatizaciones") {
       const automatizaciones = automatizacionesData as any[]
-      const temaDetectado = esCambioDeCategoria ? normalizar(body.mensaje) : textoMensajesUsuarioActivo
+      const textoMensajesAuto = esCambioDeCategoria ? normalizar(body.mensaje) : textoMensajesUsuarioActivo
+      const preguntaActualNorm = normalizar(body.mensaje)
 
-      let automatizacionesFiltradas = esSeguimientoReal
-        ? productosAnteriores
-        : automatizaciones
-            .map((item: any) => {
-              let score = 0
-              const haystack = normalizar(`${item.nombre} ${item.slug} ${item.resumen} ${item.descripcion} ${item.categoria} ${item.beneficio}`)
+      const buscaFacturas = contiene(preguntaActualNorm, ["factura", "facturas", "proveedor", "proveedores", "sii", "dte", "tributari"])
+      const buscaFiniquitos = contiene(preguntaActualNorm, ["finiquito", "finiquitos", "rrhh", "personal", "despido", "laboral", "dt", "direccion del trabajo"])
+      const buscaCuentas = contiene(preguntaActualNorm, ["cuenta", "cuentas", "erp", "asiento", "contabilidad", "contable", "cobrar", "pagar", "gesdoc", "documental"])
+      const buscaSaldos = contiene(preguntaActualNorm, ["banco", "bancos", "saldo", "saldos", "tesoreria", "cartola", "bancari", "conciliacion"])
 
-              if (contiene(temaDetectado, ["factura", "facturas", "proveedores", "sii", "dte"])) {
-                if (haystack.includes("factura") || haystack.includes("sii")) score += 1000
-              }
-              if (contiene(temaDetectado, ["finiquito", "finiquitos", "rrhh", "personal", "despido"])) {
-                if (haystack.includes("finiquito") || haystack.includes("dt")) score += 1000
-              }
-              if (contiene(temaDetectado, ["cuenta", "cuentas", "erp", "asiento", "contabilidad", "finanzas", "cobrar", "pagar"])) {
-                if (haystack.includes("cuenta") || haystack.includes("finanzas")) score += 1000
-              }
-              if (contiene(temaDetectado, ["banco", "bancos", "saldo", "saldos", "tesoreria", "cartola"])) {
-                if (haystack.includes("saldo") || haystack.includes("banco")) score += 1000
-              }
+      const tieneFocoExplicito = buscaFacturas || buscaFiniquitos || buscaCuentas || buscaSaldos
 
-              return { item, score }
-            })
-            .sort((a, b) => b.score - a.score)
-            .map((entry) => entry.item)
+      // Familias previamente recomendadas
+      const familiasPrevias = new Set<string>()
+      for (const p of todosProductosPrevios) {
+        familiasPrevias.add(obtenerFamiliaAutomatizacion(p))
+      }
+      for (const p of productosAnteriores) {
+        familiasPrevias.add(obtenerFamiliaAutomatizacion(p))
+      }
+
+      const debeExcluirPrevios = solicitaAlternativas && !tieneFocoExplicito && idsProductosPrevios.size > 0
+
+      let automatizacionesFiltradas: any[] = []
+
+      if (esSeguimientoReal) {
+        automatizacionesFiltradas = productosAnteriores
+      } else {
+        const scored = automatizaciones.map((item: any) => {
+          let score = 0
+          const familia = obtenerFamiliaAutomatizacion(item)
+          const haystack = normalizar(`${item.nombre} ${item.slug} ${item.resumen} ${item.descripcion} ${item.categoria} ${item.beneficio}`)
+
+          if (tieneFocoExplicito) {
+            if (buscaFacturas && familia === "facturas") score += 2000
+            if (buscaFiniquitos && familia === "finiquitos") score += 2000
+            if (buscaCuentas && familia === "cuentas") score += 2000
+            if (buscaSaldos && familia === "saldos") score += 2000
+          } else if (debeExcluirPrevios) {
+            // Priorizar familias que aún no se le hayan mostrado
+            if (!familiasPrevias.has(familia)) {
+              score += 3000
+            } else {
+              score -= 1000
+            }
+            // Penalizar IDs que ya se le recomendaron
+            if (idsProductosPrevios.has(item.ID_Producto)) {
+              score -= 5000
+            }
+          } else {
+            // Para consulta general de catálogo: balancear prioridades de familias
+            if (familia === "facturas") score += 40
+            if (familia === "saldos") score += 30
+            if (familia === "finiquitos") score += 20
+            if (familia === "cuentas") score += 10
+          }
+
+          // Preferir opciones estándar/canónicas de cada familia
+          if (
+            item.ID_Producto === "OFI-AUTPRC" ||
+            item.ID_Producto === "OFI-AUTPRC_SLDBNC_01" ||
+            item.ID_Producto === "OFI-AUTPRC_FNQT_01" ||
+            item.ID_Producto === "OFI-AUTPRC_GSCT_01"
+          ) {
+            score += 5
+          }
+
+          return { item, score, familia }
+        })
+
+        scored.sort((a, b) => b.score - a.score)
+
+        if (!tieneFocoExplicito) {
+          const familiasUsadas = new Set<string>()
+          const elegidos: any[] = []
+
+          // Primera pasada: seleccionar un representante por familia distinta
+          for (const entry of scored) {
+            if (elegidos.length >= 3) break
+            if (!familiasUsadas.has(entry.familia)) {
+              if (
+                debeExcluirPrevios &&
+                familiasPrevias.has(entry.familia) &&
+                familiasUsadas.size < Math.max(1, 4 - familiasPrevias.size)
+              ) {
+                continue
+              }
+              familiasUsadas.add(entry.familia)
+              elegidos.push(entry.item)
+            }
+          }
+
+          // Rellenar hasta 3 sin repetir ID
+          if (elegidos.length < 3) {
+            for (const entry of scored) {
+              if (elegidos.length >= 3) break
+              if (!elegidos.some((e) => e.ID_Producto === entry.item.ID_Producto)) {
+                elegidos.push(entry.item)
+              }
+            }
+          }
+
+          automatizacionesFiltradas = elegidos
+        } else {
+          automatizacionesFiltradas = scored.slice(0, 3).map((e) => e.item)
+        }
+      }
 
       ultimosProductosRecomendados = automatizacionesFiltradas.slice(0, 3)
 
@@ -1221,7 +1479,13 @@ Eres el asistente comercial virtual de Ofimundo experto en automatización de pr
 
 REGLAS ESTRICTAS DE RESPUESTA COMERCIAL:
 - Responde siempre en español, de forma muy breve y comercial (MÁXIMO 2 LÍNEAS).
-- Presenta de forma directa la solución de automatización ideal para la necesidad del usuario o responde su duda técnica.
+${
+  solicitaAlternativas
+    ? "- El usuario solicitó OTRAS OPCIONES O ALTERNATIVAS de automatización. Presenta de forma comercial y directa las nuevas soluciones recomendadas en esta respuesta (ej: gestión de cuentas u otros planes) destacando sus ventajas. NUNCA digas que no hay más opciones si se entregan soluciones en las tarjetas."
+    : !tieneFocoExplicito
+    ? "- El usuario consulta en general por procesos de automatización. Menciona de forma breve y concisa las distintas áreas disponibles en el catálogo (facturas SII, saldos bancarios, finiquitos DT y gestión de cuentas) representadas en las tarjetas."
+    : "- Presenta de forma directa la solución de automatización ideal para la necesidad del usuario o responde su duda técnica."
+}
 - Usa ÚNICAMENTE la información oficial suministrada.
 - REGULACIÓN DE SEGURIDAD Y ÁMBITO: ESTRICTAMENTE PROHIBIDO responder sobre claves internas, contraseñas, servidores, código, credenciales o sitios web externos.
 - ESTRICTAMENTE PROHIBIDO ofrecer enviar cotizaciones por correo/chat, ofrecer fichas técnicas, dar precios o preguntar sobre opciones de conectividad o red. Las cotizaciones se solicitan directamente desde las tarjetas.
@@ -1238,7 +1502,7 @@ ${JSON.stringify(automatizacionesParaIA)}
 
       const respuestaRaw = respuestaGroq ?? MENSAJE_FUERA_DE_SERVICIO
       const respuesta = respuestaGroq ? limpiarPreguntasAlFinal(respuestaGroq) : MENSAJE_FUERA_DE_SERVICIO
-      const productosAuto = respuestaGroq ? automatizacionesFiltradas.slice(0, 3) : []
+      const productosAuto = respuestaGroq ? ultimosProductosRecomendados : []
 
       const origin = new URL(request.url).origin
       await registrarEnHistorial(origin, sesionId, body.mensaje, respuesta, productosAuto)
@@ -1272,7 +1536,6 @@ ${JSON.stringify(automatizacionesParaIA)}
     ])
 
     const solicitaNuevaBusquedaExplicitamente =
-      esCorreccionUsuario ||
       contiene(pregunta, [
         "nueva busqueda",
         "resetear",
@@ -1280,6 +1543,7 @@ ${JSON.stringify(automatizacionesParaIA)}
         "otra busqueda",
         "cancelar busqueda",
         "buscar otra cosa",
+        "reiniciar",
       ])
 
     const esInicioNuevaBusqueda = contiene(pregunta, [
@@ -1345,17 +1609,33 @@ ${JSON.stringify(automatizacionesParaIA)}
       "hp",
       "canon",
     ]
-    const marcaEnTexto = marcasDisponibles.find((marca) => contiene(textoParametros, [marca])) ?? null
-    const finalMarca = esComparacionModelos
-      ? null
-      : esNuevaBusqueda
-        ? (marcaEnTexto || (intencionIA?.marca ? normalizar(intencionIA.marca) : null))
-        : (marcaEnTexto ?? (intencionIA?.marca ? normalizar(intencionIA.marca) : null) ?? marcaEnHistorial)
+
+    const marcaEnMensajeActual = extraerMarcaDeTexto(body.mensaje) ?? (intencionIA?.marca ? extraerMarcaDeTexto(intencionIA.marca) : null)
+
+    const marcasAExcluir = new Set<string>()
+    if (solicitaOtraMarca) {
+      if (marcaPrevia) marcasAExcluir.add(marcaPrevia)
+    }
+
+    let finalMarca: string | null = null
+    if (esComparacionModelos) {
+      finalMarca = null
+    } else if (solicitaOtraMarca) {
+      finalMarca = null
+    } else if (marcaEnMensajeActual) {
+      finalMarca = marcaEnMensajeActual
+    } else if (esNuevaBusqueda) {
+      finalMarca = intencionIA?.marca ? normalizar(intencionIA.marca) : null
+    } else {
+      finalMarca = marcaPrevia ?? (intencionIA?.marca ? normalizar(intencionIA.marca) : null) ?? marcaEnHistorial
+    }
+
+    const esCambioDeMarca = Boolean(marcaPrevia && finalMarca && marcaPrevia !== finalMarca)
 
     // 2. TIPO (Multifuncional vs Impresora)
     let tipoEnTexto: "Multifuncional" | "Impresora" | null = null
     if (
-      contiene(textoParametros, [
+      contiene(pregunta, [
         "multifuncional",
         "multifuncionales",
         "multifuncion",
@@ -1370,7 +1650,7 @@ ${JSON.stringify(automatizacionesParaIA)}
     ) {
       tipoEnTexto = "Multifuncional"
     } else if (
-      contiene(textoParametros, [
+      contiene(pregunta, [
         "solo impresora",
         "solo impresion",
         "impresora simple",
@@ -1383,17 +1663,18 @@ ${JSON.stringify(automatizacionesParaIA)}
     }
     const finalTipo = esNuevaBusqueda
       ? (tipoEnTexto || intencionIA?.tipo || null)
-      : (tipoEnTexto ?? intencionIA?.tipo ?? tipoEnHistorial)
+      : (tipoEnTexto ?? tipoPrevio ?? intencionIA?.tipo ?? tipoEnHistorial)
 
     // 3. FORMATO (A3 vs A4 / Carta / Oficio)
     const formatoActual = extraerFormatoDeTexto(body.mensaje)
     const formatoActivo = extraerFormatoDeTexto(textoMensajesUsuarioActivo)
-    const finalFormato: "A3" | "A4" | null = formatoActual ?? (formatoActivo || intencionIA?.formato || null)
+    const finalFormato: "A3" | "A4" | null = formatoActual ?? formatoPrevio ?? (formatoActivo || intencionIA?.formato || null)
 
     // 4. COLOR (color vs monocromo)
     const colorActual = extraerColorDeTexto(body.mensaje)
     const colorActivo = extraerColorDeTexto(textoMensajesUsuarioActivo)
-    const finalColor: "color" | "monocromo" | null = colorActual ?? (colorActivo || intencionIA?.color || null)
+    const finalColor: "color" | "monocromo" | null = colorActual ?? colorPrevio ?? (colorActivo || intencionIA?.color || null)
+    const esCambioDeColor = Boolean(colorActual && colorPrevio && colorPrevio !== colorActual)
 
     // 5. VOLUMEN (número explícito de páginas ingresado por el usuario)
     const ultimoBotMsj = historialBusquedaActiva.length > 0 ? historialBusquedaActiva[historialBusquedaActiva.length - 1]?.respuesta_bot : ""
@@ -1428,6 +1709,10 @@ ${JSON.stringify(automatizacionesParaIA)}
       finalFormato,
       finalColor,
       finalVolumen,
+      solicitaAlternativas,
+      solicitaOtraMarca,
+      esCambioDeColor,
+      esCambioDeMarca,
       esPreguntaSeguimiento: intencionIA?.es_pregunta_seguimiento,
     })
 
@@ -1503,11 +1788,24 @@ ${JSON.stringify(automatizacionesParaIA)}
       strictFormat: boolean = true,
       strictBrand: boolean = true,
       strictColor: boolean = true,
-      strictType: boolean = true
+      strictType: boolean = true,
+      excluirIds: Set<string | number> = new Set(),
+      excluirMarcas: Set<string> = new Set()
     ) {
       return lista
         .filter((producto) => {
+          // 0. Exclusiones de IDs si se buscan alternativas
+          if (excluirIds.size > 0 && excluirIds.has(producto.ID_Producto)) {
+            return false
+          }
+
           const marca = normalizar(producto.Nombre_Marca)
+
+          // 0b. Exclusiones de marcas si el usuario pide otras marcas
+          if (excluirMarcas.size > 0 && excluirMarcas.has(marca)) {
+            return false
+          }
+
           const color = normalizar(producto.Color_Equipo)
           const formato = normalizar(producto.Tamano_Papel_Equipo)
           const tipo = normalizar(producto.Tipo_Equipo)
@@ -1767,27 +2065,53 @@ ${JSON.stringify(automatizacionesParaIA)}
         resultados = productosAnteriores.slice(0, 3)
       }
     } else {
+      const debeExcluirPrevios = (solicitaAlternativas || solicitaOtraMarca) && !marcaEnMensajeActual && idsProductosPrevios.size > 0
+      const idsAExcluir = debeExcluirPrevios ? idsProductosPrevios : new Set<string | number>()
+
       // 1. Strict all: Brand, Color, Format, Type, Volume
-      let candidatos = filtrarYRankearEquipos(productos, !esConsultaMasRapida, true, true, true, true)
+      let candidatos = filtrarYRankearEquipos(productos, !esConsultaMasRapida, true, true, true, true, idsAExcluir, marcasAExcluir)
 
       // 2. Relax Volume: Brand, Color, Format, Type
       if (candidatos.length === 0) {
-        candidatos = filtrarYRankearEquipos(productos, false, true, true, true, true)
+        candidatos = filtrarYRankearEquipos(productos, false, true, true, true, true, idsAExcluir, marcasAExcluir)
       }
 
-      // 3. Relax Brand: Color, Format, Type (e.g. when HP/Canon not in stock or brand lacks requested A3 Monocromo)
+      // 3. Relax Brand: Color, Format, Type (e.g. when HP/Canon not in stock or brand lacks models)
       if (candidatos.length === 0) {
-        candidatos = filtrarYRankearEquipos(productos, false, true, false, true, true)
+        candidatos = filtrarYRankearEquipos(productos, false, true, false, true, true, idsAExcluir, marcasAExcluir)
       }
 
       // 4. Relax Format: Color, Type
       if (candidatos.length === 0) {
-        candidatos = filtrarYRankearEquipos(productos, false, false, false, true, true)
+        candidatos = filtrarYRankearEquipos(productos, false, false, false, true, true, idsAExcluir, marcasAExcluir)
       }
 
-      // 5. General Fallback
+      // 5. Fallback permitiendo productos previos si se agotó el catálogo
+      if (candidatos.length === 0 && idsAExcluir.size > 0) {
+        candidatos = filtrarYRankearEquipos(productos, false, true, !solicitaOtraMarca, true, true, new Set(), marcasAExcluir)
+      }
+
+      // 6. General Fallback
       if (candidatos.length === 0) {
         candidatos = filtrarYRankearEquipos(productos, false, false, false, false, false)
+      }
+
+      // Si el cliente pide otras alternativas y la marca actual sólo tiene 1 o 2 modelos disponibles, complementar con otras marcas líderes
+      if (solicitaAlternativas && candidatos.length < 3) {
+        const suplemento = filtrarYRankearEquipos(
+          productos,
+          false,
+          true,
+          false,
+          true,
+          true,
+          new Set([...idsAExcluir, ...candidatos.map((p) => p.ID_Producto)]),
+          marcasAExcluir
+        )
+        for (const sup of suplemento) {
+          if (candidatos.length >= 3) break
+          candidatos.push(sup)
+        }
       }
 
       resultados = candidatos.slice(0, 3)
@@ -1866,7 +2190,15 @@ ${
     : ""
 }
 ${
-  esComparacionModelos
+  solicitaOtraMarca
+    ? `- EL CLIENTE SOLICITÓ OPCIONES DE OTRAS MARCAS: Presenta las alternativas de las otras marcas disponibles (${[...new Set(productosParaIA.map((p: any) => p.marca))].join(", ")}), destacando que mantienen los mismos requerimientos técnicos acordados previamente en la conversación (formato, ${finalColor || "color/monocromo"}, funciones y volumen). Explica brevemente por qué la opción ${productosParaIA[0]?.marca} ${productosParaIA[0]?.nombre} es la ideal.`
+    : esCambioDeColor
+    ? `- EL CLIENTE SOLICITÓ CAMBIAR A ${finalColor === "monocromo" ? "MONOCROMÁTICO (BLANCO Y NEGRO)" : "COLOR"}: Confirma con naturalidad y empatía el ajuste a ${finalColor === "monocromo" ? "monocromo" : "color"}, y explica brevemente por qué la opción recomendada (${productosParaIA[0]?.marca} ${productosParaIA[0]?.nombre}) se adapta a los requerimientos de formato y volumen del hilo de la conversación.`
+    : esCambioDeMarca || marcaEnMensajeActual
+    ? `- EL CLIENTE SOLICITÓ LA MARCA "${finalMarca}": Presenta de forma clara y directa la mejor opción disponible de la marca ${finalMarca} (${productosParaIA[0]?.marca} ${productosParaIA[0]?.nombre}), confirmando que cumple con los requerimientos técnicos del hilo de la conversación (formato, ${finalColor || "color/monocromo"}, tipo y volumen).`
+    : solicitaAlternativas
+    ? `- EL CLIENTE SOLICITÓ OTRAS ALTERNATIVAS: Presenta amablemente las nuevas alternativas recomendadas (${productosParaIA[0]?.marca} ${productosParaIA[0]?.nombre}), explicando por qué son excelentes opciones diferentes para su necesidad sin repetir los equipos que ya le fueron presentados anteriormente.`
+    : esComparacionModelos
     ? `- REGLA DE COMPARACIÓN DIRECTA:
   * El cliente está comparando directamente estos modelos: ${modelosDetectados.map((m) => `${m.Nombre_Marca} ${m.Nombre_Equipo}`).join(" versus ")}.
   * Tienes la información técnica de ambos en la lista de productos suministrada. Compara ambos modelos de forma precisa:
@@ -1889,11 +2221,15 @@ Consulta del cliente e historial:
 ${mensajeConContexto}
 
 Criterios de búsqueda analizados en la conversación:
-- Marca solicitada: ${finalMarca || "Cualquiera"}
+- Marca solicitada: ${finalMarca || (solicitaOtraMarca ? "Otras marcas disponibles" : "Cualquiera")}
 - Color de impresión: ${finalColor || "Cualquiera"}
 - Formato de papel: ${finalFormato || "Cualquiera"}
 - Tipo de equipo: ${finalTipo || "Cualquiera"}
 - Volumen mensual estimado: ${tieneNumeroPaginasExplicito && finalVolumen ? `${finalVolumen} pág/mes` : "No especificado por el cliente"}
+${solicitaAlternativas ? "- Solicitud de alternativas: El cliente busca opciones distintas a las previamente mostradas." : ""}
+${solicitaOtraMarca ? "- Solicitud de otra marca: El cliente busca marcas alternativas a las mostradas previamente." : ""}
+${esCambioDeColor ? `- Solicitud de cambio de color: El cliente ajustó la preferencia a ${finalColor}.` : ""}
+${esCambioDeMarca ? `- Solicitud de cambio de marca: El cliente ajustó la preferencia a ${finalMarca}.` : ""}
 ${esConsultaMasRapida ? "- Consulta especial: El cliente busca expresamente la opción de mayor velocidad (máxima velocidad / más rápida). No menciones volúmenes mensuales inventados." : ""}
 ${ppmObjetivo ? `- Velocidad objetivo solicitada: ${ppmObjetivo} ppm o similar.` : ""}
 ${modeloEspecificoDetectado ? `- Modelo específico consultado: ${modeloEspecificoDetectado.Nombre_Marca} ${modeloEspecificoDetectado.Nombre_Equipo} (${modeloEspecificoDetectado.Velocidad_BN_Equipo} ppm).` : ""}
