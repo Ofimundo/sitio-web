@@ -43,11 +43,14 @@ export default async function EquipoDetallePage({ params }: PageProps) {
     : "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/03-iconos/mps.png"
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors">
       <Header />
 
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pb-8 pt-28 sm:pt-36 md:pt-40">
-        <Link href={`/catalogo?tipo=${encodeURIComponent(equipo.Tipo_Equipo)}`} className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-ofimundo-purple transition hover:text-ofimundo-magenta">
+        <Link
+          href={`/catalogo?tipo=${encodeURIComponent(equipo.Tipo_Equipo)}`}
+          className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-ofimundo-purple dark:text-purple-400 transition hover:text-ofimundo-magenta"
+        >
           <i className="fas fa-arrow-left" aria-hidden="true" /> Volver al catálogo
         </Link>
 
@@ -55,10 +58,10 @@ export default async function EquipoDetallePage({ params }: PageProps) {
           {/* Contenido principal */}
           <div className="lg:col-span-2 space-y-6 sm:space-y-8">
             {/* Sección de producto - cabecera */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden">
               <div className="grid md:grid-cols-2 gap-6 sm:gap-8 p-4 sm:p-8">
                 {/* Imagen del producto */}
-                <div className="h-[260px] sm:h-[350px] md:h-[450px] bg-linear-to-br from-purple-50 to-pink-50 rounded-xl flex items-center justify-center p-4 sm:p-6">
+                <div className="h-[260px] sm:h-[350px] md:h-[450px] bg-linear-to-br from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20 rounded-xl flex items-center justify-center p-4 sm:p-6">
                   <Image
                     src={imagenUrl}
                     alt={equipo.Nombre_Equipo}
@@ -74,12 +77,21 @@ export default async function EquipoDetallePage({ params }: PageProps) {
                     <span className="inline-block px-3 py-1 bg-ofimundo-purple text-white text-xs font-semibold rounded-full mb-3">
                       {equipo.Tipo_Equipo?.toUpperCase()}
                     </span>
-                    <h1 className="text-2xl sm:text-3xl font-bold text-ofimundo-navy mb-2 sm:mb-3 leading-tight">
+                    <h1 className="text-2xl sm:text-3xl font-bold text-ofimundo-navy dark:text-white mb-2 sm:mb-3 leading-tight">
                       {equipo.Nombre_Equipo}
                     </h1>
-                    <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
                       {equipo.Descripcion_Equipo}
                     </p>
+                  </div>
+
+                  {/* ============================================================== */}
+                  {/* EN MÓVIL: Marca, Modelo y Características Técnicas debajo de la descripción */}
+                  {/* ============================================================== */}
+                  <div className="lg:hidden space-y-4 my-4 pt-3 border-t border-gray-100 dark:border-gray-800">
+                    <MarcaYModeloCard marca={equipo.Nombre_Marca} equipoNombre={equipo.Nombre_Equipo} />
+                    <InfoTecnicaCard equipo={equipo} />
+                    <CaracteristicasClaveCard />
                   </div>
 
                   {/* Quick Specs */}
@@ -118,7 +130,7 @@ export default async function EquipoDetallePage({ params }: PageProps) {
                   <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 mt-auto">
                     <Link
                       href={`/cotizar-mps/${equipo.ID_Producto}`}
-                      className="w-full sm:flex-1 rounded-lg bg-linear-to-r from-(--ofimundo-magenta) to-(--ofimundo-purple) px-4 py-3 text-center text-xs sm:text-sm font-semibold text-white transition hover:opacity-90"
+                      className="w-full sm:flex-1 rounded-lg bg-linear-to-r from-(--ofimundo-magenta) to-(--ofimundo-purple) px-4 py-3 text-center text-xs sm:text-sm font-semibold text-white transition hover:opacity-90 shadow-xs"
                     >
                       Cotizar solución
                     </Link>
@@ -127,7 +139,7 @@ export default async function EquipoDetallePage({ params }: PageProps) {
                       href="https://outlook.office.com/bookwithme/user/5d9fcae1581e49e8be2b6a163ed07576%40ofimundo.cl/meetingtype/x2Au6VY8SU-gJ1Uq4PePCw2?anonymous&ismsaljsauthenabled"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full sm:flex-1 rounded-lg border-2 border-ofimundo-purple px-4 py-3 text-center text-xs sm:text-sm font-semibold text-ofimundo-purple transition hover:bg-white-50"
+                      className="w-full sm:flex-1 rounded-lg border-2 border-ofimundo-purple px-4 py-3 text-center text-xs sm:text-sm font-semibold text-ofimundo-purple dark:text-purple-300 transition hover:bg-purple-50 dark:hover:bg-purple-950/30"
                     >
                       Agendar Reunión
                     </a>
@@ -137,7 +149,7 @@ export default async function EquipoDetallePage({ params }: PageProps) {
                         href={equipo.Archivo_PDF_Equipo}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-full rounded-lg border-2 border-gray-300 px-4 py-3 text-center text-xs sm:text-sm font-semibold text-gray-700 transition hover:border-ofimundo-purple hover:text-ofimundo-purple flex items-center justify-center gap-2"
+                        className="w-full rounded-lg border-2 border-gray-300 dark:border-gray-700 px-4 py-3 text-center text-xs sm:text-sm font-semibold text-gray-700 dark:text-gray-200 transition hover:border-ofimundo-purple hover:text-ofimundo-purple flex items-center justify-center gap-2"
                       >
                         <i className="fas fa-file-pdf text-red-500" aria-hidden="true" />
                         Descargar Ficha Técnica
@@ -149,7 +161,7 @@ export default async function EquipoDetallePage({ params }: PageProps) {
             </div>
 
             {/* Sección de Servicios */}
-            <div className="bg-linear-to-br from-gray-50 to-gray-100 rounded-2xl p-4 sm:p-8 border border-gray-200">
+            <div className="bg-linear-to-br from-gray-50 to-gray-100 dark:from-gray-900/60 dark:to-gray-900 rounded-2xl p-4 sm:p-8 border border-gray-200 dark:border-gray-800">
               <Image
                 src="https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/06-servicio/banner-titulo.png"
                 alt="banner-servicio"
@@ -183,56 +195,11 @@ export default async function EquipoDetallePage({ params }: PageProps) {
             </div>
           </div>
 
-          {/* Sidebar */}
-          <div className="lg:col-span-1 space-y-6">
-            {/* Marca y Modelo */}
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-              <h3 className="text-sm font-semibold text-gray-500 mb-3">MARCA Y MODELO</h3>
-              <p className="text-lgf font-bold text-ofimundo-navy mb-1">{equipo.Nombre_Marca} - {equipo.Nombre_Equipo}</p>
-            </div>
-
-            {/* Información Técnica */}
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-              <h3 className="text-sm font-semibold text-gray-500 mb-4">INFORMACIÓN TÉCNICA</h3>
-              <div className="space-y-3 text-sm">
-                {equipo.Tecnologia_Equipo && (
-                  <TechRow label="Tecnología" value={equipo.Tecnologia_Equipo} />
-                )}
-                {equipo.Funciones_Equipo && (
-                  <TechRow label="Funciones" value={equipo.Funciones_Equipo} />
-                )}
-                {equipo.Conectividad_Equipo && (
-                  <TechRow label="Conectividad" value={equipo.Conectividad_Equipo} />
-                )}
-                {equipo.Tamano_Papel_Equipo && (
-                  <TechRow label="Tamaño papel" value={equipo.Tamano_Papel_Equipo} />
-                )}
-                {equipo.Color_Equipo && (
-                  <TechRow label="Color" value={equipo.Color_Equipo} />
-                )}
-                {equipo.Memoria_RAM_Equipo && (
-                  <TechRow label="Memoria RAM" value={equipo.Memoria_RAM_Equipo} />
-                )}
-                {equipo.Procesador_Equipo && (
-                  <TechRow label="Procesador" value={equipo.Procesador_Equipo} />
-                )}
-                {equipo.Disco_Duro_Equipo && (
-                  <TechRow label="Disco Duro" value={equipo.Disco_Duro_Equipo} />
-                )}
-              </div>
-            </div>
-
-            {/* Características Clave */}
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-              <h3 className="text-sm font-semibold text-gray-500 mb-4">CARACTERÍSTICAS CLAVE</h3>
-              <div className="space-y-3">
-                <FeatureItem text="Impresión de alta velocidad" />
-                <FeatureItem text="Bajo costo por página" />
-                <FeatureItem text="Conectividad avanzada" />
-                <FeatureItem text="Gestión remota incluida" />
-                <FeatureItem text="Soporte técnico en todo Chile" />
-              </div>
-            </div>
+          {/* Sidebar (solo visible en pantallas grandes desktop) */}
+          <div className="hidden lg:block lg:col-span-1 space-y-6">
+            <MarcaYModeloCard marca={equipo.Nombre_Marca} equipoNombre={equipo.Nombre_Equipo} />
+            <InfoTecnicaCard equipo={equipo} />
+            <CaracteristicasClaveCard />
           </div>
         </div>
       </div>
@@ -242,15 +209,86 @@ export default async function EquipoDetallePage({ params }: PageProps) {
   )
 }
 
+function MarcaYModeloCard({ marca, equipoNombre }: { marca?: string; equipoNombre?: string }) {
+  const nombreCompleto = [marca, equipoNombre].filter(Boolean).join(" - ") || equipoNombre || marca || "Equipo"
+  return (
+    <div className="bg-white dark:bg-gray-900 rounded-xl p-5 sm:p-6 shadow-sm border border-gray-200 dark:border-gray-800">
+      <h3 className="text-xs sm:text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">MARCA Y MODELO</h3>
+      <p className="text-base sm:text-lg font-bold text-ofimundo-navy dark:text-white leading-snug">{nombreCompleto}</p>
+    </div>
+  )
+}
+
+function InfoTecnicaCard({ equipo }: { equipo: Equipo }) {
+  const tieneDatos =
+    equipo.Tecnologia_Equipo ||
+    equipo.Funciones_Equipo ||
+    equipo.Conectividad_Equipo ||
+    equipo.Tamano_Papel_Equipo ||
+    equipo.Color_Equipo ||
+    equipo.Memoria_RAM_Equipo ||
+    equipo.Procesador_Equipo ||
+    equipo.Disco_Duro_Equipo
+
+  if (!tieneDatos) return null
+
+  return (
+    <div className="bg-white dark:bg-gray-900 rounded-xl p-5 sm:p-6 shadow-sm border border-gray-200 dark:border-gray-800">
+      <h3 className="text-xs sm:text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 sm:mb-4">INFORMACIÓN TÉCNICA</h3>
+      <div className="space-y-2.5 sm:space-y-3 text-xs sm:text-sm">
+        {equipo.Tecnologia_Equipo && (
+          <TechRow label="Tecnología" value={equipo.Tecnologia_Equipo} />
+        )}
+        {equipo.Funciones_Equipo && (
+          <TechRow label="Funciones" value={equipo.Funciones_Equipo} />
+        )}
+        {equipo.Conectividad_Equipo && (
+          <TechRow label="Conectividad" value={equipo.Conectividad_Equipo} />
+        )}
+        {equipo.Tamano_Papel_Equipo && (
+          <TechRow label="Tamaño papel" value={equipo.Tamano_Papel_Equipo} />
+        )}
+        {equipo.Color_Equipo && (
+          <TechRow label="Color" value={equipo.Color_Equipo} />
+        )}
+        {equipo.Memoria_RAM_Equipo && (
+          <TechRow label="Memoria RAM" value={equipo.Memoria_RAM_Equipo} />
+        )}
+        {equipo.Procesador_Equipo && (
+          <TechRow label="Procesador" value={equipo.Procesador_Equipo} />
+        )}
+        {equipo.Disco_Duro_Equipo && (
+          <TechRow label="Disco Duro" value={equipo.Disco_Duro_Equipo} />
+        )}
+      </div>
+    </div>
+  )
+}
+
+function CaracteristicasClaveCard() {
+  return (
+    <div className="bg-white dark:bg-gray-900 rounded-xl p-5 sm:p-6 shadow-sm border border-gray-200 dark:border-gray-800">
+      <h3 className="text-xs sm:text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 sm:mb-4">CARACTERÍSTICAS CLAVE</h3>
+      <div className="space-y-2.5 sm:space-y-3">
+        <FeatureItem text="Impresión de alta velocidad" />
+        <FeatureItem text="Bajo costo por página" />
+        <FeatureItem text="Conectividad avanzada" />
+        <FeatureItem text="Gestión remota incluida" />
+        <FeatureItem text="Soporte técnico en todo Chile" />
+      </div>
+    </div>
+  )
+}
+
 function SpecCard({ icon, label, value }: { icon: string; label: string; value: string }) {
   return (
-    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-      <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-        <i className={`fas fa-${icon} text-ofimundo-purple`}></i>
+    <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800/60 rounded-lg border border-gray-100 dark:border-gray-800">
+      <div className="w-10 h-10 bg-white dark:bg-gray-700/60 rounded-lg flex items-center justify-center shrink-0 shadow-xs">
+        <i className={`fas fa-${icon} text-ofimundo-purple dark:text-purple-400`}></i>
       </div>
       <div>
-        <p className="text-xs text-gray-500">{label}</p>
-        <p className="text-sm font-bold text-ofimundo-navy">{value}</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400">{label}</p>
+        <p className="text-sm font-bold text-ofimundo-navy dark:text-white">{value}</p>
       </div>
     </div>
   )
@@ -258,30 +296,30 @@ function SpecCard({ icon, label, value }: { icon: string; label: string; value: 
 
 function ServiceCard({ image, title, description }: { image: string; title: string; description: string }) {
   return (
-    <div className="bg-white rounded-xl p-1 shadow-sm text-center">
+    <div className="bg-white dark:bg-gray-800/80 rounded-xl p-2.5 sm:p-3 shadow-xs border border-gray-100 dark:border-gray-700/60 text-center">
       {/* Imagen */}
       {image && (
-        <div className="relative w-full h-30 mb-2">
+        <div className="relative w-full h-28 sm:h-32 mb-2 overflow-hidden rounded-lg">
           <Image 
             src={image} 
             alt={title} 
             width={400}
             height={500}
-            className="object-cover rounded-lg"
+            className="w-full h-full object-cover"
           />
         </div>
       )}
-      <h3 className="font-bold text-ofimundo-navy mb-1">{title}</h3>
-      <p className="text-sm text-gray-600">{description}</p>
+      <h3 className="font-bold text-ofimundo-navy dark:text-white text-xs sm:text-sm mb-1">{title}</h3>
+      <p className="text-xs text-gray-600 dark:text-gray-300 leading-snug">{description}</p>
     </div>
   )
 }
 
 function TechRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex justify-between py-2 border-b border-gray-100">
-      <span className="text-gray-600">{label}</span>
-      <span className="font-medium text-ofimundo-navy text-right max-w-[60%]">{value}</span>
+    <div className="flex justify-between py-2 border-b border-gray-100 dark:border-gray-800/80">
+      <span className="text-gray-600 dark:text-gray-400">{label}</span>
+      <span className="font-semibold text-ofimundo-navy dark:text-white text-right max-w-[60%]">{value}</span>
     </div>
   )
 }
@@ -289,10 +327,10 @@ function TechRow({ label, value }: { label: string; value: string }) {
 function FeatureItem({ text }: { text: string }) {
   return (
     <div className="flex items-start gap-3">
-      <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center shrink-0">
-        <i className="fas fa-check text-green-600 text-sm"></i>
+      <div className="w-7 h-7 sm:w-8 sm:h-8 bg-green-100 dark:bg-green-950/60 rounded-lg flex items-center justify-center shrink-0">
+        <i className="fas fa-check text-green-600 dark:text-green-400 text-xs sm:text-sm"></i>
       </div>
-      <span className="text-sm text-gray-700">{text}</span>
+      <span className="text-xs sm:text-sm text-gray-700 dark:text-gray-300">{text}</span>
     </div>
   )
 }

@@ -295,6 +295,7 @@ function extraerMarcaDeTexto(texto: string | null | undefined): string | null {
   const norm = normalizar(texto)
   if (!norm) return null
 
+  // Marcas Oficiales de Ofimundo
   if (/\b(kyocera|kyosera|kiosera|kiocera|quiosera|quiocera|kiyocera|kyocers|kyosela)\b/i.test(norm)) {
     return "kyocera"
   }
@@ -310,11 +311,37 @@ function extraerMarcaDeTexto(texto: string | null | undefined): string | null {
   if (/\b(lexmark|lesmark|lexmar|lexmart|lemark|lexmarkk)\b/i.test(norm)) {
     return "lexmark"
   }
-  if (/\b(hp|hewlett\s+packard|hewlett)\b/i.test(norm)) {
+
+  // Marcas Externas NO comercializadas (para detectar que el cliente preguntó por una marca fuera de catálogo)
+  if (/\b(hp|hewlett\s*packard|hewlett)\b/i.test(norm)) {
     return "hp"
   }
   if (/\b(canon|kannon|kanon)\b/i.test(norm)) {
     return "canon"
+  }
+  if (/\b(ricoh|rico)\b/i.test(norm)) {
+    return "ricoh"
+  }
+  if (/\b(konica|minolta|konica\s*minolta)\b/i.test(norm)) {
+    return "konica minolta"
+  }
+  if (/\b(sharp)\b/i.test(norm)) {
+    return "sharp"
+  }
+  if (/\b(toshiba)\b/i.test(norm)) {
+    return "toshiba"
+  }
+  if (/\b(pantum)\b/i.test(norm)) {
+    return "pantum"
+  }
+  if (/\b(oki|okidata)\b/i.test(norm)) {
+    return "oki"
+  }
+  if (/\b(dell)\b/i.test(norm)) {
+    return "dell"
+  }
+  if (/\b(samsung)\b/i.test(norm)) {
+    return "samsung"
   }
 
   return null
@@ -488,6 +515,23 @@ function limpiarPreguntasAlFinal(texto: string | null | undefined): string {
   return limpio
 }
 
+const MARCAS_NO_CATALOGO_REGEX = /\b(hp\s+laserjet|hp\s+pagewide|hp|hewlett[\s-]*packard|canon\s+imagepress|canon\s+imagerunner|canon|ricoh|konica[\s-]*minolta|minolta|sharp|toshiba|pantum|oki|okidata|dell)\b/i
+
+function sanitizarRespuestaCatalogo(texto: string | null | undefined, clientePreguntoPorMarcaNoOficial: boolean = false): string {
+  if (!texto) return ""
+  let limpio = limpiarPreguntasAlFinal(texto)
+
+  // Si el usuario NO preguntó por una marca fuera de catálogo, pero la IA mencionó o sugirió una marca ajena al catálogo:
+  if (!clientePreguntoPorMarcaNoOficial && MARCAS_NO_CATALOGO_REGEX.test(limpio)) {
+    limpio = limpio
+      .replace(/\b(hp\s+laserjet|hp\s+pagewide|hp|hewlett[\s-]*packard)\b/gi, "Xerox")
+      .replace(/\b(canon\s+imagepress|canon\s+imagerunner|canon)\b/gi, "Epson")
+      .replace(/\b(ricoh|konica[\s-]*minolta|minolta|sharp|toshiba|pantum|oki|okidata|dell)\b/gi, "Kyocera")
+  }
+
+  return limpio
+}
+
 function esConsultaRestringidaOFueraDeAmbito(texto: string): boolean {
   const norm = normalizar(texto)
   if (!norm) return false
@@ -653,6 +697,7 @@ Categorías válidas:
 - general (saludos, preguntas institucionales)
 
 Reglas de deducción:
+- marca: extrae la marca mencionada por el usuario (ej: "xerox", "kyocera", "epson", "brother", "lexmark", "hp", "canon", etc.). Si no menciona marca, asigna null.
 - es_pregunta_seguimiento: asigna true si el usuario hace una pregunta sobre los productos o temas previamente discutidos (ej: "¿cuál es más rápida?", "¿tienen wifi?", "¿qué garantía tienen?", "¿cuál es el precio?", "¿diferencia entre la primera y la segunda?", "¿cuántas personas caben?"). Si el usuario está solicitando o consultando sobre una nueva categoría o servicio distinto (ej: pasando de impresoras a salas o automatizaciones), asigna FALSE.
 - uso: "hogar" si menciona casa, hogar, uso personal, tareas, estudiante; "pyme" si menciona oficina pequeña, negocio, tienda, pyme o 2-10 usuarios; "corporativo" si menciona gran empresa, corporación, alto volumen.
 - volumen: número entero si indicó páginas al mes.
@@ -1227,6 +1272,7 @@ Eres el asistente comercial virtual de Ofimundo.
 REGLAS ESTRICTAS:
 - Responde en MÁXIMO 2 LÍNEAS en español con un tono amable, fluido y comercial.
 - Si saluda o pregunta en general, explícale de forma directa que puedes orientarlo en equipamiento de impresión MPS, salas colaborativas de videoconferencia o automatización de procesos.
+- EXCLUSIVIDAD DE CATÁLOGO Y MARCAS AUTORIZADAS: En equipamiento de impresión, Ofimundo distribuye EXCLUSIVAMENTE las marcas oficiales: Xerox, Epson, Kyocera, Brother y Lexmark. ESTRICTAMENTE PROHIBIDO recomendar, sugerir o mencionar marcas fuera de catálogo (como HP, Canon, Ricoh, Konica Minolta, Sharp, Toshiba, Pantum, OKI o Dell). Si el cliente consulta si trabajamos con alguna de esas marcas externas, aclara amablemente que Ofimundo se especializa exclusivamente en las marcas líderes oficiales (Xerox, Epson, Kyocera, Brother y Lexmark) y ofrécele orientarlo en esas marcas.
 - REGULACIÓN DE SEGURIDAD Y ÁMBITO: ESTRICTAMENTE PROHIBIDO entregar o responder sobre claves internas, contraseñas, credenciales, servidores, código o arquitectura de Ofimundo. ESTRICTAMENTE PROHIBIDO recomendar o mencionar sitios web externos o enlaces ajenos a Ofimundo. Si la consulta es sobre temas no relacionados con los productos de Ofimundo (recetas, noticias, política, claves), desvía cortésmente la conversación indicando que solo puedes orientarlo sobre el catálogo comercial de Ofimundo.
 - ESTRICTAMENTE PROHIBIDO inventar modelos o menciones de impresoras previas si está saludando.
 - ESTRICTAMENTE PROHIBIDO ofrecer enviar cotizaciones por correo/chat, ofrecer fichas técnicas, dar precios o preguntar sobre opciones de conectividad o red.
@@ -1239,7 +1285,7 @@ ${body.mensaje}
       )
 
       const respuestaRaw = respuestaGroq ?? MENSAJE_FUERA_DE_SERVICIO
-      const respuesta = respuestaGroq ? limpiarPreguntasAlFinal(respuestaGroq) : MENSAJE_FUERA_DE_SERVICIO
+      const respuesta = respuestaGroq ? sanitizarRespuestaCatalogo(respuestaGroq) : MENSAJE_FUERA_DE_SERVICIO
 
       const origin = new URL(request.url).origin
       await registrarEnHistorial(origin, sesionId, body.mensaje, respuesta)
@@ -1326,7 +1372,7 @@ Eres el asistente comercial virtual de Ofimundo experto en soluciones para salas
 REGLAS ESTRICTAS DE RESPUESTA COMERCIAL:
 - Responde siempre en español, de forma muy breve y comercial (MÁXIMO 2 LÍNEAS).
 - Recomienda directamente la solución de sala idónea (ej: Essential S, Advanced M, Business S, etc.) destacando su capacidad adecuada de personas o sus marcas/equipos principales (Logitech, Poly, Neat, Jabra, 4K, One-Touch join, agendamiento).
-- Usa ÚNICAMENTE la información oficial suministrada de las salas filtradas.
+- EXCLUSIVIDAD DE CATÁLOGO: Usa ÚNICAMENTE la información oficial suministrada de las salas filtradas. ESTRICTAMENTE PROHIBIDO recomendar marcas o productos que no estén en el catálogo de Ofimundo.
 - REGULACIÓN DE SEGURIDAD Y ÁMBITO: ESTRICTAMENTE PROHIBIDO responder sobre claves internas, contraseñas, servidores, código, credenciales o sitios web externos.
 - ESTRICTAMENTE PROHIBIDO ofrecer enviar cotizaciones por correo/chat, ofrecer fichas técnicas, dar precios o preguntar sobre opciones de conectividad o red. Las cotizaciones se solicitan directamente desde las tarjetas.
 - ESTRICTAMENTE PROHIBIDO INCLUIR CUALQUIER TIPO DE PREGUNTA EN TU RESPUESTA. Tu mensaje debe contener ÚNICAMENTE el texto descriptivo de la recomendación, terminando directamente con un punto final.
@@ -1341,7 +1387,7 @@ ${JSON.stringify(salasParaIA)}
       )
 
       const respuestaRaw = respuestaGroq ?? MENSAJE_FUERA_DE_SERVICIO
-      const respuesta = respuestaGroq ? limpiarPreguntasAlFinal(respuestaGroq) : MENSAJE_FUERA_DE_SERVICIO
+      const respuesta = respuestaGroq ? sanitizarRespuestaCatalogo(respuestaGroq) : MENSAJE_FUERA_DE_SERVICIO
       const productosSalas = respuestaGroq ? ultimosProductosRecomendados : []
 
       const origin = new URL(request.url).origin
@@ -1486,7 +1532,7 @@ ${
     ? "- El usuario consulta en general por procesos de automatización. Menciona de forma breve y concisa las distintas áreas disponibles en el catálogo (facturas SII, saldos bancarios, finiquitos DT y gestión de cuentas) representadas en las tarjetas."
     : "- Presenta de forma directa la solución de automatización ideal para la necesidad del usuario o responde su duda técnica."
 }
-- Usa ÚNICAMENTE la información oficial suministrada.
+- EXCLUSIVIDAD DE CATÁLOGO: Usa ÚNICAMENTE la información oficial suministrada de las soluciones de automatización de Ofimundo. ESTRICTAMENTE PROHIBIDO inventar o recomendar software o servicios externos fuera del catálogo.
 - REGULACIÓN DE SEGURIDAD Y ÁMBITO: ESTRICTAMENTE PROHIBIDO responder sobre claves internas, contraseñas, servidores, código, credenciales o sitios web externos.
 - ESTRICTAMENTE PROHIBIDO ofrecer enviar cotizaciones por correo/chat, ofrecer fichas técnicas, dar precios o preguntar sobre opciones de conectividad o red. Las cotizaciones se solicitan directamente desde las tarjetas.
 - ESTRICTAMENTE PROHIBIDO INCLUIR CUALQUIER TIPO DE PREGUNTA EN TU RESPUESTA. Tu mensaje debe contener ÚNICAMENTE el texto descriptivo del proceso, terminando directamente con un punto final.
@@ -1501,7 +1547,7 @@ ${JSON.stringify(automatizacionesParaIA)}
       )
 
       const respuestaRaw = respuestaGroq ?? MENSAJE_FUERA_DE_SERVICIO
-      const respuesta = respuestaGroq ? limpiarPreguntasAlFinal(respuestaGroq) : MENSAJE_FUERA_DE_SERVICIO
+      const respuesta = respuestaGroq ? sanitizarRespuestaCatalogo(respuestaGroq) : MENSAJE_FUERA_DE_SERVICIO
       const productosAuto = respuestaGroq ? ultimosProductosRecomendados : []
 
       const origin = new URL(request.url).origin
@@ -1606,8 +1652,6 @@ ${JSON.stringify(automatizacionesParaIA)}
       "brother",
       "epson",
       "lexmark",
-      "hp",
-      "canon",
     ]
 
     const marcaEnMensajeActual = extraerMarcaDeTexto(body.mensaje) ?? (intencionIA?.marca ? extraerMarcaDeTexto(intencionIA.marca) : null)
@@ -2171,11 +2215,16 @@ ${JSON.stringify(automatizacionesParaIA)}
       `
 Eres el asesor comercial virtual de Ofimundo experto en soluciones y equipos de impresión.
 
+REGLA SUPREMA DE EXCLUSIVIDAD DE CATÁLOGO Y MARCAS AUTORIZADAS:
+- En Ofimundo comercializamos EXCLUSIVAMENTE equipos de las 5 marcas oficiales de nuestro catálogo: XEROX, EPSON, KYOCERA, BROTHER y LEXMARK.
+- ESTRICTAMENTE PROHIBIDO recomendar, sugerir o mencionar modelos o marcas ajenas a nuestro catálogo (como HP, Hewlett-Packard, Canon, Ricoh, Konica Minolta, Sharp, Toshiba, Pantum, OKI o Dell).
+- NUNCA recomiendes ni menciones un equipo o marca que no esté presente en la lista de productos suministrada en este prompt. Todas tus recomendaciones deben basarse ÚNICA Y EXCLUSIVAMENTE en los equipos de nuestro catálogo entregados abajo.
+
 REGLAS DE RECOMENDACIÓN DE ALTA PRECISIÓN Y CONCORDANCIA:
 - Responde siempre en español, de forma breve, empática, profesional y comercial (máximo 2 a 3 líneas).
 ${
   esMarcaFueraDeStock
-    ? `- El cliente solicitó expresamente la marca "${finalMarca}" (la cual no se encuentra en nuestro catálogo actual). Explica amablemente que Ofimundo trabaja comercialmente con las marcas líderes Xerox, Epson, Kyocera, Brother y Lexmark, y presenta la mejor alternativa equivalente de la lista.`
+    ? `- REGLA PARA MARCAS EXTERNAS FUERA DE CATÁLOGO: El cliente mencionó la marca "${finalMarca}" (la cual NO forma parte de nuestro catálogo). Explica cortésmente que en Ofimundo trabajamos exclusivamente con las marcas oficiales Xerox, Epson, Kyocera, Brother y Lexmark, y presenta de inmediato la mejor alternativa recomendada de nuestro catálogo (${productosParaIA[0]?.marca} ${productosParaIA[0]?.nombre}). ESTRICTAMENTE PROHIBIDO recomendar ningún equipo de ${finalMarca}.`
     : ""
 }
 ${
@@ -2194,7 +2243,7 @@ ${
     ? `- EL CLIENTE SOLICITÓ OPCIONES DE OTRAS MARCAS: Presenta las alternativas de las otras marcas disponibles (${[...new Set(productosParaIA.map((p: any) => p.marca))].join(", ")}), destacando que mantienen los mismos requerimientos técnicos acordados previamente en la conversación (formato, ${finalColor || "color/monocromo"}, funciones y volumen). Explica brevemente por qué la opción ${productosParaIA[0]?.marca} ${productosParaIA[0]?.nombre} es la ideal.`
     : esCambioDeColor
     ? `- EL CLIENTE SOLICITÓ CAMBIAR A ${finalColor === "monocromo" ? "MONOCROMÁTICO (BLANCO Y NEGRO)" : "COLOR"}: Confirma con naturalidad y empatía el ajuste a ${finalColor === "monocromo" ? "monocromo" : "color"}, y explica brevemente por qué la opción recomendada (${productosParaIA[0]?.marca} ${productosParaIA[0]?.nombre}) se adapta a los requerimientos de formato y volumen del hilo de la conversación.`
-    : esCambioDeMarca || marcaEnMensajeActual
+    : esCambioDeMarca || (marcaEnMensajeActual && !esMarcaFueraDeStock)
     ? `- EL CLIENTE SOLICITÓ LA MARCA "${finalMarca}": Presenta de forma clara y directa la mejor opción disponible de la marca ${finalMarca} (${productosParaIA[0]?.marca} ${productosParaIA[0]?.nombre}), confirmando que cumple con los requerimientos técnicos del hilo de la conversación (formato, ${finalColor || "color/monocromo"}, tipo y volumen).`
     : solicitaAlternativas
     ? `- EL CLIENTE SOLICITÓ OTRAS ALTERNATIVAS: Presenta amablemente las nuevas alternativas recomendadas (${productosParaIA[0]?.marca} ${productosParaIA[0]?.nombre}), explicando por qué son excelentes opciones diferentes para su necesidad sin repetir los equipos que ya le fueron presentados anteriormente.`
@@ -2239,8 +2288,9 @@ ${JSON.stringify(productosParaIA)}
 `
     )
 
+    const clientePreguntoPorMarcaNoOficial = Boolean(marcaEnMensajeActual && esMarcaFueraDeStock)
     const respuestaRaw = respuestaGroq ?? MENSAJE_FUERA_DE_SERVICIO
-    const respuesta = respuestaGroq ? limpiarPreguntasAlFinal(respuestaGroq) : MENSAJE_FUERA_DE_SERVICIO
+    const respuesta = respuestaGroq ? sanitizarRespuestaCatalogo(respuestaGroq, clientePreguntoPorMarcaNoOficial) : MENSAJE_FUERA_DE_SERVICIO
     const productosEquipos = respuestaGroq ? resultados : []
 
     /*

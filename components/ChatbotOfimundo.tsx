@@ -499,7 +499,7 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
       </div>
 
       {/* Opciones rápidas */}
-      <div className="bg-purple-50/80 dark:bg-gray-800/60 px-4 py-2 border-b border-purple-100 dark:border-gray-700/50 flex gap-2 overflow-x-auto no-scrollbar shrink-0">
+      <div className="bg-purple-50/80 dark:bg-gray-900/90 px-4 py-2 border-b border-purple-100 dark:border-gray-800 flex gap-2 overflow-x-auto no-scrollbar shrink-0">
         <span className="text-[11px] font-semibold text-purple-800 dark:text-purple-300 flex items-center gap-1 shrink-0 self-center">
           <Sparkles size={12} /> Sugerencias:
         </span>
@@ -508,7 +508,7 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
             key={idx}
             onClick={() => enviarMensajeTexto(opcion)}
             disabled={cargando}
-            className="text-[11px] font-medium px-3 py-1 bg-white dark:bg-gray-800 text-purple-900 dark:text-purple-200 hover:bg-purple-600 hover:text-white dark:hover:bg-purple-600 border border-purple-200 dark:border-gray-700 rounded-full transition-all shrink-0 whitespace-nowrap shadow-xs disabled:opacity-50"
+            className="chatbot-suggestion-btn text-[11px] font-medium px-3 py-1 bg-white dark:bg-purple-950/40 text-purple-900 dark:text-purple-200 hover:bg-purple-600 hover:text-white dark:hover:bg-purple-700 dark:hover:text-white border border-purple-200 dark:border-purple-800/60 rounded-full transition-all shrink-0 whitespace-nowrap shadow-xs disabled:opacity-50"
           >
             {opcion}
           </button>
@@ -516,7 +516,7 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
       </div>
 
       {/* Lista de Mensajes */}
-      <div ref={messagesContainerRef} className="flex-1 space-y-4 overflow-y-auto bg-slate-50 dark:bg-gray-950 p-4">
+      <div ref={messagesContainerRef} className="chatbot-messages flex-1 space-y-4 overflow-y-auto bg-slate-50 dark:bg-gray-950 p-4">
         {mensajes.map((item, index) => (
           <div
             key={index}
@@ -540,8 +540,8 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
               <div
                 className={`max-w-[92%] sm:max-w-[85%] whitespace-pre-wrap rounded-2xl px-3.5 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm leading-relaxed ${
                   item.rol === "usuario"
-                    ? "rounded-br-xs bg-slate-900 dark:bg-purple-700 text-white shadow-xs"
-                    : "rounded-bl-xs border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-slate-800 dark:text-gray-100 shadow-sm"
+                    ? "chatbot-user-bubble rounded-br-xs bg-slate-900 dark:bg-purple-700 text-white shadow-xs"
+                    : "chatbot-bot-bubble rounded-bl-xs border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-sm"
                 }`}
               >
                 {item.rol === "bot" ? limpiarPreguntasFrontend(item.texto) : item.texto}
@@ -552,7 +552,7 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
               item.productos &&
               item.productos.length > 0 && (
                 <div className="mt-3 ml-0 sm:ml-10 w-full sm:w-[90%] space-y-2.5">
-                  <div className="px-1 text-[11px] font-bold text-[#2D1B4B] dark:text-purple-300 uppercase tracking-wider flex items-center gap-1">
+                  <div className="px-1 text-[11px] font-bold text-purple-900 dark:text-purple-300 uppercase tracking-wider flex items-center gap-1">
                     <Sparkles size={12} /> Productos recomendados
                   </div>
 
@@ -568,7 +568,7 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
                       return (
                         <div
                           key={productoIndex}
-                          className="flex gap-3 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-3 shadow-xs hover:shadow-md transition-all"
+                          className="chatbot-card flex gap-3 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#151e31] p-3 shadow-xs hover:shadow-md transition-all"
                         >
                           <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800 p-1">
                             {tarjeta.imagen ? (
@@ -584,16 +584,16 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
 
                           <div className="min-w-0 flex-1 flex flex-col justify-between">
                             <div>
-                              <div className="text-[10px] font-bold text-purple-700 dark:text-purple-400 uppercase tracking-wider">
+                              <div className="chatbot-card-badge text-[10px] font-bold text-purple-700 dark:text-purple-400 uppercase tracking-wider">
                                 {tarjeta.tipo}
                               </div>
 
-                              <div className="text-xs font-semibold leading-snug text-slate-900 dark:text-white line-clamp-1">
+                              <div className="chatbot-card-title text-xs font-semibold leading-snug text-slate-900 dark:text-white line-clamp-1">
                                 {tarjeta.nombre}
                               </div>
 
                               {tarjeta.descripcion && (
-                                <div className="mt-0.5 line-clamp-2 text-[11px] text-slate-500 dark:text-gray-400">
+                                <div className="chatbot-card-desc mt-0.5 line-clamp-2 text-[11px] text-slate-500 dark:text-gray-300">
                                   {tarjeta.descripcion}
                                 </div>
                               )}
@@ -603,7 +603,7 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
                               {tarjeta.cotizar && (
                                 <a
                                   href={tarjeta.cotizar}
-                                  className="rounded-lg px-3 py-1.5 text-[10px] font-bold text-white transition hover:opacity-90 inline-block"
+                                  className="rounded-lg px-3 py-1.5 text-[10px] font-bold text-white transition hover:opacity-90 inline-block shadow-xs"
                                   style={{
                                     background: "linear-gradient(90deg, #552B7E 0%, #A33A5E 100%)",
                                   }}
@@ -615,7 +615,7 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
                               {tarjeta.detalle && (
                                 <a
                                   href={tarjeta.detalle}
-                                  className="px-2 py-1.5 text-[10px] font-semibold text-purple-700 dark:text-purple-300 hover:underline inline-block"
+                                  className="chatbot-card-link px-2 py-1.5 text-[10px] font-semibold text-purple-700 dark:text-purple-300 hover:underline inline-block"
                                 >
                                   Ver más →
                                 </a>
@@ -633,8 +633,8 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
 
         {cargando && (
           <div className="flex justify-start items-center gap-2 ml-10">
-            <div className="flex items-center gap-2 rounded-2xl rounded-bl-xs border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 py-3 text-sm text-slate-500 dark:text-gray-400 shadow-sm">
-              <Loader2 size={16} className="animate-spin text-purple-600" />
+            <div className="flex items-center gap-2 rounded-2xl rounded-bl-xs border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 py-3 text-sm text-slate-600 dark:text-gray-200 shadow-sm">
+              <Loader2 size={16} className="animate-spin text-purple-600 dark:text-purple-400" />
               Buscando las mejores opciones para tu empresa...
             </div>
           </div>
@@ -668,7 +668,7 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
           </button>
         </div>
 
-        <div className="mt-2 text-center text-[10px] text-gray-400 dark:text-gray-500">
+        <div className="mt-2 text-center text-[10px] text-gray-500 dark:text-gray-400">
           Asistente Inteligente de Ofimundo · Respuesta instantánea 24/7
         </div>
       </div>
@@ -678,7 +678,7 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
   if (embedded) {
     return (
       <div
-        className={`w-full max-w-5xl mx-auto rounded-2xl sm:rounded-3xl border border-purple-200/80 dark:border-purple-900/40 bg-white dark:bg-gray-900 shadow-xl overflow-hidden my-2 transition-all duration-300 ease-in-out ${
+        className={`chatbot-container w-full max-w-5xl mx-auto rounded-2xl sm:rounded-3xl border border-purple-200/80 dark:border-purple-900/40 bg-white dark:bg-gray-900 shadow-xl overflow-hidden my-2 transition-all duration-300 ease-in-out ${
           minimizado ? "h-[76px]" : "h-[540px] sm:h-[580px]"
         }`}
       >
@@ -691,7 +691,7 @@ export default function ChatbotOfimundo({ embedded = false }: ChatbotOfimundoPro
     <>
       {abierto && (
         <div
-          className={`fixed bottom-20 sm:bottom-24 right-3 sm:right-5 left-3 sm:left-auto z-50 flex w-auto sm:w-[460px] max-w-[calc(100vw-1.5rem)] sm:max-w-[460px] flex-col overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-2xl transition-all duration-300 ease-in-out ${
+          className={`chatbot-container fixed bottom-20 sm:bottom-24 right-3 sm:right-5 left-3 sm:left-auto z-50 flex w-auto sm:w-[460px] max-w-[calc(100vw-1.5rem)] sm:max-w-[460px] flex-col overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-2xl transition-all duration-300 ease-in-out ${
             minimizado ? "h-[76px]" : "h-[80vh] max-h-[640px]"
           }`}
         >
