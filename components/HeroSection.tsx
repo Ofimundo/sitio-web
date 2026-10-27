@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react"
 import Image from "next/image"
+import Link from "next/link"
 import ChatbotOfimundo from "@/components/ChatbotOfimundo"
 
 export function HeroSection() {
@@ -38,24 +39,30 @@ export function HeroSection() {
   const banners = [
     {
       image: "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/02-banner/01-banner-of.jpg",
-      title: "Diseñados para potenciar tu crecimiento",
-      subtitle: "Soluciones tecnológicas para empresas",
+      title: "Managed Print Services (MPS)",
+      subtitle: "Gestión inteligente de impresión.",
+      link: "/soluciones#mps",
     },
     {
       image: "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/02-banner/02-banner-of.png",
-      title: "Diseñados para potenciar tu crecimiento",
-      subtitle: "Soluciones tecnológicas para empresas",
+      title: "Salas Colaborativas",
+      subtitle: "Tecnología que transforma tus reuniones.",
+      link: "/soluciones#salas",
     },
     {
       image: "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/02-banner/03-banner-of.jpg",
-      title: "Diseñados para potenciar tu crecimiento",
-      subtitle: "Soluciones tecnológicas para empresas",
+      title: "Automatización de procesos",
+      subtitle: "Optimización de tareas repetitivas.",
+      link: "/soluciones#automatizaciones",
     },
+    /* Oculto temporalmente:
     {
       image: "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/02-banner/04-banner-of.jpg",
-      title: "Diseñados para potenciar tu crecimiento",
-      subtitle: "Soluciones tecnológicas para empresas",
+      title: "Dispositivo como servicio (DaaS)",
+      subtitle: "Arriendo de equipos de cómputo.",
+      link: "/catalogo",
     },
+    */
   ]
 
   return (
@@ -77,14 +84,14 @@ export function HeroSection() {
                   priority={index === 0}
                 />
                 <div className="absolute inset-0 bg-black/25 flex flex-col items-center justify-center text-center text-white z-10 px-4">
-                  <p className="text-xs sm:text-base md:text-xl font-medium mb-1 sm:mb-2 drop-shadow-sm">{banner.subtitle}</p>
-                  <h1 className="text-lg sm:text-2xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-5 max-w-3xl leading-tight drop-shadow-md">{banner.title}</h1>
-                  <a
-                    href="/catalogo"
+                  <h2 className="text-lg sm:text-2xl md:text-4xl lg:text-5xl font-bold mb-1 sm:mb-2 max-w-3xl leading-tight drop-shadow-md">{banner.title}</h2>
+                  <p className="text-xs sm:text-base md:text-xl font-medium mb-3 sm:mb-5 drop-shadow-sm">{banner.subtitle}</p>
+                  <Link
+                    href={banner.link}
                     className="btn-account bg-linear-to-br from-(--ofimundo-purple) to-(--ofimundo-magenta) text-white rounded-lg text-xs sm:text-sm font-semibold px-4 py-2 sm:px-6 sm:py-3 hover:from-[#241a78] hover:to-[#c62842] transition shadow-lg"
                   >
                     {"Conoce las Soluciones →"}
-                  </a>
+                  </Link>
                 </div>
               </div>
             ))}

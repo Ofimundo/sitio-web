@@ -43,7 +43,7 @@ export default function ContactoPage() {
             Estamos para ayudarte
           </span>
           <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold text-gradient mb-4 leading-tight">
-            Contáctate con Ofimundo
+            ¿Cómo podemos ayudarte?
           </h1>
           <p className="text-sm sm:text-lg md:text-xl text-slate-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
             Conoce nuestros canales oficiales de contacto, dirección y horario de atención.

@@ -64,13 +64,14 @@ export async function POST(request: NextRequest) {
 
     await executeQuery(
       `
-      INSERT INTO [THE_COOLER_SGCX].[MPR].[CHATBOT_CONVERSACION]
+      INSERT INTO [MPR].[CHATBOT_CONVERSACION]
       (
         sesion_id,
         mensaje_usuario,
         respuesta_bot,
         productos_recomendados,
-        filtros_detectados
+        filtros_detectados,
+        fecha_registro
       )
       VALUES
       (
@@ -78,7 +79,8 @@ export async function POST(request: NextRequest) {
         @mensaje_usuario,
         @respuesta_bot,
         @productos_recomendados,
-        @filtros_detectados
+        @filtros_detectados,
+        SYSDATETIME()
       )
       `,
       {

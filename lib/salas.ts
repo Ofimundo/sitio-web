@@ -49,8 +49,11 @@ type OpcionRow = {
   codigo_opcion?: string
   id_producto_opcion?: string | number
   marca?: string
+  Marca?: string
   modelo?: string
+  Modelo?: string
   descripcion?: string
+  Descripcion?: string
   imagen?: string
   imagen_Equipo?: string
   imagen_equipo?: string
@@ -114,9 +117,9 @@ function mapResumen(row: SalaRow, index: number): Sala {
  * Mapeo de imágenes de equipos a los archivos locales en /images/Salas configuracion/
  */
 function getLocalImagenEquipo(row: OpcionRow): string | null {
-  const modelo = (row.modelo || "").toLowerCase()
+  const modelo = (row.Modelo || row.modelo || "").toLowerCase()
   const idProductoOpcion = String(row.id_producto_opcion || "").toLowerCase()
-  const descripcion = (row.descripcion || "").toLowerCase()
+  const descripcion = (row.Descripcion || row.descripcion || "").toLowerCase()
   const rawImg = (row.imagen || row.imagen_Equipo || row.imagen_equipo || "").toLowerCase()
 
   const matchText = `${modelo} ${idProductoOpcion} ${descripcion} ${rawImg}`
@@ -174,13 +177,15 @@ const AWS_SALAS_BASE = "https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/05-
  */
 export function getGaleriaImagenesEquipo(row: {
   modelo?: string
+  Modelo?: string
   id_producto_opcion?: string | number
   descripcion?: string
+  Descripcion?: string
   imagen?: string
 }): string[] {
-  const modelo = (row.modelo || "").toLowerCase()
+  const modelo = (row.Modelo || row.modelo || "").toLowerCase()
   const idProductoOpcion = String(row.id_producto_opcion || "").toLowerCase()
-  const descripcion = (row.descripcion || "").toLowerCase()
+  const descripcion = (row.Descripcion || row.descripcion || "").toLowerCase()
   const rawImg = (row.imagen || "").toLowerCase()
 
   const matchText = `${modelo} ${idProductoOpcion} ${descripcion} ${rawImg}`
@@ -333,11 +338,15 @@ function groupOpciones(rows: OpcionRow[]): SalaOpcion[] {
     const galeria = getGaleriaImagenesEquipo(row)
     const primaryImg = cleanImg || (galeria.length > 0 ? galeria[0] : null)
 
+    const nombreEquipo = row.modelo?.trim() || row.Modelo?.trim() || String(row.id_producto_opcion ?? "Equipo")
+    const nombreMarca = row.marca?.trim() || row.Marca?.trim() || ""
+    const descripcion = (row.Descripcion ?? row.descripcion ?? "")?.trim()
+
     equipos.push({
       ID_Producto: String(row.id_producto_opcion ?? ""),
-      Nombre_Equipo: row.modelo?.trim() || String(row.id_producto_opcion ?? "Equipo"),
-      Nombre_Marca: row.marca?.trim() || "",
-      Descripcion: row.descripcion?.trim() || "",
+      Nombre_Equipo: nombreEquipo,
+      Nombre_Marca: nombreMarca,
+      Descripcion: descripcion,
       Imagen_Equipo: primaryImg,
       Imagenes_Equipo: galeria.length > 0 ? galeria : (primaryImg ? [primaryImg] : []),
       Orden: equipos.length + 1,

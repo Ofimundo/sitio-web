@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
+import { executeQuery } from "@/lib/db"
 import equiposData from "@/data/equipos.json"
 import salasData from "@/data/salas.json"
 import automatizacionesData from "@/data/automatizaciones.json"
@@ -14,8 +15,48 @@ async function registrarEnHistorial(
   productosRecomendados: any[] = [],
   filtrosDetectados: any = {}
 ) {
-  // Operación 100% segura y aislada en cliente/JSON sin consultas SQL
-  return
+  try {
+    if (!sesionId || !mensajeUsuario) return
+
+    await executeQuery(
+      `
+      INSERT INTO [MPR].[CHATBOT_CONVERSACION]
+      (
+        sesion_id,
+        mensaje_usuario,
+        respuesta_bot,
+        productos_recomendados,
+        filtros_detectados,
+        fecha_registro
+      )
+      VALUES
+      (
+        @sesion_id,
+        @mensaje_usuario,
+        @respuesta_bot,
+        @productos_recomendados,
+        @filtros_detectados,
+        SYSDATETIME()
+      )
+      `,
+      {
+        sesion_id: String(sesionId).slice(0, 100),
+        mensaje_usuario: String(mensajeUsuario),
+        respuesta_bot: respuestaBot ? String(respuestaBot) : null,
+        productos_recomendados:
+          productosRecomendados && productosRecomendados.length > 0
+            ? JSON.stringify(productosRecomendados)
+            : null,
+        filtros_detectados:
+          filtrosDetectados && Object.keys(filtrosDetectados).length > 0
+            ? JSON.stringify(filtrosDetectados)
+            : null,
+      }
+    )
+  } catch (error) {
+    // Auditoría pasiva: el error en base de datos nunca interrumpe la respuesta al usuario
+    console.error("Error al registrar auditoría en [MPR].[CHATBOT_CONVERSACION]:", error)
+  }
 }
 
 
@@ -910,6 +951,8 @@ export async function POST(request: NextRequest) {
     }
 
     if (esConsultaRestringidaOFueraDeAmbito(body?.mensaje ?? "")) {
+      const origin = new URL(request.url).origin
+      await registrarEnHistorial(origin, sesionId, body.mensaje, MENSAJE_FUERA_DE_AMBITO)
       return NextResponse.json({
         success: true,
         categoria: "general",
@@ -2164,6 +2207,16 @@ ${JSON.stringify(automatizacionesParaIA)}
     ultimosProductosRecomendados = resultados
 
     if (resultados.length === 0) {
+      const respSinResultados =
+        "No se encontraron equipos que cumplan exactamente con los requisitos solicitados en el catálogo actual."
+      const origin = new URL(request.url).origin
+      await registrarEnHistorial(origin, sesionId, body.mensaje, respSinResultados, [], {
+        marca: finalMarca,
+        color: finalColor,
+        formato: finalFormato,
+        tipo: finalTipo,
+      })
+
       return NextResponse.json({
         success: true,
         categoria: "equipos",
@@ -2175,8 +2228,7 @@ ${JSON.stringify(automatizacionesParaIA)}
           tipo: finalTipo,
         },
         total: 0,
-        respuesta:
-          "No se encontraron equipos que cumplan exactamente con los requisitos solicitados en el catálogo actual.",
+        respuesta: respSinResultados,
         productos: [],
       })
     }
