@@ -12,7 +12,7 @@ const contactCards = [
   {
     icon: "fas fa-clock",
     title: "Horario de Atención",
-    lines: ["Lunes a jueves: 09 a 18 hrs", "Viernes: 09 a 17 hrs"],
+    lines: ["Lunes a jueves: 8:30 a 18:00 hrs", "Viernes: 8:30 a 17:00 hrs"],
   },
   {
     icon: "fas fa-envelope",
