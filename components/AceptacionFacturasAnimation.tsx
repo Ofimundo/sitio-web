@@ -165,7 +165,7 @@ export function AceptacionFacturasAnimation() {
                     COMPLETADO
                   </span>
                   <div className="text-[11px] font-bold text-slate-800 tracking-tight">FACTURA ACEPTADA</div>
-                  <span className="text-[9px] text-slate-500">Montos y RUC válidos</span>
+                  <span className="text-[9px] text-slate-500">Montos y Rut válidos</span>
                   <div className="text-[8px] font-semibold text-emerald-700 bg-emerald-100/70 px-1.5 py-0.5 rounded-xs w-max">
                     ✔ Aprobado por AI
                   </div>

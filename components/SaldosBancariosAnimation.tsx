@@ -57,7 +57,7 @@ export function SaldosBancariosAnimation() {
   const getWorkflowStatusText = () => {
     switch (currentStation) {
       case 1:
-        return "Paso 1: Sincronización y Actualización 24/7"
+        return "Paso 1: Actualización diaria"
       case 2:
         return "Paso 2: Conciliando movimientos y saldos..."
       case 3:
@@ -65,7 +65,7 @@ export function SaldosBancariosAnimation() {
       case 4:
         return "Paso 4: Saldo Actualizado y Reportes"
       default:
-        return "Conciliación Bancaria 24/7"
+        return "Conciliación Bancaria Diaria"
     }
   }
 
@@ -96,7 +96,7 @@ export function SaldosBancariosAnimation() {
             <div className="flex items-center space-x-2">
               <div className="w-2.5 h-2.5 bg-blue-600 rounded-full animate-ping" />
               <div>
-                <h2 className="text-[11px] font-bold text-slate-800 tracking-tight leading-tight">Conciliación Bancaria 24/7</h2>
+                <h2 className="text-[11px] font-bold text-slate-800 tracking-tight leading-tight">Conciliación Bancaria Diaria</h2>
                 <p className="text-[9px] text-slate-500">Sincronización en tiempo real</p>
               </div>
             </div>
@@ -124,7 +124,7 @@ export function SaldosBancariosAnimation() {
           {/* Vertical Timeline Workflow Column */}
           <div className="relative w-full flex-1 flex flex-col items-center justify-between z-10 py-2">
 
-            {/* STATION 1: Actualización 24/7 */}
+            {/* STATION 1: Actualización Diaria */}
             <div className={`station-card w-full rounded-xl p-3 flex flex-col justify-between relative shadow-xs transition-all duration-300 ${currentStation === 1 ? "active" : ""}`}>
               <div className="flex items-center justify-between mb-1">
                 <span className="text-[8px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full uppercase tracking-wider">Fase 01</span>
@@ -136,7 +136,7 @@ export function SaldosBancariosAnimation() {
                 <div>
                   <div className="flex items-center space-x-1.5 text-slate-800 font-bold text-[11px]">
                     <i className="fa-solid fa-clock text-blue-500 text-[10px]" />
-                    <span>Actualización 24/7</span>
+                    <span>Actualización diaria</span>
                   </div>
                   <p className="text-[9px] text-slate-500 mt-0.5">Sincronización continua de cartolas</p>
                 </div>

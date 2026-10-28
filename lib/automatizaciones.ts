@@ -80,30 +80,37 @@ function cleanText(text = "") {
   return text.trim().replace(/\s*\.{2,}\s*$/, "").replace(/\.$/, "").trim()
 }
 
+function normalizeBeneficio(beneficio?: string) {
+  if (!beneficio) return ""
+  if (/90%\s*menos\s*tiempo/i.test(beneficio)) {
+    return "Reducción de tiempo hasta 90%"
+  }
+  if (/24\s*\/\s*7/i.test(beneficio)) {
+    return "Actualización diaria"
+  }
+  return beneficio
+}
+
 function mapResumen(row: AutomatizacionRow): Automatizacion {
   const id = idProducto(row)
   const nombre = row.nombre_producto?.trim() || row.modelo?.trim() || id
   const slug = slugFromId(id)
-  const fallback = obtenerAutomatizacionPorSlug(slug)
-
+  const fallback = obtenerAutomatizacionPorSlug(slug) || automatizacionesFallback[0]
   const dbDescClean = cleanText(row.descripcion_corta)
 
-  // Resumen corto de 1 frase para la tarjeta del catálogo
-  const resumen = row.descripcion_corta?.trim() || fallback.resumen || ""
-
-  // Descripción extendida y completa solo para la página de detalle (Ver más)
-  const descripcion = fallback.descripcion
-    ? (dbDescClean ? `${dbDescClean}. ${fallback.descripcion}` : fallback.descripcion)
-    : (dbDescClean || resumen)
+  const categoria = row.clasificacion?.trim() || fallback.categoria || "Finanzas"
+  const resumen = dbDescClean || fallback.resumen || ""
+  const descripcion = dbDescClean || fallback.descripcion || resumen
+  const beneficioRaw = row.beneficio?.trim() || fallback.beneficio || "Alta precisión"
 
   return {
     ID_Producto: id,
     slug,
     nombre,
     nombreCorto: row.modelo?.trim() || fallback.nombreCorto || nombre,
-    categoria: row.clasificacion?.trim() || fallback.categoria || "Finanzas",
+    categoria,
     modalidad: row.modalidad?.trim() || fallback.modalidad || "Integración personalizada",
-    beneficio: row.beneficio?.trim() || fallback.beneficio || "Alta precisión",
+    beneficio: normalizeBeneficio(beneficioRaw),
     resumen,
     descripcion,
     imagen: row.link_imagen?.trim() || fallback.imagen || "/images/automatizaciones/aceptacion-facturas.png",
@@ -139,12 +146,20 @@ export async function getAutomatizaciones(filtros: FiltrosAutomatizacion = {}): 
       rawList = (automatizacionesJson as unknown) as Automatizacion[]
     }
 
-    // 3. Normalizar y deduplicar manteniendo la descripcion_corta (resumen) de la base de datos
+    // Filtrar completamente la automatización eliminada de gestión de documentos
+    rawList = rawList.filter((item) => {
+      const id = (item.ID_Producto || "").toLowerCase()
+      const slug = (item.slug || "").toLowerCase()
+      const nom = (item.nombre || "").toLowerCase()
+      return !id.includes("gesdoc") && !slug.includes("gestion-documental") && !nom.includes("document")
+    })
+
+    // 3. Normalizar y deduplicar manteniendo los datos de la base de datos
     if (rawList.length > 0) {
       const seen = new Set<string>()
       for (const item of rawList) {
         const canonical = obtenerAutomatizacionPorSlug(item.slug)
-        if (!seen.has(canonical.slug)) {
+        if (canonical && !seen.has(canonical.slug)) {
           seen.add(canonical.slug)
           const dbResumen = cleanText(item.resumen)
           listado.push({
@@ -153,7 +168,7 @@ export async function getAutomatizaciones(filtros: FiltrosAutomatizacion = {}): 
             resumen: dbResumen || canonical.resumen,
             categoria: item.categoria || canonical.categoria,
             modalidad: item.modalidad || canonical.modalidad,
-            beneficio: item.beneficio || canonical.beneficio,
+            beneficio: normalizeBeneficio(item.beneficio) || canonical.beneficio,
           })
         }
       }
@@ -190,7 +205,6 @@ export async function getAutomatizacionesDestacadas(): Promise<Automatizacion[]>
       "finiquitos-dt",
       "gestion-cuentas",
       "saldos-bancarios",
-      "gestion-documental",
     ]
 
     const sorted = [...listado].sort((a, b) => {
@@ -210,6 +224,10 @@ export async function getAutomatizacionesDestacadas(): Promise<Automatizacion[]>
 export async function getAutomatizacionByIdentifier(identifier: string): Promise<Automatizacion | null> {
   try {
     const normalized = normalizeIdentifier(identifier)
+    if (normalized.includes("gesdoc") || normalized.includes("gestion_documental") || normalized.includes("document")) {
+      return null
+    }
+
     const allRows = await executeQuery<AutomatizacionRow>(`SELECT * FROM ${VISTAS.automatizacion}`)
     if (!allRows || allRows.length === 0) {
       return obtenerAutomatizacionPorSlug(identifier)
@@ -224,8 +242,12 @@ export async function getAutomatizacionByIdentifier(identifier: string): Promise
       return obtenerAutomatizacionPorSlug(identifier)
     }
 
-    const productId = idProducto(row)
     const fallback = obtenerAutomatizacionPorSlug(identifier)
+    if (!fallback) {
+      return null
+    }
+
+    const productId = idProducto(row)
     const automatizacion = mapResumen(row)
 
     // 1. Consultar tabla MPR.producto_caracteristica_automatizacion
@@ -245,8 +267,7 @@ export async function getAutomatizacionByIdentifier(identifier: string): Promise
         (normRId.includes("aprrch") && normalized.includes("factura")) ||
         (normRId.includes("fnqt") && normalized.includes("finiquito")) ||
         (normRId.includes("gsct") && normalized.includes("cuenta")) ||
-        (normRId.includes("sldbnc") && normalized.includes("saldo")) ||
-        (normRId.includes("gesdoc") && normalized.includes("doc"))
+        (normRId.includes("sldbnc") && normalized.includes("saldo"))
       )
     })
 
@@ -265,18 +286,23 @@ export async function getAutomatizacionByIdentifier(identifier: string): Promise
       .map((f) => f.caracteristica?.trim())
       .filter((f): f is string => Boolean(f))
 
+    const dbDescClean = cleanText(row.descripcion_corta)
     if (descripcionRows.length > 0) {
       automatizacion.descripcion = descripcionRows.join("\n\n")
-    } else if (fallback.descripcion) {
-      const dbDescClean = cleanText(row.descripcion_corta)
-      automatizacion.descripcion = dbDescClean
-        ? `${dbDescClean}. ${fallback.descripcion}`
-        : fallback.descripcion
+    } else {
+      automatizacion.descripcion = dbDescClean || fallback.descripcion
     }
 
-    automatizacion.metricas = dbMetricas.length > 0 ? dbMetricas : fallback.metricas
+    automatizacion.categoria = row.clasificacion?.trim() || fallback.categoria
+    automatizacion.beneficio = normalizeBeneficio(row.beneficio?.trim()) || fallback.beneficio
+    automatizacion.resumen = dbDescClean || fallback.resumen
     automatizacion.capacidades = dbCapacidades.length > 0 ? dbCapacidades : fallback.capacidades
-    automatizacion.caracteristicas = dbCaracteristicas.length > 0 ? dbCaracteristicas : (fallback.caracteristicas || fallback.integraciones)
+    automatizacion.metricas = dbMetricas.length > 0 ? dbMetricas : fallback.metricas
+
+    const rawCaracteristicas = dbCaracteristicas.length > 0 ? dbCaracteristicas : (fallback.caracteristicas || fallback.integraciones)
+    automatizacion.caracteristicas = rawCaracteristicas.map((item) =>
+      item.replace(/\bAPI\s+del\s+cliente\b/i, "API´S del cliente")
+    )
     automatizacion.integraciones = automatizacion.caracteristicas
     automatizacion.planes = fallback.planes
 

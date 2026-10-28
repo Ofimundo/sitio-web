@@ -59,11 +59,11 @@ export function FiniquitosDtAnimation() {
       case 1:
         return "Paso 1: Validación Laboral"
       case 2:
-        return "Paso 2: Cálculo DT en proceso"
+        return "Paso 2: Cálculo de finiquito en proceso"
       case 3:
         return "Paso 3: Aprobación RR.HH."
       case 4:
-        return "Paso 4: Envío al Trabajador"
+        return "Paso 4: Envío a la DT"
       default:
         return "Centro de Automatización DT"
     }
@@ -142,12 +142,12 @@ export function FiniquitosDtAnimation() {
                 </div>
                 <div className="bg-indigo-50/80 border border-indigo-100 rounded-md px-2 py-1 flex items-center space-x-1 shrink-0">
                   <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
-                  <span className="text-[8.5px] font-semibold text-indigo-700">RUC & Contrato OK</span>
+                  <span className="text-[8.5px] font-semibold text-indigo-700">Rut & Contrato OK</span>
                 </div>
               </div>
             </div>
 
-            {/* STEP 2: Cálculo DT */}
+            {/* STEP 2: Cálculo de finiquito */}
             <div className={`glass-step w-full rounded-xl p-3 flex flex-col justify-between relative shadow-xs transition-all duration-300 ${currentStep === 2 ? "active" : currentStep > 2 ? "completed" : ""}`}>
               <div className="flex items-center justify-between mb-1">
                 <span className="text-[8px] font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full uppercase tracking-wider">Fase 02</span>
@@ -159,7 +159,7 @@ export function FiniquitosDtAnimation() {
                 <div>
                   <div className="flex items-center space-x-1.5 text-slate-800 font-bold text-[11px]">
                     <i className="fa-solid fa-coins text-purple-500 text-[10px]" />
-                    <span>Cálculo DT</span>
+                    <span>Cálculo de finiquito</span>
                   </div>
                   <p className="text-[9px] text-slate-500 mt-0.5">Indemnización y vacaciones</p>
                 </div>
@@ -208,7 +208,7 @@ export function FiniquitosDtAnimation() {
               </div>
             </div>
 
-            {/* STEP 4: Envío al Trabajador */}
+            {/* STEP 4: Envío a la DT */}
             <div className={`glass-step w-full rounded-xl p-3 flex flex-col justify-between relative shadow-xs transition-all duration-300 ${currentStep === 4 ? "active completed" : ""}`}>
               <div className="flex items-center justify-between mb-1">
                 <span className="text-[8px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full uppercase tracking-wider">Fase 04</span>
@@ -220,14 +220,14 @@ export function FiniquitosDtAnimation() {
                 <div>
                   <div className="flex items-center space-x-1.5 text-slate-800 font-bold text-[11px]">
                     <i className="fa-solid fa-envelope-circle-check text-emerald-500 text-[10px]" />
-                    <span>Envío al Trabajador</span>
+                    <span>Envío a la DT</span>
                   </div>
                   <p className="text-[9px] text-slate-500 mt-0.5">Despacho vía Email & SMS</p>
                 </div>
                 {currentStep === 4 ? (
                   <div className="bg-emerald-50 border border-emerald-200 rounded-md px-2 py-1 flex items-center space-x-1 shrink-0">
                     <i className="fa-solid fa-paper-plane text-emerald-600 text-[10px] animate-bounce" />
-                    <span className="text-[8.5px] font-extrabold text-emerald-700">¡Enviado por correo!</span>
+                    <span className="text-[8.5px] font-extrabold text-emerald-700">¡Enviado a la DT!</span>
                   </div>
                 ) : (
                   <div className="bg-slate-100 border border-slate-200 rounded-md px-2 py-1 flex items-center space-x-1 shrink-0">
