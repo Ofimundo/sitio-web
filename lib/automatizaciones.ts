@@ -27,10 +27,38 @@ type CaracteristicaRow = {
   orden_caracteristica?: number
 }
 
+interface CaracteristicaAutomatizacionRow {
+  id_Producto?: string
+  id_producto?: string
+  como_dimensionamos?: string
+  que_automatiza?: string
+  caracteristicas?: string
+}
+
 const VISTAS = {
   automatizacion: "[THE_COOLER_SGCX].[MPR].[VT_SEL_AUTOMATIZACION]",
   caracteristicas: "[THE_COOLER_SGCX].[MPR].[VT_SEL_AUTOMATIZACION_CARACTERISTICAS]",
+  caracteristicasTabla: "[THE_COOLER_SGCX].[MPR].[producto_caracteristica_automatizacion]",
 } as const
+
+function parseListaItems(values: (string | null | undefined)[]): string[] {
+  const result: string[] = []
+  const seen = new Set<string>()
+
+  for (const v of values) {
+    if (!v || typeof v !== "string") continue
+    const items = v.split(/[;\r\n]+/)
+    for (const item of items) {
+      const clean = item.trim().replace(/^[-•*]\s*/, "")
+      if (clean && !seen.has(clean.toLowerCase())) {
+        seen.add(clean.toLowerCase())
+        result.push(clean)
+      }
+    }
+  }
+
+  return result
+}
 
 function idProducto(row: AutomatizacionRow | CaracteristicaRow) {
   return String(row.id_Producto ?? row.id_producto ?? "").trim()
@@ -94,24 +122,39 @@ import automatizacionesJson from "../data/automatizaciones.json"
 export async function getAutomatizaciones(filtros: FiltrosAutomatizacion = {}): Promise<Automatizacion[]> {
   try {
     let listado: Automatizacion[] = []
-
     let rawList: Automatizacion[] = []
-    if (automatizacionesJson && automatizacionesJson.length > 0) {
-      rawList = (automatizacionesJson as unknown) as Automatizacion[]
-    } else {
+
+    // 1. Intentar consultar directamente la vista en SQL Server (MPR.VT_SEL_AUTOMATIZACION)
+    try {
       const rows = await executeQuery<AutomatizacionRow>(`SELECT * FROM ${VISTAS.automatizacion}`)
       if (rows && rows.length > 0) {
         rawList = rows.map(mapResumen)
       }
+    } catch (dbError) {
+      console.warn("[getAutomatizaciones] Aviso: No se pudo conectar a la BD, usando respaldo JSON/fallback:", dbError)
     }
 
+    // 2. Si la BD no está disponible o no devolvió filas, usar el respaldo local
+    if (rawList.length === 0 && automatizacionesJson && automatizacionesJson.length > 0) {
+      rawList = (automatizacionesJson as unknown) as Automatizacion[]
+    }
+
+    // 3. Normalizar y deduplicar manteniendo la descripcion_corta (resumen) de la base de datos
     if (rawList.length > 0) {
       const seen = new Set<string>()
       for (const item of rawList) {
         const canonical = obtenerAutomatizacionPorSlug(item.slug)
         if (!seen.has(canonical.slug)) {
           seen.add(canonical.slug)
-          listado.push(canonical)
+          const dbResumen = cleanText(item.resumen)
+          listado.push({
+            ...canonical,
+            nombre: canonical.nombre || item.nombre,
+            resumen: dbResumen || canonical.resumen,
+            categoria: item.categoria || canonical.categoria,
+            modalidad: item.modalidad || canonical.modalidad,
+            beneficio: item.beneficio || canonical.beneficio,
+          })
         }
       }
     }
@@ -139,7 +182,24 @@ export async function getAutomatizaciones(filtros: FiltrosAutomatizacion = {}): 
 export async function getAutomatizacionesDestacadas(): Promise<Automatizacion[]> {
   try {
     const listado = await getAutomatizaciones()
-    return listado.length > 0 ? listado : automatizacionesFallback.slice(0, 4)
+    if (listado.length === 0) return automatizacionesFallback.slice(0, 4)
+
+    // Orden prioritario para la sección de automatizaciones de la página principal
+    const homeOrder = [
+      "aceptacion-rechazo-facturas",
+      "finiquitos-dt",
+      "gestion-cuentas",
+      "saldos-bancarios",
+      "gestion-documental",
+    ]
+
+    const sorted = [...listado].sort((a, b) => {
+      const idxA = homeOrder.indexOf(a.slug)
+      const idxB = homeOrder.indexOf(b.slug)
+      return (idxA === -1 ? 99 : idxA) - (idxB === -1 ? 99 : idxB)
+    })
+
+    return sorted
   } catch (error) {
     console.error("[getAutomatizacionesDestacadas] Error al consultar la BD, usando fallback:", error)
     return automatizacionesFallback.slice(0, 4)
@@ -165,13 +225,40 @@ export async function getAutomatizacionByIdentifier(identifier: string): Promise
     }
 
     const productId = idProducto(row)
+    const fallback = obtenerAutomatizacionPorSlug(identifier)
+    const automatizacion = mapResumen(row)
+
+    // 1. Consultar tabla MPR.producto_caracteristica_automatizacion
+    const carRows = await executeQuery<CaracteristicaAutomatizacionRow>(
+      `SELECT * FROM ${VISTAS.caracteristicasTabla}`
+    ).catch(() => [])
+
+    const matchingCarRows = carRows.filter((r) => {
+      const rId = String(r.id_Producto ?? r.id_producto ?? "").trim()
+      const normRId = normalizeIdentifier(rId)
+      return (
+        rId === productId ||
+        normRId === normalized ||
+        slugFromId(rId) === normalized ||
+        normRId.startsWith(normalized) ||
+        normalized.startsWith(normRId) ||
+        (normRId.includes("aprrch") && normalized.includes("factura")) ||
+        (normRId.includes("fnqt") && normalized.includes("finiquito")) ||
+        (normRId.includes("gsct") && normalized.includes("cuenta")) ||
+        (normRId.includes("sldbnc") && normalized.includes("saldo")) ||
+        (normRId.includes("gesdoc") && normalized.includes("doc"))
+      )
+    })
+
+    const dbMetricas = parseListaItems(matchingCarRows.map((r) => r.como_dimensionamos))
+    const dbCapacidades = parseListaItems(matchingCarRows.map((r) => r.que_automatiza))
+    const dbCaracteristicas = parseListaItems(matchingCarRows.map((r) => r.caracteristicas))
+
+    // 2. Consulta opcional de respaldo para descripción detallada
     const featureRows = await executeQuery<CaracteristicaRow>(
       `SELECT * FROM ${VISTAS.caracteristicas} WHERE id_producto = @idProducto ORDER BY orden_caracteristica`,
       { idProducto: productId }
     ).catch(() => [])
-
-    const automatizacion = mapResumen(row)
-    const fallback = obtenerAutomatizacionPorSlug(identifier)
 
     const descripcionRows = featureRows
       .filter((f) => ["descripcion", "descripcion_larga", "detalle"].includes(f.tipo?.trim().toLowerCase() ?? ""))
@@ -187,24 +274,10 @@ export async function getAutomatizacionByIdentifier(identifier: string): Promise
         : fallback.descripcion
     }
 
-    const capacidades = featureRows
-      .filter((f) => f.tipo?.trim().toLowerCase() === "capacidad" || f.tipo?.trim().toLowerCase() === "funcion")
-      .map((f) => f.caracteristica?.trim())
-      .filter((f): f is string => Boolean(f))
-
-    const integraciones = featureRows
-      .filter((f) => f.tipo?.trim().toLowerCase() === "integracion")
-      .map((f) => f.caracteristica?.trim())
-      .filter((f): f is string => Boolean(f))
-
-    const metricas = featureRows
-      .filter((f) => f.tipo?.trim().toLowerCase() === "metrica")
-      .map((f) => f.caracteristica?.trim())
-      .filter((f): f is string => Boolean(f))
-
-    automatizacion.capacidades = capacidades.length > 0 ? capacidades : fallback.capacidades
-    automatizacion.integraciones = integraciones.length > 0 ? integraciones : fallback.integraciones
-    automatizacion.metricas = metricas.length > 0 ? metricas : fallback.metricas
+    automatizacion.metricas = dbMetricas.length > 0 ? dbMetricas : fallback.metricas
+    automatizacion.capacidades = dbCapacidades.length > 0 ? dbCapacidades : fallback.capacidades
+    automatizacion.caracteristicas = dbCaracteristicas.length > 0 ? dbCaracteristicas : (fallback.caracteristicas || fallback.integraciones)
+    automatizacion.integraciones = automatizacion.caracteristicas
     automatizacion.planes = fallback.planes
 
     return automatizacion

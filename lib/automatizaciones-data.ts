@@ -9,7 +9,7 @@ export const automatizacionesFallback: Automatizacion[] = [
     categoria: "Finanzas",
     modalidad: "Integración personalizada",
     beneficio: "99% de precisión",
-    resumen: "Control total de tus documentos con validación automática y flujos de aprobación inteligentes.",
+    resumen: "Gestiona tus facturas de forma inteligente",
     descripcion: "Centraliza la recepción de documentos tributarios, aplica reglas de negocio y automatiza su aceptación o rechazo con trazabilidad completa.",
     imagen: "/images/automatizaciones/aceptacion-facturas.png",
     icono: "fa-file-circle-check",
@@ -30,7 +30,7 @@ export const automatizacionesFallback: Automatizacion[] = [
     categoria: "Finanzas",
     modalidad: "Integración personalizada",
     beneficio: "Actualización 24/7",
-    resumen: "Consulta automática de saldos y alertas financieras en tiempo real.",
+    resumen: "Monitoreo financiero en tiempo real",
     descripcion: "Consolida saldos bancarios, organiza la línea de cobranza por empresa y entrega reportes ejecutivos listos para la toma de decisiones.",
     imagen: "/images/automatizaciones/saldos-bancarios.png",
     icono: "fa-building-columns",
@@ -50,7 +50,7 @@ export const automatizacionesFallback: Automatizacion[] = [
     categoria: "Recursos Humanos",
     modalidad: "Automatización gestionada",
     beneficio: "Hasta 90% menos tiempo",
-    resumen: "Cálculos precisos y documentos automatizados para la gestión de término laboral.",
+    resumen: "Cálculos precisos y automatizados para la gestión de término de relación laboral",
     descripcion: "Automatiza el cálculo, elaboración, envío y seguimiento de finiquitos con información consolidada y alertas operativas.",
     imagen: "/images/automatizaciones/finiquitos-dt.png",
     icono: "fa-scroll",
@@ -70,13 +70,30 @@ export const automatizacionesFallback: Automatizacion[] = [
     categoria: "Contabilidad",
     modalidad: "Automatización gestionada",
     beneficio: "Hasta 50% más eficiencia",
-    resumen: "Registros contables automatizados y contabilización directa en tu ERP.",
+    resumen: "Registros contables automatizados. Gestión contable simplificada",
     descripcion: "Automatiza el registro de facturas, cuentas por pagar y asientos contables directamente en tu ERP con reglas personalizadas de contabilización.",
     imagen: "/images/automatizaciones/cuentas-basicas.png",
     icono: "fa-calculator",
     capacidades: ["Registros contables automatizados", "Reglas contables por centro de costo", "Flujos de aprobación y trazabilidad", "Reportes diarios y mensuales"],
     integraciones: ["ERP del cliente", "SII", "Gestor documental", "Correo electrónico"],
     metricas: ["Cantidad mensual de documentos", "Cantidad de centros de costo", "Reglas de contabilización", "Soporte mensual"],
+    planes: [],
+  },
+  {
+    ID_Producto: "auto_gestion_documental",
+    slug: "gestion-documental",
+    nombre: "Gestión de Documentos",
+    nombreCorto: "Gestión Documental",
+    categoria: "Gestión Documental",
+    modalidad: "Integración personalizada",
+    beneficio: "95% de precisión",
+    resumen: "Convierte documentos físicos y digitales en información estructurada, validada y lista para integrarse",
+    descripcion: "Automatiza la captura, validación y extracción de datos de documentos con inteligencia artificial e integración directa a tus sistemas.",
+    imagen: "/images/automatizaciones/cuentas-basicas.png",
+    icono: "fa-file-lines",
+    capacidades: ["Captura y extracción de documentos", "Validación automática de campos", "Integración con ERP y sistemas de gestión", "Reportes y trazabilidad"],
+    integraciones: ["ERP del cliente", "Gestor documental", "Correo electrónico", "API"],
+    metricas: ["Volumen mensual de documentos", "Formatos requeridos", "Reglas de validación", "Soporte mensual"],
     planes: [],
   },
 ]
@@ -86,7 +103,7 @@ export const categoriasAutomatizacion = ["Finanzas", "Contabilidad", "Recursos H
 export const modalidadesAutomatizacion = ["Automatización gestionada", "Integración personalizada"]
 
 export function obtenerAutomatizacionPorSlug(slug: string): Automatizacion {
-  const norm = slug.trim().toLowerCase().replaceAll("-", "_").replace(/^auto_/, "").replace(/^ofi_autprc_/, "")
+  const norm = slug.trim().toLowerCase().replaceAll("-", "_").replace(/^auto_/, "").replace(/^ofi_autprc_?/, "")
   
   const exact = automatizacionesFallback.find((item) => {
     const itemNorm = item.slug.trim().toLowerCase().replaceAll("-", "_").replace(/^auto_/, "")
@@ -104,8 +121,11 @@ export function obtenerAutomatizacionPorSlug(slug: string): Automatizacion {
   if (norm.includes("finiquito") || norm.includes("fnqt")) {
     return automatizacionesFallback[2]
   }
-  if (norm.includes("gsct") || norm.includes("gesdoc") || norm.includes("cuenta")) {
+  if (norm.includes("gsct") || (norm.includes("cuenta") && !norm.includes("doc"))) {
     return automatizacionesFallback[3]
+  }
+  if (norm.includes("gesdoc") || norm.includes("doc")) {
+    return automatizacionesFallback[4]
   }
 
   return automatizacionesFallback[0]

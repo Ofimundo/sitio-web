@@ -15,19 +15,19 @@ import {
   isSaldosBancariosAnimation,
 } from "@/lib/automatizaciones-helpers"
 import { AGENDA_URL } from "@/components/AutomatizacionCard"
-import { obtenerAutomatizacionPorSlug } from "@/lib/automatizaciones"
+import { getAutomatizacionByIdentifier, obtenerAutomatizacionPorSlug } from "@/lib/automatizaciones"
 
 /* SEO Metadata - Comentado
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
-  const item = await obtenerAutomatizacionPorSlug(slug)
+  const item = await getAutomatizacionByIdentifier(slug) || obtenerAutomatizacionPorSlug(slug)
   return item ? { title: `${item.nombre} - Automatización`, description: item.resumen } : { title: "Automatización no encontrada" }
 }
 */
 
 export default async function AutomatizacionDetallePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-  const item = await obtenerAutomatizacionPorSlug(slug)
+  const item = (await getAutomatizacionByIdentifier(slug)) || obtenerAutomatizacionPorSlug(slug)
   if (!item) notFound()
   const hasPlanes = Boolean(item.planes && item.planes.length > 0)
 
@@ -105,7 +105,7 @@ export default async function AutomatizacionDetallePage({ params }: { params: Pr
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
                   <InfoBlock icon="fa-chart-line" title="Cómo dimensionamos" items={item.metricas} compact />
                   <InfoBlock icon="fa-gears" title="Qué automatiza" items={item.capacidades} compact />
-                  <InfoBlock icon="fa-plug" title="Integraciones" items={item.integraciones} compact />
+                  <InfoBlock icon="fa-list-check" title="Características" items={item.caracteristicas && item.caracteristicas.length > 0 ? item.caracteristicas : item.integraciones} compact />
                 </div>
               )}
             </div>
@@ -123,7 +123,7 @@ export default async function AutomatizacionDetallePage({ params }: { params: Pr
                 <>
                   <InfoBlock icon="fa-chart-line" title="Cómo dimensionamos" items={item.metricas} compact />
                   <InfoBlock icon="fa-gears" title="Qué automatiza" items={item.capacidades} compact />
-                  <InfoBlock icon="fa-plug" title="Integraciones" items={item.integraciones} compact />
+                  <InfoBlock icon="fa-list-check" title="Características" items={item.caracteristicas && item.caracteristicas.length > 0 ? item.caracteristicas : item.integraciones} compact />
                 </>
               )}
               <section className="rounded-lg bg-ofimundo-navy p-6 text-white shadow-sm">

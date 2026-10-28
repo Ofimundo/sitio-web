@@ -153,6 +153,7 @@ export interface Automatizacion {
   capacidades: string[]
   integraciones: string[]
   metricas: string[]
+  caracteristicas?: string[]
   planes: PlanAutomatizacion[]
 }
 

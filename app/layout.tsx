@@ -2,6 +2,7 @@
 import type { Viewport } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
+import { WhatsAppButton } from "@/components/WhatsAppButton"
 // SEO Imports deshabilitados
 // import GoogleAnalytics from '@/components/seo/GoogleAnalytics';
 // import { GoogleTagManagerHead, GoogleTagManagerBody } from '@/components/seo/GoogleTagManager';
@@ -82,6 +83,7 @@ export default function RootLayout({
         {/* SEO - Componente comentado */}
         {/* <GoogleTagManagerBody /> */}
         {children}
+        <WhatsAppButton />
       </body>
     </html>
   )
