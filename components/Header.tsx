@@ -101,13 +101,9 @@ export function Header() {
             </div>
           </li>
           <li>
-            <a
-              href="https://www.ofimundo.cl/aniversario/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <Link href="/somos-ofimundo">
               Somos Ofimundo
-            </a>
+            </Link>
           </li>
           <li>
             <Link href="/catalogo">Catálogo</Link>
@@ -208,16 +204,13 @@ export function Header() {
             </li>
 
             <li>
-              <a
-                href="https://www.ofimundo.cl/aniversario/"
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                href="/somos-ofimundo"
                 onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center justify-between py-2.5 px-3 rounded-xl font-semibold text-gray-800 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-800 transition"
               >
                 <span>Somos Ofimundo</span>
-                <i className="fas fa-external-link-alt text-xs text-gray-400"></i>
-              </a>
+              </Link>
             </li>
 
             <li>

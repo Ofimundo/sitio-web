@@ -301,7 +301,7 @@ export async function getAutomatizacionByIdentifier(identifier: string): Promise
 
     const rawCaracteristicas = dbCaracteristicas.length > 0 ? dbCaracteristicas : (fallback.caracteristicas || fallback.integraciones)
     automatizacion.caracteristicas = rawCaracteristicas.map((item) =>
-      item.replace(/\bAPI\s+del\s+cliente\b/i, "API´S del cliente")
+      item.replace(/\bAPI(?:['´]?S)?\s+del\s+cliente\b/i, "API´S")
     )
     automatizacion.integraciones = automatizacion.caracteristicas
     automatizacion.planes = fallback.planes

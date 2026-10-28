@@ -57,7 +57,7 @@ export function Footer() {
                         </h4>
                         <ul className="space-y-3">
                             <li><Link href="/" className="text-white/80 hover:text-white hover:translate-x-1 transition-all inline-block">Home</Link></li>
-                            <li><a href="https://www.ofimundo.cl/aniversario/" target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-white hover:translate-x-1 transition-all inline-block">Somos Ofimundo</a></li>
+                            <li><Link href="/somos-ofimundo" className="text-white/80 hover:text-white hover:translate-x-1 transition-all inline-block">Somos Ofimundo</Link></li>
                             <li><Link href="/contacto" className="text-white/80 hover:text-white hover:translate-x-1 transition-all inline-block">Contacto</Link></li>
                         </ul>
                     </div>
@@ -80,8 +80,9 @@ export function Footer() {
                             Legal
                         </h4>
                         <ul className="space-y-3 mb-6">
-                            <li><a href="../politica-de-privacidad-de-datos.html" className="text-white/80 hover:text-white hover:translate-x-1 transition-all inline-block">Política de Privacidad</a></li>
+                            <li><Link href="/politica-de-privacidad" className="text-white/80 hover:text-white hover:translate-x-1 transition-all inline-block">Política de Privacidad</Link></li>
                             <li><a href="https://micuenta.ofimundo.cl/" className="text-white/80 hover:text-white hover:translate-x-1 transition-all inline-block">Mi Cuenta</a></li>
+                            <li><Link href="/conoce-tu-factura" className="text-white/80 hover:text-white hover:translate-x-1 transition-all inline-block">Conoce tu factura</Link></li>
                         </ul>
                     </div>
 

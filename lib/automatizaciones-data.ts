@@ -14,7 +14,7 @@ export const automatizacionesFallback: Automatizacion[] = [
     imagen: "/images/automatizaciones/aceptacion-facturas.png",
     icono: "fa-file-circle-check",
     capacidades: ["Validación automática de facturas", "Reglas personalizadas de aceptación y rechazo", "Flujos de aprobación automáticos", "Alertas y reportes diarios y mensuales"],
-    integraciones: ["SII", "ERP del cliente", "API´S del cliente", "Correo electrónico"],
+    integraciones: ["SII", "ERP del cliente", "API´S", "Correo electrónico"],
     metricas: ["Cantidad mensual de facturas", "Cantidad de RUT", "Reglas de negocio", "Horas de soporte"],
     planes: [
       { nombre: "Estándar", descripcion: "Control inicial con reglas de negocio predefinidas.", idealPara: ["Hasta 500 facturas", "1 RUT"], incluye: ["Integración con ERP", "Regla", "Reporte", "Soporte mensual"] },

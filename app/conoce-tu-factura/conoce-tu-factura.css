@@ -1,0 +1,487 @@
+.conoce-tu-factura-page {
+  --navy: #2d3560;
+  --navy-light: #3d4878;
+  --navy-dark: #1e2442;
+  --magenta: #e8336d;
+  --magenta-light: #f04d82;
+  --white: #ffffff;
+  --bg: #f5f6f9;
+  --card: #ffffff;
+  --border: #dfe2ea;
+  --text: #2d3560;
+  --text-muted: #6b7194;
+  --text-light: #8a8fb0;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 3px rgba(45, 53, 96, 0.08), 0 4px 12px rgba(45, 53, 96, 0.04);
+  --shadow-lg:
+    0 4px 16px rgba(45, 53, 96, 0.12), 0 8px 32px rgba(45, 53, 96, 0.06);
+}
+
+/* ── Soft Design System Card & Waves ──────────── */
+.conoce-tu-factura-page .ctf-section {
+  padding-top: 7rem;
+  padding-bottom: 3rem;
+  border: 0;
+}
+
+.conoce-tu-factura-page .ctf-container {
+  padding-bottom: 3rem;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+@media (min-width: 768px) {
+  .conoce-tu-factura-page .ctf-container {
+    max-width: 83.333333%;
+  }
+}
+
+@media (min-width: 992px) {
+  .conoce-tu-factura-page .ctf-container {
+    max-width: 66.666667%;
+  }
+}
+
+.conoce-tu-factura-page .ctf-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #ffffff;
+  background-clip: border-box;
+  border: 0 solid rgba(0, 0, 0, 0.125);
+  border-radius: 1rem;
+  box-shadow: 0 20px 27px 0 rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.conoce-tu-factura-page .ctf-card-header {
+  padding: 3rem;
+  position: relative;
+  border-radius: 1rem 1rem 0 0;
+  background-image: linear-gradient(310deg, #141727 0%, #3a416f 100%);
+}
+
+.conoce-tu-factura-page .ctf-card-header h3 {
+  margin-bottom: 0;
+  color: #ffffff;
+  font-size: 1.875rem;
+  line-height: 1.375;
+  font-weight: 700;
+}
+
+.conoce-tu-factura-page .ctf-card-header p {
+  margin-bottom: 1.5rem;
+  color: #ffffff;
+  opacity: 0.8;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+.conoce-tu-factura-page .ctf-waves-container {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  width: 100%;
+  z-index: 1;
+}
+
+.conoce-tu-factura-page .waves {
+  position: relative;
+  width: 100%;
+  height: 7vh;
+  margin-bottom: -7px;
+  min-height: 50px;
+  max-height: 150px;
+  display: block;
+}
+
+.conoce-tu-factura-page .moving-waves > use {
+  animation: ctf-move-forever 40s cubic-bezier(0.55, 0.5, 0.45, 0.5) infinite;
+}
+
+.conoce-tu-factura-page .moving-waves > use:nth-child(1) {
+  animation-delay: -2s;
+  animation-duration: 11s;
+}
+
+.conoce-tu-factura-page .moving-waves > use:nth-child(2) {
+  animation-delay: -4s;
+  animation-duration: 13s;
+}
+
+.conoce-tu-factura-page .moving-waves > use:nth-child(3) {
+  animation-delay: -3s;
+  animation-duration: 15s;
+}
+
+.conoce-tu-factura-page .moving-waves > use:nth-child(4) {
+  animation-delay: -4s;
+  animation-duration: 20s;
+}
+
+.conoce-tu-factura-page .moving-waves > use:nth-child(5) {
+  animation-delay: -4s;
+  animation-duration: 25s;
+}
+
+.conoce-tu-factura-page .moving-waves > use:nth-child(6) {
+  animation-delay: -3s;
+  animation-duration: 30s;
+}
+
+@keyframes ctf-move-forever {
+  0% {
+    transform: translate3d(-90px, 0, 0);
+  }
+  100% {
+    transform: translate3d(85px, 0, 0);
+  }
+}
+
+/* ── Invoice Type Tabs ─────────────────────────── */
+.conoce-tu-factura-page .tabs-wrapper {
+  width: 100%;
+  margin: 32px auto 0;
+  padding: 0 24px;
+  position: relative;
+  z-index: 2;
+}
+
+@media (min-width: 992px) {
+  .conoce-tu-factura-page .tabs-wrapper {
+    width: 80%;
+  }
+}
+
+.conoce-tu-factura-page .tabs-bar {
+  display: flex;
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.conoce-tu-factura-page .tab-btn {
+  flex: 1;
+  padding: 16px 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+  transition: all 0.25s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.conoce-tu-factura-page .tab-btn:not(:last-child) {
+  border-right: 1px solid var(--border);
+}
+
+.conoce-tu-factura-page .tab-btn:hover {
+  background: rgba(45, 53, 96, 0.03);
+  color: var(--navy);
+}
+
+.conoce-tu-factura-page .tab-btn.active {
+  color: var(--magenta);
+  background: rgba(232, 51, 109, 0.04);
+}
+
+.conoce-tu-factura-page .tab-btn.active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 20%;
+  right: 20%;
+  height: 3px;
+  background: var(--magenta);
+  border-radius: 3px 3px 0 0;
+}
+
+.conoce-tu-factura-page .tab-btn .tab-desc {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-light);
+  display: none;
+}
+
+.conoce-tu-factura-page .tab-btn.active .tab-desc {
+  color: var(--magenta);
+  opacity: 0.7;
+}
+
+@media (min-width: 640px) {
+  .conoce-tu-factura-page .tab-btn .tab-desc {
+    display: block;
+  }
+  .conoce-tu-factura-page .tab-btn {
+    padding: 18px 16px;
+  }
+}
+
+/* ── Main Layout ───────────────────────────────── */
+.conoce-tu-factura-page .main {
+  max-width: 1140px;
+  margin: 32px auto 64px;
+  padding: 0 24px;
+}
+
+.conoce-tu-factura-page .section-intro {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+.conoce-tu-factura-page .layout-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+@media (min-width: 960px) {
+  .conoce-tu-factura-page .layout-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ── Invoice Image Panel ───────────────────────── */
+.conoce-tu-factura-page .invoice-panel {
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  background: var(--card);
+  box-shadow: var(--shadow);
+  position: relative;
+}
+
+@media (min-width: 960px) {
+  .conoce-tu-factura-page .invoice-panel {
+    position: sticky;
+    top: 120px;
+  }
+}
+
+.conoce-tu-factura-page .invoice-panel img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.conoce-tu-factura-page .invoice-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(45, 53, 96, 0.35);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.conoce-tu-factura-page .invoice-overlay.visible {
+  opacity: 1;
+}
+
+/* ── Markers on image ──────────────────────────── */
+.conoce-tu-factura-page .marker {
+  position: absolute;
+  z-index: 2;
+  transition: all 0.3s ease;
+}
+
+.conoce-tu-factura-page .marker .marker-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--white);
+  background: var(--navy);
+  box-shadow: 0 2px 8px rgba(45, 53, 96, 0.25);
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+
+.conoce-tu-factura-page .marker.dimmed .marker-dot {
+  background: rgba(107, 113, 148, 0.5);
+}
+
+.conoce-tu-factura-page .marker.active .marker-dot {
+  background: var(--magenta);
+  transform: scale(1.15);
+  box-shadow:
+    0 0 0 6px rgba(232, 51, 109, 0.25),
+    0 2px 12px rgba(232, 51, 109, 0.3);
+}
+
+.conoce-tu-factura-page .marker .marker-highlight {
+  position: absolute;
+  top: -24px;
+  left: -24px;
+  right: -24px;
+  bottom: -24px;
+  border-radius: var(--radius);
+  border: 2px solid var(--magenta);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  transform: scale(0.95);
+  transition: all 0.3s ease;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.conoce-tu-factura-page .marker.active .marker-highlight {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ── Accordion Panel ───────────────────────────── */
+.conoce-tu-factura-page .accordion-panel {
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--card);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.conoce-tu-factura-page .accordion-header {
+  background: var(--navy);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.conoce-tu-factura-page .accordion-header svg {
+  width: 18px;
+  height: 18px;
+  color: var(--white);
+  flex-shrink: 0;
+}
+
+.conoce-tu-factura-page .accordion-header h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--white);
+  margin-top: 0.5rem;
+}
+
+/* ── Accordion Items ───────────────────────────── */
+.conoce-tu-factura-page .accordion-item {
+  border-bottom: 1px solid var(--border);
+}
+
+.conoce-tu-factura-page .accordion-item:last-child {
+  border-bottom: none;
+}
+
+.conoce-tu-factura-page .accordion-trigger {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 16px 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: inherit;
+  transition: background 0.15s ease;
+}
+
+.conoce-tu-factura-page .accordion-trigger:hover {
+  background: rgba(45, 53, 96, 0.03);
+}
+
+.conoce-tu-factura-page .accordion-trigger-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.conoce-tu-factura-page .trigger-number {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+  transition: all 0.25s ease;
+  background: rgba(45, 53, 96, 0.08);
+  color: var(--navy);
+}
+
+.conoce-tu-factura-page .accordion-item.open .trigger-number {
+  background: var(--magenta);
+  color: var(--white);
+}
+
+.conoce-tu-factura-page .trigger-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  text-align: left;
+}
+
+.conoce-tu-factura-page .trigger-chevron {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: var(--text-muted);
+  transition: transform 0.3s ease;
+}
+
+.conoce-tu-factura-page .accordion-item.open .trigger-chevron {
+  transform: rotate(180deg);
+}
+
+/* ── Accordion Content ─────────────────────────── */
+.conoce-tu-factura-page .accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.conoce-tu-factura-page .accordion-content-inner {
+  padding: 0 20px 16px;
+  margin-left: 40px;
+}
+
+.conoce-tu-factura-page .accordion-content-inner p {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.conoce-tu-factura-page .content-badge {
+  display: inline-flex;
+  margin-top: 10px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba(45, 53, 96, 0.07);
+  color: var(--navy);
+}
+
