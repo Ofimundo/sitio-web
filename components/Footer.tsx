@@ -27,7 +27,7 @@ export function Footer() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
 
             <div className="bg-linear-to-r from-purple-900/40 to-pink-900/40 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-6 sm:p-10 lg:p-12 mb-8">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-10">
 
                     <div>
                         <Link href="/" onClick={scrollToTop} className="inline-block mb-4" aria-label="Ir al inicio">
@@ -92,6 +92,18 @@ export function Footer() {
                             <li><Link href="/politica-de-privacidad" className="text-white/80 hover:text-white hover:translate-x-1 transition-all inline-block">Política de Privacidad</Link></li>
                             <li><a href="https://micuenta.ofimundo.cl/" className="text-white/80 hover:text-white hover:translate-x-1 transition-all inline-block">Mi Cuenta</a></li>
                             <li><Link href="/conoce-tu-factura" className="text-white/80 hover:text-white hover:translate-x-1 transition-all inline-block">Conoce tu factura</Link></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 className="text-white font-bold text-lg mb-5 flex items-center gap-2">
+                            <span className="w-1 h-6 bg-linear-to-b from-pink-500 to-purple-600 rounded-full"></span>
+                            Grupo Ofimundo
+                        </h4>
+                        <ul className="space-y-3 mb-6">
+                            <li><a href="https://dreamtec.cl/" target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-white hover:translate-x-1 transition-all inline-block">Dreamtec</a></li>
+                            <li><a href="https://globalhorizonlatam.com/" target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-white hover:translate-x-1 transition-all inline-block">Global Horizon Latam</a></li>
+                            <li><a href="https://cxhiway.com/" target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-white hover:translate-x-1 transition-all inline-block">Hiway</a></li>
                         </ul>
                     </div>
                 </div>
