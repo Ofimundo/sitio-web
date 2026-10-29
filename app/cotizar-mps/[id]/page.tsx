@@ -75,10 +75,11 @@ const FUNCIONES = [
   "Impresión",
   "Copiado",
   "Escaneo a correo / carpeta",
-  "Fax",
-  "Impresión desde móvil",
-  "Grapado / terminación",
+  "Venta",
+  "Arriendo",
 ]
+
+const FUNCIONES_IMPRESORA_SOLA = new Set(["Impresión", "Venta", "Arriendo"])
 
 export default function CotizarMpsPage() {
   const params = useParams<{ id: string }>()
@@ -117,7 +118,13 @@ export default function CotizarMpsPage() {
         const res = await fetch(`/api/equipos/${params.id}`)
         if (res.ok) {
           const json = await res.json()
-          if (activo && json?.success && json?.data) setEquipo(json.data as Equipo)
+          if (activo && json?.success && json?.data) {
+            const eq = json.data as Equipo
+            setEquipo(eq)
+            if (eq.Tipo_Equipo?.trim().toLowerCase() === "impresora") {
+              setFunciones((prev) => prev.filter((item) => FUNCIONES_IMPRESORA_SOLA.has(item)))
+            }
+          }
         }
       } catch {
         // El formulario conserva su estado si el equipo no está disponible temporalmente.
@@ -132,7 +139,10 @@ export default function CotizarMpsPage() {
     }
   }, [params.id])
 
+  const esImpresoraSola = equipo?.Tipo_Equipo?.trim().toLowerCase() === "impresora"
+
   const toggleFuncion = (valor: string) => {
+    if (esImpresoraSola && !FUNCIONES_IMPRESORA_SOLA.has(valor)) return
     setFunciones((prev) => (prev.includes(valor) ? prev.filter((item) => item !== valor) : [...prev, valor]))
   }
 
@@ -142,7 +152,7 @@ export default function CotizarMpsPage() {
     setVolumen(VOLUMENES[1])
     setTipoImpresion(TIPO_IMPRESION[0])
     setTamanoPapel(TAMANOS_PAPEL[0])
-    setFunciones(["Impresión", "Copiado", "Escaneo a correo / carpeta"])
+    setFunciones(esImpresoraSola ? ["Impresión"] : ["Impresión", "Copiado", "Escaneo a correo / carpeta"])
     setUbicaciones(1)
     setObservaciones("")
   }
@@ -205,7 +215,7 @@ export default function CotizarMpsPage() {
         </div>
         <div className="flex-1">
           <p className="text-xs font-semibold uppercase tracking-wide text-ofimundo-purple">Servicio seleccionado</p>
-          <h2 className="mt-1 text-lg font-bold text-ofimundo-navy md:text-xl">{nombreEquipo} + Arriendo + Mantención</h2>
+          <h2 className="mt-1 text-lg font-bold text-ofimundo-navy md:text-xl">{nombreEquipo}</h2>
           {equipo?.Nombre_Marca && <span className="mt-2 inline-block rounded-full bg-purple-50 px-3 py-1 text-xs font-medium text-ofimundo-purple">{equipo.Nombre_Marca}</span>}
         </div>
       </div>
@@ -311,10 +321,26 @@ export default function CotizarMpsPage() {
                   </legend>
                   <div className="mt-3 grid gap-2 sm:grid-cols-2">
                     {FUNCIONES.map((item) => {
-                      const activo = funciones.includes(item)
+                      const deshabilitado = esImpresoraSola && !FUNCIONES_IMPRESORA_SOLA.has(item)
+                      const activo = !deshabilitado && funciones.includes(item)
                       return (
-                        <label key={item} className={`flex cursor-pointer items-center gap-3 rounded-lg border-2 bg-white p-3 transition ${activo ? "border-ofimundo-purple" : "border-gray-200 hover:border-gray-300"}`}>
-                          <input type="checkbox" checked={activo} onChange={() => toggleFuncion(item)} className="h-4 w-4 shrink-0 accent-[#2e2096]" />
+                        <label
+                          key={item}
+                          className={`flex items-center gap-3 rounded-lg border-2 p-3 transition ${
+                            deshabilitado
+                              ? "cursor-not-allowed border-gray-200 bg-gray-100 opacity-50"
+                              : activo
+                                ? "cursor-pointer border-ofimundo-purple bg-white"
+                                : "cursor-pointer border-gray-200 bg-white hover:border-gray-300"
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            disabled={deshabilitado}
+                            checked={activo}
+                            onChange={() => toggleFuncion(item)}
+                            className="h-4 w-4 shrink-0 accent-[#2e2096] disabled:cursor-not-allowed"
+                          />
                           <span className="text-sm font-medium text-gray-800">{item}</span>
                         </label>
                       )
