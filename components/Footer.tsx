@@ -27,9 +27,18 @@ export function Footer() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
 
             <div className="bg-linear-to-r from-purple-900/40 to-pink-900/40 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-6 sm:p-10 lg:p-12 mb-8">
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-12 gap-8 sm:gap-10">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10">
 
-                    <div className="sm:col-span-2 md:col-span-1 lg:col-span-2">
+                    <div>
+                        <Link href="/" onClick={scrollToTop} className="inline-block mb-4" aria-label="Ir al inicio">
+                            <Image
+                                src="https://d3d57fbyf4vdnc.cloudfront.net/banco_imagenes/01-logos/logo-ofimundo-blanco.png"
+                                alt="Ofimundo"
+                                width={180}
+                                height={44}
+                                className="h-9 sm:h-10 w-auto object-contain"
+                            />
+                        </Link>
                         <p className="text-white/90 text-base mb-6 leading-relaxed">
                             Tu transformación,<br></br>nuestra pasión
                         </p>
@@ -50,7 +59,7 @@ export function Footer() {
                     </div>
                     
 
-                    <div className="sm:col-span-1 md:col-span-1 lg:col-span-2">
+                    <div>
                         <h4 className="text-white font-bold text-lg mb-5 flex items-center gap-2">
                             <span className="w-1 h-6 bg-linear-to-b from-pink-500 to-purple-600 rounded-full"></span>
                             Empresa
@@ -62,7 +71,7 @@ export function Footer() {
                         </ul>
                     </div>
                     
-                    <div className="sm:col-span-1 md:col-span-1 lg:col-span-2">
+                    <div>
                         <h4 className="text-white font-bold text-lg mb-5 flex items-center gap-2">
                             <span className="w-1 h-6 bg-linear-to-b from-pink-500 to-purple-600 rounded-full"></span>
                             Servicios
@@ -74,7 +83,7 @@ export function Footer() {
                         </ul>
                     </div>
                     
-                    <div className="sm:col-span-1 md:col-span-1 lg:col-span-2">
+                    <div>
                         <h4 className="text-white font-bold text-lg mb-5 flex items-center gap-2">
                             <span className="w-1 h-6 bg-linear-to-b from-pink-500 to-purple-600 rounded-full"></span>
                             Legal
@@ -85,58 +94,83 @@ export function Footer() {
                             <li><Link href="/conoce-tu-factura" className="text-white/80 hover:text-white hover:translate-x-1 transition-all inline-block">Conoce tu factura</Link></li>
                         </ul>
                     </div>
+                </div>
+            </div>
+            
+            <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+                <p className="text-white/70 text-xs sm:text-sm order-2 md:order-1 text-center md:text-left">
+                    Copyright © 2026 | Ofimundo, todos los derechos reservados
+                </p>
 
-                    <div className="sm:col-span-2 md:col-span-2 lg:col-span-4">
-                        <h4 className="text-white font-bold text-lg mb-5 flex items-center gap-2">
-                            <span className="w-1 h-6 bg-linear-to-b from-pink-500 to-purple-600 rounded-full"></span>
-                            Grupo Empresarial Ofimundo
-                        </h4>
-                        <div className="grid grid-cols-2 gap-x-6 gap-y-4 items-center">
+                <div className="flex flex-col items-center md:items-end gap-1.5 order-1 md:order-2">
+                    <p className="text-white/70 text-xs sm:text-sm">
+                        Un ecosistema de soluciones para cada desafío
+                    </p>
+                    <div className="flex flex-wrap items-center justify-center md:justify-end gap-3 sm:gap-4">
+                        <span className="text-white/80 text-sm sm:text-base font-medium tracking-wider uppercase">
+                            GRUPO EMPRESARIAL OFIMUNDO
+                        </span>
+                        <div className="flex items-center gap-3">
                             <a
                                 href="https://www.ofimundo.cl/"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center justify-start py-1.5 transition-transform hover:scale-105"
+                                className="inline-flex items-center justify-start w-[28px] h-[28px] overflow-hidden opacity-90 hover:opacity-100 transition-opacity"
                                 title="Ofimundo"
+                                aria-label="Ofimundo"
                             >
-                                <Image src="/ofimundo.png" alt="Ofimundo" width={180} height={52} className="h-10 sm:h-11 lg:h-12 w-auto object-contain opacity-85 hover:opacity-100 transition-opacity" />
+                                <img
+                                    src="/ofimundo.png"
+                                    alt="Ofimundo"
+                                    className="h-[28px] w-auto max-w-none shrink-0"
+                                />
                             </a>
+                            <span className="text-white/40 text-sm select-none">|</span>
                             <a
                                 href="https://dreamtec.cl/"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center justify-start py-1.5 transition-transform hover:scale-105"
+                                className="inline-flex items-center justify-start w-[21px] h-[28px] overflow-hidden opacity-90 hover:opacity-100 transition-opacity"
                                 title="Dreamtec"
+                                aria-label="Dreamtec"
                             >
-                                <Image src="/dreamtec.png" alt="Dreamtec" width={180} height={48} className="h-10 sm:h-11 lg:h-12 w-auto object-contain opacity-85 hover:opacity-100 transition-opacity" />
+                                <img
+                                    src="/dreamtec.png"
+                                    alt="Dreamtec"
+                                    className="h-[28px] w-auto max-w-none shrink-0"
+                                />
                             </a>
+                            <span className="text-white/40 text-sm select-none">|</span>
                             <a
                                 href="https://globalhorizonlatam.com/"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center justify-start py-1.5 transition-transform hover:scale-105"
+                                className="inline-flex items-center justify-start w-[27px] h-[28px] overflow-hidden opacity-90 hover:opacity-100 transition-opacity"
                                 title="Global Horizon"
+                                aria-label="Global Horizon"
                             >
-                                <Image src="/global.png" alt="Global Horizon" width={180} height={58} className="h-10 sm:h-11 lg:h-12 w-auto object-contain opacity-85 hover:opacity-100 transition-opacity" />
+                                <img
+                                    src="/global.png"
+                                    alt="Global Horizon"
+                                    className="h-[28px] w-auto max-w-none shrink-0"
+                                />
                             </a>
+                            <span className="text-white/40 text-sm select-none">|</span>
                             <a
                                 href="https://cxhiway.com/"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center justify-start py-1.5 transition-transform hover:scale-105"
+                                className="inline-flex items-center justify-center h-[28px] text-white opacity-90 hover:opacity-100 transition-opacity"
                                 title="Hiway"
+                                aria-label="Hiway"
                             >
-                                <Image src="/hiway.png" alt="Hiway" width={180} height={60} className="h-10 sm:h-11 lg:h-12 w-auto object-contain opacity-85 hover:opacity-100 transition-opacity" />
+                                <svg className="h-[25px] w-auto" viewBox="0 0 20 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M2 1H13.5L19 11L13.5 21H2L7.5 11L2 1Z" fill="currentColor" />
+                                </svg>
                             </a>
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <div className="text-center">
-                <p className="text-white/60 text-sm">
-                    Copyright © 2025 | Ofimundo, todos los derechos reservados
-                </p>
             </div>
         </div>
     </footer>

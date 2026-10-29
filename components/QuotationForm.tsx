@@ -9,27 +9,30 @@ import { Header } from "@/components/Header"
 //  HELPERS DE SANITIZACIÓN
 // ─────────────────────────────────────────────
 
-const MAX_TEXT = 250
+const MAX_NOMBRE_EMPRESA = 50
+const MAX_EMAIL = 120
 
-/** Solo letras, espacios, acentos, ñ, ü. Máx 250 caracteres. */
+/** Solo letras, espacios, acentos, ñ, ü. Máx 50 caracteres (igual que en servicios). */
 const sanitizeNombre = (v: string) =>
-  v.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]/g, "").slice(0, MAX_TEXT)
+  v.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]/g, "").slice(0, MAX_NOMBRE_EMPRESA)
 
-/** Teléfono: + opcional al inicio + hasta 10 dígitos = máx 11 caracteres. */
-const sanitizeTelefono = (v: string) => {
-  let cleaned = v.replace(/[^0-9+]/g, "")
-  if (cleaned.includes("+")) {
-    cleaned = "+" + cleaned.replace(/\+/g, "")
-  }
-  return cleaned.slice(0, 11)
-}
+/** Teléfono: solo números, máx 15 dígitos (igual que en servicios). */
+const sanitizeTelefono = (v: string) =>
+  v.replace(/[^0-9]/g, "").slice(0, 15)
 
-/** Cualquier texto, solo acotado a 250 caracteres. */
-const sanitizeTexto = (v: string) => v.slice(0, MAX_TEXT)
+/** Texto acotado a 50 caracteres para nombre de empresa. */
+const sanitizeEmpresa = (v: string) => v.slice(0, MAX_NOMBRE_EMPRESA)
 
-/** Sanitiza RUT chileno: solo números, puntos, guion y K/k. Máx 12 caracteres (Ej: 12.345.678-K). */
+/** Correo acotado a 120 caracteres. */
+const sanitizeEmail = (v: string) => v.slice(0, MAX_EMAIL)
+
+/** Formatea RUT chileno en vivo igual que en servicios (Ej: 96.234.567-1). */
 const sanitizeRut = (v: string) =>
-  v.replace(/[^0-9kK.-]/g, "").slice(0, 12)
+  v
+    .replace(/[^0-9kK]/g, "")
+    .replace(/^0+/, "")
+    .slice(0, 9)
+    .replace(/(\d{1,2})(\d{3})(\d{3})([kK\d])?$/, "$1.$2.$3-$4")
 
 // ─────────────────────────────────────────────
 
@@ -88,10 +91,10 @@ export function ContactStep({ data, onChange }: { data: ContactData; onChange: (
         sanitized = sanitizeTelefono(value)
         break
       case "email":
-        sanitized = sanitizeTexto(value)
+        sanitized = sanitizeEmail(value)
         break
       case "empresa":
-        sanitized = sanitizeTexto(value)
+        sanitized = sanitizeEmpresa(value)
         break
       case "rutEmpresa":
         sanitized = sanitizeRut(value)
@@ -107,26 +110,26 @@ export function ContactStep({ data, onChange }: { data: ContactData; onChange: (
       <div className="flex flex-col gap-5 sm:gap-6">
         <div>
           <label htmlFor="nombreCompleto" className="mb-2 block text-sm font-semibold text-gray-700">Nombre completo <span className="text-red-500">*</span></label>
-          <input id="nombreCompleto" type="text" autoComplete="name" required value={data.nombreCompleto} onChange={(event) => handleChange("nombreCompleto", event.target.value)} placeholder="Juan Pérez" className={fieldClass} />
+          <input id="nombreCompleto" type="text" autoComplete="name" required maxLength={50} value={data.nombreCompleto} onChange={(event) => handleChange("nombreCompleto", event.target.value)} placeholder="Juan Pérez" className={fieldClass} />
         </div>
         <div className="grid gap-5 sm:gap-6 md:grid-cols-2">
           <div>
             <label htmlFor="telefono" className="mb-2 block text-sm font-semibold text-gray-700">Teléfono <span className="text-red-500">*</span></label>
-            <input id="telefono" type="tel" autoComplete="tel" required value={data.telefono} onChange={(event) => handleChange("telefono", event.target.value)} placeholder="+56 9 1234 5678" className={fieldClass} />
+            <input id="telefono" type="tel" autoComplete="tel" required maxLength={15} pattern="[0-9]+" title="Sólo se permiten números" value={data.telefono} onChange={(event) => handleChange("telefono", event.target.value)} placeholder="Ej: 981233403" className={fieldClass} />
           </div>
           <div>
             <label htmlFor="email" className="mb-2 block text-sm font-semibold text-gray-700">Correo electrónico <span className="text-red-500">*</span></label>
-            <input id="email" type="email" autoComplete="email" required value={data.email} onChange={(event) => handleChange("email", event.target.value)} placeholder="nombre@empresa.cl" className={fieldClass} />
+            <input id="email" type="email" autoComplete="email" required maxLength={120} value={data.email} onChange={(event) => handleChange("email", event.target.value)} placeholder="nombre@empresa.cl" className={fieldClass} />
           </div>
         </div>
         <div className="grid gap-5 sm:gap-6 md:grid-cols-2">
           <div>
             <label htmlFor="rutEmpresa" className="mb-2 block text-sm font-semibold text-gray-700">RUT Empresa <span className="text-red-500">*</span></label>
-            <input id="rutEmpresa" type="text" required value={data.rutEmpresa} onChange={(event) => handleChange("rutEmpresa", event.target.value)} placeholder="76.123.456-7" className={fieldClass} />
+            <input id="rutEmpresa" type="text" required maxLength={12} pattern="[0-9.\-kK]+" title="Solo se permiten números, puntos, guiones y la letra K." value={data.rutEmpresa} onChange={(event) => handleChange("rutEmpresa", event.target.value)} placeholder="Ej: 96.234.567-1" className={fieldClass} />
           </div>
           <div>
             <label htmlFor="empresa" className="mb-2 block text-sm font-semibold text-gray-700">Razón Social / Empresa <span className="text-red-500">*</span></label>
-            <input id="empresa" type="text" autoComplete="organization" required value={data.empresa} onChange={(event) => handleChange("empresa", event.target.value)} placeholder="Nombre de la empresa" className={fieldClass} />
+            <input id="empresa" type="text" autoComplete="organization" required maxLength={50} value={data.empresa} onChange={(event) => handleChange("empresa", event.target.value)} placeholder="Ej: Ofimundo S.A" className={fieldClass} />
           </div>
         </div>
       </div>

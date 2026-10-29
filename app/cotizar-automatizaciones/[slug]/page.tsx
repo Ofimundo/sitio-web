@@ -375,26 +375,9 @@ export default function CotizarAutomatizacionPage() {
           /* ── Paso 2: Contacto con validaciones ───────────────── */
           <ContactStep
             data={contact}
-            onChange={(field, value) => {
-              let sanitized = value
-
-              switch (field) {
-                case "nombreCompleto":
-                  sanitized = sanitizeNombre(value)
-                  break
-                case "telefono":
-                  sanitized = sanitizeTelefono(value)
-                  break
-                case "email":
-                  sanitized = sanitizeTexto(value)
-                  break
-                case "empresa":
-                  sanitized = sanitizeTexto(value)
-                  break
-              }
-
-              setContact((actual) => ({ ...actual, [field]: sanitized }))
-            }}
+            onChange={(field, value) =>
+              setContact((actual) => ({ ...actual, [field]: value }))
+            }
           />
         )}
 
