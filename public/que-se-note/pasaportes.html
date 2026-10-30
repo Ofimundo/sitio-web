@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QUE SE NOTE — Pasaportes</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style_master.css">
+<link rel="stylesheet" href="css/style_pasaportes.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+
+</head>
+<body>
+
+<nav class="nav">
+  <div class="brand">QUE <span>SE NOTE.</span></div>
+  <div class="navlinks">
+    <a href="index.html">Inicio</a>
+    <a href="programa.html">El programa</a>
+    <a href="pasaportes.html" class="active">Pasaportes</a>
+    <a href="reconocimientos.html">Reconocimientos</a>
+  </div>
+  <a href="quiero-reconocer.html" class="btn-primary">Quiero reconocer</a>
+</nav>
+
+<section>
+  <span class="kicker">Directorio de talentos</span>
+  <h1>PASAPORTES</h1>
+  <p class="subtitle">Explora los perfiles de nuestros colaboradores. Haz clic en cualquier tarjeta para ver el detalle de sus competencias transversales y específicas.</p>
+  
+  <input type="text" id="search-input" class="search-bar" placeholder="Buscar por nombre, área, empresa o cargo..." onkeyup="filterPassports()">
+  
+  <div class="grid-3" id="passports-grid">
+    <!-- El grid se renderiza vía JS -->
+  </div>
+</section>
+
+<!-- Ventana Modal de Perfil -->
+<div class="modal-overlay" id="profile-modal" onclick="closeModal(event)">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal(event, true)"><i data-lucide="x"></i></button>
+    
+    <div class="profile-header">
+      <div class="decor-tl"></div>
+      <div class="decor-br"></div>
+      
+      <div class="profile-left">
+        <img src="" alt="Foto de Perfil" class="profile-photo" id="modal-photo">
+        <a href="quiero-reconocer.html" class="btn-reconocer">RECONOCER</a>
+      </div>
+      
+      <div class="profile-right">
+        <div class="profile-kicker">Pasaporte</div>
+        <h2 class="profile-name" id="modal-name">MARCELO CÁCERES</h2>
+        <div class="profile-role-area"><span id="modal-area">GERENCIA</span> | <span id="modal-role">GERENTE GENERAL</span></div>
+        <div class="profile-company" id="modal-company">OFIMUNDO</div>
+      </div>
+    </div>
+
+    <div class="profile-body">
+      <div>
+        <div class="comp-section-title"><i data-lucide="layers"></i> Competencias Transversales</div>
+        <div id="modal-transversales"></div>
+      </div>
+      <div>
+        <div class="comp-section-title"><i data-lucide="target"></i> Competencias Específicas</div>
+        <div id="modal-especificas"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<footer class="site-footer">
+  <div class="footer-intro">Un ecosistema de soluciones para cada desafío.</div>
+  
+  <div class="footer-brands">
+    <!-- Marca 1: Ofimundo -->
+    <div class="footer-brand">
+      <a href="https://www.ofimundo.cl"><img src="img/logo_ofimundo.svg" height="50" alt="Ofimundo"></a>
+    </div>
+    
+    <div class="footer-divider"></div>
+    
+    <!-- Marca 2: Dreamtec -->
+    <div class="footer-brand">
+      <a href="https://www.dreamtec.cl"><img src="img/logo_dreamtec.svg" height="40" alt="Dreamtec"></a>
+    </div>
+    
+    <div class="footer-divider"></div>
+    
+    <!-- Marca 3: Global Horizon -->
+    <div class="footer-brand">
+      <a href="https://www.globalhorizonlatam.com"><img src="img/logo_globalhorizon.svg" height="40" alt="Global Horizon Latam"></a>
+    </div>
+    
+    <div class="footer-divider"></div>
+    
+    <!-- Marca 4: Hiway -->
+    <div class="footer-brand">
+      <a href="https://cxhiway.com"><img src="img/logo_hiway.svg" height="40" alt="Hiway"></a>
+    </div>
+  </div>
+</footer>
+
+<script src="datos.js"></script>
+<script>
+lucide.createIcons();
+function getFallbackImage(name) {
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=181810&color=C8F000&size=200&bold=true`;
+}
+
+function renderDirectory() {
+  const grid = document.getElementById('passports-grid');
+  grid.innerHTML = '';
+  
+  peopleList.forEach(person => {
+    const searchString = `${person.nombre} ${person.area} ${person.empresa} ${person.cargo}`.toLowerCase();
+    const imgHtml = `<img src="${person.foto}" alt="${person.nombre}" class="avatar" onerror="this.onerror=null; this.src='${getFallbackImage(person.nombre)}';">`;
+    
+    grid.innerHTML += `
+      <div class="person-card" data-search="${searchString}" onclick="openModal(${person.id})">
+        ${imgHtml}
+        <div class="info">
+          <h3>${person.nombre}</h3>
+          <span class="role">${person.cargo} · ${person.area}</span>
+          <span class="company">${person.empresa}</span>
+        </div>
+        <i data-lucide="chevron-right" class="icon-arrow"></i>
+      </div>
+    `;
+  });
+  lucide.createIcons();
+}
+
+function filterPassports() {
+  const query = document.getElementById('search-input').value.toLowerCase().trim();
+  document.querySelectorAll('.person-card').forEach(card => {
+    const match = card.getAttribute('data-search').includes(query);
+    card.style.display = match ? 'flex' : 'none';
+  });
+}
+
+// Renderizado de acordeón con <details> y descripciones
+function renderCompetenciesGroup(competenciesArray) {
+  const grouped = competenciesArray.reduce((acc, curr) => {
+    if (!acc[curr.categoria]) acc[curr.categoria] = [];
+    acc[curr.categoria].push(curr.competencia);
+    return acc;
+  }, {});
+
+  let html = '';
+  for (const [categoria, competencias] of Object.entries(grouped)) {
+    html += `<div class="category-group">
+               <div class="category-name">${categoria}</div>
+               <div class="comp-list">`;
+    
+    competencias.forEach(comp => {
+      // Intenta obtener la descripción o usa una por defecto si es específica y no está en la lista.
+      const desc = descripcionesCompetencias[comp] || "Comportamientos y habilidades esperadas para el correcto desempeño de esta competencia dentro del marco estratégico de la organización.";
+      
+      html += `
+        <details class="comp-details">
+          <summary class="comp-summary">
+            <i data-lucide="check" class="icon-check"></i>
+            <span>${comp}</span>
+            <i data-lucide="chevron-down" class="icon-chevron"></i>
+          </summary>
+          <div class="comp-desc">${desc}</div>
+        </details>
+      `;
+    });
+    
+    html += `  </div></div>`;
+  }
+  return html;
+}
+
+function openModal(id) {
+  const person = peopleList.find(p => p.id === id);
+  if (!person) return;
+
+  const modalImg = document.getElementById('modal-photo');
+  modalImg.src = person.foto;
+  modalImg.alt = person.nombre;
+  modalImg.onerror = function() {
+    this.onerror = null;
+    this.src = getFallbackImage(person.nombre);
+  };
+
+  document.getElementById('modal-name').textContent = person.nombre;
+  document.getElementById('modal-company').textContent = person.empresa;
+  document.getElementById('modal-role').textContent = person.cargo;
+  document.getElementById('modal-area').textContent = person.area;
+
+  const transversales = person.competencias.filter(c => c.tipo === "Transversales");
+  const especificas = person.competencias.filter(c => c.tipo === "Específicas");
+
+  document.getElementById('modal-transversales').innerHTML = renderCompetenciesGroup(transversales);
+  document.getElementById('modal-especificas').innerHTML = renderCompetenciesGroup(especificas);
+  
+  lucide.createIcons();
+  document.getElementById('profile-modal').classList.add('active');
+  document.body.style.overflow = 'hidden';
+
+  document.querySelector('.btn-reconocer').href = `quiero-reconocer.html?id=${person.id}`;
+}
+
+function closeModal(e, force = false) {
+  if (force || e.target.id === 'profile-modal') {
+    document.getElementById('profile-modal').classList.remove('active');
+    document.body.style.overflow = ''; 
+  }
+}
+
+renderDirectory();
+</script>
+
+</body>
+</html>

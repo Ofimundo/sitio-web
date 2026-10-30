@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QUE SE NOTE — Quiero Reconocer</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style_master.css">
+<link rel="stylesheet" href="css/style_quieroreconocer.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="brand">QUE <span>SE NOTE.</span></div>
+  <div class="navlinks">
+    <a href="index.html">Inicio</a>
+    <a href="programa.html">El programa</a>
+    <a href="pasaportes.html">Pasaportes</a>
+    <a href="reconocimientos.html">Reconocimientos</a>
+  </div>
+  <a href="quiero-reconocer.html" class="btn-primary">Quiero reconocer</a>
+</nav>
+
+<section>
+  <div class="form-wrapper">
+    <span class="kicker">Plan de Reconocimiento</span>
+    <h1>HAZ QUE <br><span>SE NOTE.</span></h1>
+    <p class="form-intro">Completa el siguiente formulario para destacar las acciones, desempeños y conductas que generan valor en nuestro grupo.</p>
+    
+    <div id="status-alert" class="status-msg"></div>
+
+    <form id="form-reconocimiento" action="/api/que-se-note" method="POST">
+      
+      <div class="form-row">
+        <!-- 1. Me llamo... (SELECT DINÁMICO) -->
+        <div class="form-group">
+          <label for="remitente"><span class="num">01.</span> Me llamo...</label>
+          <span class="field-hint">Selecciona tu nombre de la lista.</span>
+          <select id="remitente" name="remitente" required>
+            <option value="" disabled selected>Selecciona tu nombre...</option>
+            <!-- Opciones inyectadas desde datos.js -->
+          </select>
+          <div id="sender-badge" class="selected-person-badge"></div>
+        </div>
+
+        <!-- 2. ¿A quién quieres reconocer? (SELECT DINÁMICO) -->
+        <div class="form-group">
+          <label for="destinatario"><span class="num">02.</span> ¿A quién quieres reconocer?</label>
+          <span class="field-hint">Selecciona al colaborador a reconocer.</span>
+          <select id="destinatario" name="destinatario" required>
+            <option value="" disabled selected>Selecciona un colaborador...</option>
+            <!-- Opciones inyectadas desde datos.js -->
+          </select>
+          <div id="person-badge" class="selected-person-badge"></div>
+        </div>
+      </div>
+
+      <!-- 3. Competencia demostrada (SINCRONIZADA CON EL PASAPORTE DEL PASO 02) -->
+      <div class="form-group">
+        <label for="competencia"><span class="num">03.</span> Competencia demostrada</label>
+        <span class="field-hint">¿Qué competencia (transversal o específica de su rol) demostró principalmente esta persona?</span>
+        <select id="competencia" name="competencia" required disabled>
+          <option value="" disabled selected>Primero selecciona a un colaborador en el paso 02...</option>
+        </select>
+      </div>
+
+      <!-- 4. Acción excepcional -->
+      <div class="form-group">
+        <label for="accion_excepcional"><span class="num">04.</span> Acción excepcional</label>
+        <span class="field-hint">Describe la acción concreta que quieres reconocer. Cuéntanos qué hizo la persona, en qué situación ocurrió y por qué su actuación fue excepcional. Evita descripciones generales como “es buena compañera” o “siempre ayuda”.</span>
+        <textarea id="accion_excepcional" name="accion_excepcional" required placeholder="Detalla qué hizo, en qué contexto y por qué fue extraordinario..."></textarea>
+      </div>
+
+      <!-- 5. Relación con la competencia -->
+      <div class="form-group">
+        <label for="relacion_competencia"><span class="num">05.</span> Relación con la competencia</label>
+        <span class="field-hint">¿Cómo se relaciona esta acción con la competencia que seleccionaste? Explica qué conducta observable demuestra la competencia. No basta con mencionar nuevamente el nombre de la competencia.</span>
+        <textarea id="relacion_competencia" name="relacion_competencia" required placeholder="Explica qué comportamiento concreto evidencia la competencia seleccionada..."></textarea>
+      </div>
+
+      <!-- 6. Impacto generado -->
+      <div class="form-group">
+        <label for="impacto_generado"><span class="num">06.</span> Impacto generado</label>
+        <span class="field-hint">¿Qué impacto produjo esta acción? Ejemplo: Ayudó a resolver un problema relevante, mejoró la experiencia de un cliente, etc.</span>
+        <textarea id="impacto_generado" name="impacto_generado" required placeholder="Describe el resultado o valor que aportó al equipo, cliente o empresa..."></textarea>
+      </div>
+
+      <button type="submit" class="btn-submit" id="btn-submit">
+        <i data-lucide="send"></i> Enviar Reconocimiento
+      </button>
+    </form>
+  </div>
+</section>
+<footer class="site-footer">
+  <div class="footer-intro">Un ecosistema de soluciones para cada desafío.</div>
+  
+  <div class="footer-brands">
+    <!-- Marca 1: Ofimundo -->
+    <div class="footer-brand">
+      <a href="https://www.ofimundo.cl"><img src="img/logo_ofimundo.svg" height="50" alt="Ofimundo"></a>
+    </div>
+    
+    <div class="footer-divider"></div>
+    
+    <!-- Marca 2: Dreamtec -->
+    <div class="footer-brand">
+      <a href="https://www.dreamtec.cl"><img src="img/logo_dreamtec.svg" height="40" alt="Dreamtec"></a>
+    </div>
+    
+    <div class="footer-divider"></div>
+    
+    <!-- Marca 3: Global Horizon -->
+    <div class="footer-brand">
+      <a href="https://www.globalhorizonlatam.com"><img src="img/logo_globalhorizon.svg" height="40" alt="Global Horizon Latam"></a>
+    </div>
+    
+    <div class="footer-divider"></div>
+    
+    <!-- Marca 4: Hiway -->
+    <div class="footer-brand">
+      <a href="https://cxhiway.com"><img src="img/logo_hiway.svg" height="40" alt="Hiway"></a>
+    </div>
+  </div>
+</footer>
+<!-- 1. Cargamos la base de datos compartida -->
+<script src="datos.js"></script>
+
+<!-- 2. Lógica de quiero-reconocer.html -->
+<script>
+lucide.createIcons();
+
+const selectRemitente = document.getElementById('remitente');
+const selectDestinatario = document.getElementById('destinatario');
+const selectCompetencia = document.getElementById('competencia');
+const senderBadge = document.getElementById('sender-badge');
+const personBadge = document.getElementById('person-badge');
+
+// 1. Poblar ambos selectores ("Me llamo..." y "¿A quién quieres reconocer?") desde datos.js
+function populatePeopleSelects() {
+  peopleList.forEach(person => {
+    const formattedValue = `${person.nombre} (${person.cargo} - ${person.empresa})`;
+    const formattedText = `${person.nombre} — ${person.area} (${person.empresa})`;
+
+    // Opción para "01. Me llamo..."
+    const optRemitente = document.createElement('option');
+    optRemitente.value = formattedValue;
+    optRemitente.dataset.id = person.id;
+    optRemitente.textContent = formattedText;
+    selectRemitente.appendChild(optRemitente);
+
+    // Opción para "02. ¿A quién quieres reconocer?"
+    const optDestinatario = document.createElement('option');
+    optDestinatario.value = formattedValue;
+    optDestinatario.dataset.id = person.id;
+    optDestinatario.textContent = formattedText;
+    selectDestinatario.appendChild(optDestinatario);
+  });
+}
+
+// 2. Evitar que una persona se seleccione a sí misma en ambos campos
+function preventSelfRecognition() {
+  const remitenteOpt = selectRemitente.options[selectRemitente.selectedIndex];
+  const destinatarioOpt = selectDestinatario.options[selectDestinatario.selectedIndex];
+
+  const remitenteId = remitenteOpt ? remitenteOpt.dataset.id : null;
+  const destinatarioId = destinatarioOpt ? destinatarioOpt.dataset.id : null;
+
+  // Deshabilitar en "Destinatario" a quien ya está seleccionado en "Remitente"
+  Array.from(selectDestinatario.options).forEach(opt => {
+    if (opt.dataset.id) {
+      opt.disabled = (opt.dataset.id === remitenteId);
+    }
+  });
+
+  // Deshabilitar en "Remitente" a quien ya está seleccionado en "Destinatario"
+  Array.from(selectRemitente.options).forEach(opt => {
+    if (opt.dataset.id) {
+      opt.disabled = (opt.dataset.id === destinatarioId);
+    }
+  });
+}
+
+// 3. Mostrar insignia de cargo/empresa debajo de "01. Me llamo..."
+function updateSenderBadge(personId) {
+  const person = peopleList.find(p => p.id === parseInt(personId));
+  if (!person) {
+    senderBadge.classList.remove('active');
+    return;
+  }
+  senderBadge.innerHTML = `<i data-lucide="user" style="width:14px;height:14px;"></i> ${person.cargo} · ${person.empresa}`;
+  senderBadge.classList.add('active');
+  lucide.createIcons();
+}
+
+// 4. Sincronizar competencias según el colaborador seleccionado en "02. ¿A quién quieres reconocer?"
+function syncCompetencias(personId) {
+  const person = peopleList.find(p => p.id === parseInt(personId));
+  selectCompetencia.innerHTML = '';
+
+  if (!person) {
+    selectCompetencia.disabled = true;
+    selectCompetencia.innerHTML = '<option value="" disabled selected>Primero selecciona a un colaborador en el paso 02...</option>';
+    personBadge.classList.remove('active');
+    return;
+  }
+
+  personBadge.innerHTML = `<i data-lucide="user-check" style="width:14px;height:14px;"></i> ${person.cargo} · ${person.area} · ${person.empresa}`;
+  personBadge.classList.add('active');
+  lucide.createIcons();
+
+  selectCompetencia.disabled = false;
+  
+  const defaultOpt = document.createElement('option');
+  defaultOpt.value = "";
+  defaultOpt.disabled = true;
+  defaultOpt.selected = true;
+  defaultOpt.textContent = `Selecciona una competencia de ${person.nombre}...`;
+  selectCompetencia.appendChild(defaultOpt);
+
+  const grouped = person.competencias.reduce((acc, curr) => {
+    const groupKey = `${curr.tipo.toUpperCase()} — ${curr.categoria}`;
+    if (!acc[groupKey]) acc[groupKey] = [];
+    acc[groupKey].push(curr);
+    return acc;
+  }, {});
+
+  for (const [groupLabel, items] of Object.entries(grouped)) {
+    const optgroup = document.createElement('optgroup');
+    optgroup.label = groupLabel;
+
+    items.forEach(item => {
+      const option = document.createElement('option');
+      option.value = `[${item.tipo}] ${item.categoria}: ${item.competencia}`;
+      option.textContent = `${item.competencia} (${item.categoria})`;
+      optgroup.appendChild(option);
+    });
+
+    selectCompetencia.appendChild(optgroup);
+  }
+}
+
+// Eventos al cambiar "01. Me llamo..."
+selectRemitente.addEventListener('change', function() {
+  const selectedOption = this.options[this.selectedIndex];
+  updateSenderBadge(selectedOption.dataset.id);
+  preventSelfRecognition();
+});
+
+// Eventos al cambiar "02. ¿A quién quieres reconocer?"
+selectDestinatario.addEventListener('change', function() {
+  const selectedOption = this.options[this.selectedIndex];
+  syncCompetencias(selectedOption.dataset.id);
+  preventSelfRecognition();
+});
+
+// Inicializar listas al cargar la página
+populatePeopleSelects();
+
+// Autoseleccionar destinatario si viene desde pasaportes.html (?id=X)
+const urlParams = new URLSearchParams(window.location.search);
+const idParam = urlParams.get('id');
+const personaParam = urlParams.get('persona');
+
+if (idParam || personaParam) {
+  const targetPerson = peopleList.find(p => 
+    (idParam && p.id === parseInt(idParam)) || 
+    (personaParam && p.nombre.toLowerCase() === personaParam.toLowerCase())
+  );
+  if (targetPerson) {
+    Array.from(selectDestinatario.options).forEach(opt => {
+      if (parseInt(opt.dataset.id) === targetPerson.id) opt.selected = true;
+    });
+    syncCompetencias(targetPerson.id);
+    preventSelfRecognition();
+  }
+}
+
+// Envío del formulario hacia enviar-reconocimiento.php
+document.getElementById('form-reconocimiento').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  
+  const form = this;
+  const submitBtn = document.getElementById('btn-submit');
+  const statusAlert = document.getElementById('status-alert');
+  
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = 'Enviando reconocimiento...';
+  statusAlert.className = 'status-msg';
+  statusAlert.style.display = 'none';
+
+  try {
+    const formData = new FormData(form);
+    const response = await fetch('/api/que-se-note', {
+      method: 'POST',
+      body: formData
+    });
+
+    const result = await response.json();
+
+    // Verifica que el código HTTP devuelto por cURL sea exitoso (200 al 299)
+    if (result.status >= 200 && result.status < 300) {
+      statusAlert.className = 'status-msg success';
+      statusAlert.innerHTML = `<i data-lucide="check-circle-2"></i> <span>¡El reconocimiento ha sido enviado con éxito!</span>`;
+      form.reset();
+      updateSenderBadge(null);
+      syncCompetencias(null);
+      preventSelfRecognition();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      throw new Error('El servidor respondió con código ' + result.status + '. Inténtalo nuevamente.');
+    }
+  } catch (error) {
+    statusAlert.className = 'status-msg error';
+    statusAlert.innerHTML = `<i data-lucide="alert-circle"></i> <span>${error.message}</span>`;
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = '<i data-lucide="send"></i> Enviar Reconocimiento';
+    lucide.createIcons();
+  }
+});
+</script>
+</body>
+</html>

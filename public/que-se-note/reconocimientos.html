@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QUE SE NOTE — Reconocimientos</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Quicksand:wght@300..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style_master.css">
+<link rel="stylesheet" href="css/style_reconocimientos.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="brand">QUE <span>SE NOTE.</span></div>
+  <div class="navlinks">
+    <a href="index.html">Inicio</a>
+    <a href="programa.html">El programa</a>
+    <a href="pasaportes.html">Pasaportes</a>
+    <a href="reconocimientos.html" class="active">Reconocimientos</a>
+  </div>
+  <a href="quiero-reconocer.html" class="btn-primary">Quiero reconocer</a>
+</nav>
+
+<section>
+  <span class="kicker">Historial Global</span>
+  <h1>Muro de los <br><span>Reconocimientos.</span></h1>
+  <p class="subtitle">Conoce los últimos reconocimientos de nuestro grupo. </p>
+  <p class="kickertxt">QUE SE NOTE</p>
+  
+  <div class="filters" id="filters-container">
+    <button class="filter-btn active" onclick="filterFeed('Todos', this)">Todos</button>
+    <button class="filter-btn" onclick="filterFeed('SE NOTÓ', this)">Se Notó</button>
+    <button class="filter-btn" onclick="filterFeed('DESTACÓ', this)">Destacó</button>
+    <button class="filter-btn" onclick="filterFeed('DEJÓ HUELLA', this)">Dejó Huella</button>
+    <button class="filter-btn" onclick="filterFeed('MARCÓ LA DIFERENCIA', this)">Marcó la Diferencia</button>
+  </div>
+  
+  <div class="feed-grid" id="feed-container">
+    <!-- El Feed se renderiza vía JS -->
+  </div>
+</section>
+<footer class="site-footer">
+  <div class="footer-intro">Un ecosistema de soluciones para cada desafío.</div>
+  
+  <div class="footer-brands">
+    <!-- Marca 1: Ofimundo -->
+    <div class="footer-brand">
+      <a href="https://www.ofimundo.cl"><img src="img/logo_ofimundo.svg" height="50" alt="Ofimundo"></a>
+    </div>
+    
+    <div class="footer-divider"></div>
+    
+    <!-- Marca 2: Dreamtec -->
+    <div class="footer-brand">
+      <a href="https://www.dreamtec.cl"><img src="img/logo_dreamtec.svg" height="40" alt="Dreamtec"></a>
+    </div>
+    
+    <div class="footer-divider"></div>
+    
+    <!-- Marca 3: Global Horizon -->
+    <div class="footer-brand">
+      <a href="https://www.globalhorizonlatam.com"><img src="img/logo_globalhorizon.svg" height="40" alt="Global Horizon Latam"></a>
+    </div>
+    
+    <div class="footer-divider"></div>
+    
+    <!-- Marca 4: Hiway -->
+    <div class="footer-brand">
+      <a href="https://cxhiway.com"><img src="img/logo_hiway.svg" height="40" alt="Hiway"></a>
+    </div>
+  </div>
+</footer>
+<!-- Cargamos la base de datos compartida (Requiere datos.js actualizado) -->
+<script src="datos.js"></script>
+
+<script>
+lucide.createIcons();
+
+// Función de respaldo para imágenes rotas
+function getFallbackImage(name) {
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=181810&color=C8F000&size=200&bold=true`;
+}
+
+// Renderizar el Muro de Noticias
+function renderFeed(filter = "Todos") {
+  const container = document.getElementById('feed-container');
+  container.innerHTML = '';
+  
+  // Filtrar la lista
+  const filteredList = reconocimientosList.filter(rec => filter === "Todos" || rec.dimension === filter);
+  
+  if(filteredList.length === 0) {
+    container.innerHTML = `<p style="text-align:center; color:var(--text-muted); font-size:15px; margin-top:40px;">No hay reconocimientos en esta categoría aún.</p>`;
+    return;
+  }
+
+  // Construir las tarjetas
+  filteredList.forEach(rec => {
+    // Buscar los datos de la persona que recibió el reconocimiento usando su ID
+    const person = peopleList.find(p => p.id === rec.destinatarioId);
+    
+    // Fallbacks por si se eliminó a la persona o hay error de base de datos
+    const personName = person ? person.nombre : "Colaborador Desconocido";
+    const personRole = person ? `${person.cargo} · ${person.empresa}` : "Rol no definido";
+    const personFoto = person ? person.foto : "";
+    const imgHtml = `<img src="${personFoto}" alt="${personName}" class="news-avatar" onerror="this.onerror=null; this.src='${getFallbackImage(personName)}';">`;
+    
+    // Iconos según dimensión
+    let icon = "star";
+    if(rec.dimension === "DESTACÓ") icon = "users";
+    if(rec.dimension === "DEJÓ HUELLA") icon = "award";
+    if(rec.dimension === "MARCÓ LA DIFERENCIA") icon = "rocket";
+
+    container.innerHTML += `
+      <article class="news-card">
+        
+        <div class="news-header">
+          <div class="news-author-info">
+            ${imgHtml}
+            <div class="news-meta">
+              <h3>${personName}</h3>
+              <span class="role">${personRole}</span>
+            </div>
+          </div>
+          <div class="news-date">${rec.fecha}</div>
+        </div>
+
+        <div class="news-body">
+          <div class="news-competency">
+            <i data-lucide="check-circle-2" style="width:14px; height:14px;"></i> 
+            ${rec.categoria}: ${rec.competencia}
+          </div>
+          <p class="news-message">${rec.mensaje}</p>
+        </div>
+
+        <div class="news-footer">
+          <div class="news-sender">Reconocido por: <strong>${rec.remitente}</strong></div>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <span class="news-dimension">${rec.dimension}</span>
+            <div class="news-dimension-icon"><i data-lucide="${icon}"></i></div>
+          </div>
+        </div>
+
+      </article>
+    `;
+  });
+
+  lucide.createIcons();
+}
+
+// Función para manejar los botones de filtro
+function filterFeed(category, btnElement) {
+  // Quitar clase active de todos los botones
+  document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+  // Añadir clase active al botón clickeado
+  btnElement.classList.add('active');
+  // Re-renderizar el muro
+  renderFeed(category);
+}
+
+// Renderizar al cargar la página
+renderFeed();
+</script>
+</body>
+</html>
